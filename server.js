@@ -5,6 +5,7 @@ const cors=require("cors")
 const mongoose=require("mongoose")
 const corsOptions=require("./config/corsOptions")
 const connectDB=require('./config/dbConn')
+const createInitialAdmin=require('./Admin/CreateInitialAdmin')
 
 const PORT=process.env.PORT||2001
 const app=express()
@@ -13,10 +14,13 @@ app.use(cors(corsOptions))
 app.use(express.json())
 
 app.use('/api/auth',require('./routes/authRouters'))
+app.use('/api/users',require('./routes/userRoute'))
 
 mongoose.connection.once('open',()=>{
     console.log('connected to mongoDB')
     app.listen(PORT,()=>{console.log(`server is running on port ${PORT}`)})
+    //creat admin user
+    createInitialAdmin()
 })
 
 mongoose.connection.on('error',(err)=>{
