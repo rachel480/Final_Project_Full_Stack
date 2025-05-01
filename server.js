@@ -12,7 +12,7 @@ const app=express()
 connectDB()
 app.use(cors(corsOptions))
 app.use(express.json())
-
+//
 app.use('/api/auth',require('./routes/authRouters'))
 app.use('/api/users',require('./routes/userRoute'))
 
