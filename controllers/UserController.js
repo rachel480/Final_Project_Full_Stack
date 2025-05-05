@@ -13,6 +13,9 @@ const getAllUser = async (req, res) => {
 //get one users only for admin and user
 const getSingleUser = async (req, res) => {
     const { id } = req.params
+    if (!id)
+        return res.status(400).send('id is required')
+
     //chek if user is admin or user
     const  user  = req.user
     let findedUser
@@ -72,10 +75,10 @@ const deleteUser = async (req, res) => {
     return res.status(201).json({ message: `user with id ${id} was deleted successfully` })
 }
 //update active only admain
-const updateUserActive = async (req, res) => {
+const updateUserByAdmit = async (req, res) => {
     //validation
     //required fields
-    const { id } = req.body
+    const { id,active,roles } = req.body
     if (!id)
         return res.status(400).send('id is required')
     const  user  = req.user
@@ -85,7 +88,8 @@ const updateUserActive = async (req, res) => {
     const findedUser = await User.findOne({ _id: id }).exec()
     if (!findedUser)
         return res.status(400).json({ message: 'no user found' })
-    findedUser.active = !findedUser.active
+    findedUser.roles=roles?roles:findedUser.roles
+    findedUser.active = active?active:findedUser.active
     const updatedUser = await findedUser.save()
     if (!updatedUser)
         return res.status(400).json({ message: `error occurred while updateing user ${userName}` })
@@ -93,4 +97,4 @@ const updateUserActive = async (req, res) => {
     return res.status(201).json({ message: `user with id ${id}  was updated successfully` })
 
 }
-module.exports = { getAllUser, getSingleUser, updateUser, deleteUser, updateUserActive }
+module.exports = { getAllUser, getSingleUser, updateUser, deleteUser, updateUserByAdmit }

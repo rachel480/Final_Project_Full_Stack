@@ -12,10 +12,15 @@ const app=express()
 connectDB()
 app.use(cors(corsOptions))
 app.use(express.json())
-//
-app.use('/api/auth',require('./routes/authRouters'))
-app.use('/api/users',require('./routes/userRoute'))
 
+app.use('/api/auth',require('./routes/authRouters'))
+app.use('/api/user',require('./routes/userRoute'))
+app.use('/api/category',require('./routes/categoryRoute'))
+app.use('/api/challenge',require('./routes/challengeRoute'))
+app.use('/api/course',require('./routes/courseRouter'))
+app.use('/api/question',require('./routes/questionRouter'))
+// app.use('/api/recommendation',require('./routes/RecommendationRouter'))
+app.use('/api/word',require('./routes/wordRouters'))
 mongoose.connection.once('open',()=>{
     console.log('connected to mongoDB')
     app.listen(PORT,()=>{console.log(`server is running on port ${PORT}`)})

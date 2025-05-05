@@ -5,7 +5,7 @@ const categorySchema=new mongoose.Schema({
         type:String,
         required:true,
     },
-    wordList:{
+    wordsList:{
         type:[mongoose.Schema.Types.ObjectId],
         required:true,
         ref:"Word"

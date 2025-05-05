@@ -8,7 +8,7 @@ router.use(verifyJWT)
 router.get('/',userController.getAllUser)
 router.get('/getUser/:id',userController.getSingleUser)
 router.put('/',userController.updateUser)
-router.put('/updateActive',userController.updateUserActive)
+router.put('/updateUserByAdmit',userController.updateUserByAdmit)
 router.delete('/',userController.deleteUser)
 
 module.exports=router

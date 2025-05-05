@@ -1,12 +1,12 @@
 const mongoose=require('mongoose')
 
 const challengeSchema=new mongoose.Schema({
-    question:{
+    questions:{
         type:[mongoose.Schema.Types.ObjectId],
         required:true,
         ref:"Question"
     },
-    grade:{
+    finalGrade:{
         type:Number,
         required:true,
         default:0,

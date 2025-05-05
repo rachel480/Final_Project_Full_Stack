@@ -13,9 +13,10 @@ const questionSchema=new mongoose.Schema({
         default:"-",
     },
     correctAnswer:{
-        type:string,
+        type:String,
         required:true
     },
+    
     grade:{
         type:Number,
         required:true,

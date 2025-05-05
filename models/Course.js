@@ -18,10 +18,10 @@ const courseSchema=new mongoose.Schema({
     },
     solvedChalenges:{
         type:[mongoose.Schema.Types.ObjectId],
-        required:true,
+        default:[],
         ref:"Challenge"
     },
-    user:{
+    userId:{
         type:[mongoose.Schema.Types.ObjectId],
         required:true,
         ref:"User"
