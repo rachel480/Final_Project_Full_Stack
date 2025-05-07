@@ -11,11 +11,11 @@ const wordSchema = new mongoose.Schema({
     trim: true,
     required: true
   },
-  // img: {
-  //   data: Buffer,
-  //   contentType: String
+  img: {
+    data: Buffer,
+    contentType: String
 
-  // }
+  }
 }, { timestamps: true })
 
 

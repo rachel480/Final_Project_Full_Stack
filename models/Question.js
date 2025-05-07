@@ -2,10 +2,9 @@ const mongoose=require('mongoose')
 
 const questionSchema=new mongoose.Schema({
     question:{
-        type:String,
-        required:true,
-        lowerCase:true,
-        trim:true
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Word",
+        required:true 
     },
     userAnswer:{
         type:String,
