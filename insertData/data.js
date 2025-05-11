@@ -1,6 +1,13 @@
 const fs = require("fs")
 const path = require("path")
+
+//models
 const Word = require('../models/Word')
+const Question = require("../models/Question")
+
+
+//functions
+
 //help function that chekes if the word is already selected in questions
 const chekWordInQuestion = (id, questionArr) => {
     for (let i = 0; i < questionArr.length; i++) {
@@ -17,7 +24,8 @@ const chekWordInOptions = (id, options) => {
     }
     return false
 }
-//
+
+//data
 
 const words = [
     //vegtables
@@ -34,10 +42,11 @@ const words = [
     { word: "garlic", translation: "שום", categoryName: "vegtables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "garlic.jpg")), contentType: "jpg" } },
     { word: "cabbage", translation: "כרוב", categoryName: "vegtables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "cabbage.jpg")), contentType: "jpg" } }
 ]
+//vegtable questions
 const creatVegtablesQuestions = async () => {
     const wordsFromDB = await Word.find({ categoryName: "vegtables" }).lean() //get all words that category is vegtable
     const vegtablesQuestions = []
-    for (let i = 0;i< wordsFromDB.length; i++)//loop that chooses in every round a word for the question
+    for (let i = 0; i < wordsFromDB.length; i++)//loop that chooses in every round a word for the question
     {
         let wordPosition = Math.floor(Math.random() * wordsFromDB.length)
         while (chekWordInQuestion(wordsFromDB[wordPosition]._id, vegtablesQuestions)) {
@@ -60,6 +69,18 @@ const creatVegtablesQuestions = async () => {
     }
     return vegtablesQuestions
 }
+//vegtable challenge
+const creatVegtableChallenge = async () => {
+    const questionsFromDB = await Question.find().populate({
+        path: "question",
+        match: { categoryName: "vegtables" }
+    }).lean()
+    const filterQuestions = questionsFromDB.filter((q) => {
+        return q.question !== null
+    })
+    const challenge={question:filterQuestions}
+    return challenge
 
 
-module.exports = { words,creatVegtablesQuestions}
+}
+module.exports = { words, creatVegtablesQuestions,creatVegtableChallenge }

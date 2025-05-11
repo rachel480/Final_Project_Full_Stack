@@ -1,13 +1,16 @@
 //models
 const Word = require('../models/Word')
 const Question = require('../models/Question')
+const challenge = require('../models/Challenge')
 
 //data
-const { words, creatVegtablesQuestions } = require('./data')
-//functions
+const { words, creatVegtablesQuestions, creatVegtableChallenge } = require('./data')
+const Challenge = require('../models/Challenge')
+//functions 
+// insert words to dataBase
 const insertWord = async () => {
-    const chekWords = await Word.find().lean()
-    if (!chekWords.length) {
+    const checkWords = await Word.find().lean()
+    if (!checkWords.length) {
         for (let i = 0; i < words.length; i++) {
             const newWord = await Word.create({
                 word: words[i].word,
@@ -24,13 +27,14 @@ const insertWord = async () => {
         console.log('words table was filled successfully')
     }
     else
-      return
+        return
 }
+// insert questions to dataBase
 const insertQuestions = async () => {
-    const chekQuestions = await Question.find().lean()
-    if (!chekQuestions.length) {
+    const checkQuestions = await Question.find().lean()
+    if (!checkQuestions.length) {
         // insert vegtable questions
-        const vegtablesQuestions=await creatVegtablesQuestions()
+        const vegtablesQuestions = await creatVegtablesQuestions()
         for (let i = 0; i < vegtablesQuestions.length; i++) {
             const newQuestion = await Question.create({
                 question: vegtablesQuestions[i].question,
@@ -47,4 +51,19 @@ const insertQuestions = async () => {
 
 }
 
-module.exports = { insertWord, insertQuestions }
+//insert challenges to dataBase
+const insertChallenges = async () => {
+    const checkChallenges = await Challenge.find().lean()
+    if (!checkChallenges.length) {
+        //insert vegtable challenge 
+        const vegtableChallenge = await creatVegtableChallenge()
+        const newChallenge = await Challenge.create({
+            questions: vegtableChallenge.question
+        })
+        if(!newChallenge)
+            console.log(`error creating vegtable challenge`)
+        console.log('challenges table was filled successfully')
+    }
+}
+
+module.exports = { insertWord, insertQuestions,insertChallenges }

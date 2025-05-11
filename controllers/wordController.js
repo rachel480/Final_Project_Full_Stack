@@ -33,7 +33,7 @@ const getAllWords=async(req,res)=>{
       const newWord=await Word.create({word,translation,categoryName})
       if (!newWord)
           return res.status(400).json({ message: `error occurred while createing  the Word ` })
-      return res.status(201).json({ message: `Word created successfully` })
+      return res.status(201).json({ message: `word ${word} created successfully` })
   }
   //update Word for admin
   const updateWord=async(req,res)=>{
