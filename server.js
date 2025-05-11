@@ -22,13 +22,15 @@ app.use('/api/course',require('./routes/courseRouter'))
 app.use('/api/question',require('./routes/questionRouter'))
 // app.use('/api/recommendation',require('./routes/RecommendationRouter'))
 app.use('/api/word',require('./routes/wordRouters'))
-mongoose.connection.once('open',()=>{
+mongoose.connection.once('open',async()=>{
     console.log('connected to mongoDB')
     app.listen(PORT,()=>{console.log(`server is running on port ${PORT}`)})
     //creat admin user
-    createInitialAdmin()
+    await createInitialAdmin()
     //create words
-    insertData.insertWord()
+    await insertData.insertWord()
+    //create question
+   await insertData.insertQuestions()
 })
 
 mongoose.connection.on('error',(err)=>{

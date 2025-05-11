@@ -21,30 +21,30 @@ const getAllWords=async(req,res)=>{
   }
   //creat new Word for admin
   const createNewWord=async(req,res)=>{
-      const {word,translation}=req.body
+      const {word,translation,categoryName}=req.body
       //validetion
       //chek if user is admin
       const user = req.user
       if (user.roles === 'User')
           return res.status(403).json({ message: 'Forbidden' })
       //required fields
-      if (!word||!translation)
+      if (!word||!translation||!categoryName)
           return res.status(400).send('all fields are required')
-      const newWord=await Word.create({word,translation})
+      const newWord=await Word.create({word,translation,categoryName})
       if (!newWord)
           return res.status(400).json({ message: `error occurred while createing  the Word ` })
       return res.status(201).json({ message: `Word created successfully` })
   }
   //update Word for admin
   const updateWord=async(req,res)=>{
-      const {word,translation,id}=req.body
+      const {word,translation,categoryName,id}=req.body
       //validetion
        //chek if user is admin
        const user = req.user
        if (user.roles === 'User')
            return res.status(403).json({ message: 'Forbidden' })
       //required fields
-      if (!word||!translation||!id)
+      if (!word||!translation||!categoryName||!id)
           return res.status(400).send('all fields are required')
       const foundWord=await Word.findById(id).exec()
       if (!foundWord)
@@ -52,6 +52,7 @@ const getAllWords=async(req,res)=>{
       //update fields
       foundWord.word=word
       foundWord.translation=translation
+      foundWord.categoryName=categoryName
       const updatedWord=await foundWord.save()
       if (!updatedWord)
           return res.status(400).json({ message: `error occurred while updateing word` })

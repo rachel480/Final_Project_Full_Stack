@@ -12,10 +12,10 @@ const questionSchema=new mongoose.Schema({
         default:"-",
     },
     correctAnswer:{
-        type:String,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Word",
         required:true
     },
-    
     grade:{
         type:Number,
         required:true,
