@@ -2,15 +2,16 @@
 const Word = require('../models/Word')
 const Question = require('../models/Question')
 const Challenge = require('../models/Challenge')
-const Category=require('../models/Category')
+const Category = require('../models/Category')
+const Course = require('../models/Course')
 
 //data
-const { words, creatVegtablesQuestions, creatVegtableChallenge ,createVegtableCategory} = require('./data')
+const { words, creatVegtablesQuestions, creatVegtableChallenge, createVegtableCategory, createCourses } = require('./data')
 
 //functions 
 // insert words to dataBase
 const insertWord = async () => {
-    let wordCounter=0
+    let wordCounter = 0
     const checkWords = await Word.find().lean()
     if (!checkWords.length) {
         for (let i = 0; i < words.length; i++) {
@@ -33,7 +34,7 @@ const insertWord = async () => {
 }
 // insert questions to dataBase
 const insertQuestions = async () => {
-    let questionCounter=0
+    let questionCounter = 0
     const checkQuestions = await Question.find().lean()
     if (!checkQuestions.length) {
         // insert vegtable questions
@@ -46,7 +47,7 @@ const insertQuestions = async () => {
             })
             if (!newQuestion)
                 console.log(`error creating vegtable question`)
-            else 
+            else
                 questionCounter++
         }
         console.log(`${questionCounter} questions were inserted successfully to questions table`)
@@ -62,34 +63,55 @@ const insertChallenges = async () => {
         const newChallenge = await Challenge.create({
             questions: vegtableChallenge.question
         })
-        if(!newChallenge){
+        if (!newChallenge) {
             console.log(`error creating vegtable challenge`)
             return
         }
-            
+
         console.log('challenges table was filled successfully')
     }
 }
 
 //insert categories to database
-const insertCategories=async()=>{
-    const checkCategoriea=await Category.find().lean()
-    if(!checkCategoriea.length){
+const insertCategories = async () => {
+    const checkCategoriea = await Category.find().lean()
+    if (!checkCategoriea.length) {
         //insert vegtable category
-        const vegtabltCategory=await createVegtableCategory()
-        const newCategory=await Category.create({
-            name:vegtabltCategory.name,
-            wordsList:vegtabltCategory.wordsList,
-            challenge:vegtabltCategory.challenge
+        const vegtabltCategory = await createVegtableCategory()
+        const newCategory = await Category.create({
+            name: vegtabltCategory.name,
+            wordsList: vegtabltCategory.wordsList,
+            challenge: vegtabltCategory.challenge,
+            level: vegtabltCategory.level
         })
-        if(!newCategory){
+        if (!newCategory) {
             console.log(`error creating vegtable categories`)
             return
         }
-            
+
         console.log('categories table was filled successfully')
     }
 }
 
+// insert courses to dataBase
+const insertCourses = async () => {
+    let courseCounter = 0
+    const checkCourse = await Course.find().lean()
+    if (!checkCourse.length) {
+        const courses = await createCourses()
+        for (let i = 0; i < courses.length; i++) {
+            const newCourse = await Course.create({
+                level: courses[i].level,
+                categories: courses[i].categories
+            })
+            if (!newCourse)
+                onsole.log(`error creating course}`)
+            else
+                courseCounter++
+        }
+        console.log(`${courseCounter} courses were inserted successfully to courses table`)
+    }
+}
 
-module.exports = { insertWord, insertQuestions,insertChallenges,insertCategories }
+
+module.exports = { insertWord, insertQuestions, insertChallenges, insertCategories,insertCourses }

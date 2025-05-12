@@ -7,15 +7,15 @@ const categorySchema = new mongoose.Schema({
         lowerCase: true,
         trim: true
     },
-    wordsList: {
-        type: [mongoose.Schema.Types.ObjectId],
-        required: true,
-        ref: "Word"
-    },
     challenge: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "Challenge"
+    },
+    level: {
+        type: String,
+        required: true,
+        enum: ["Easy", "Medium", "Hard"],
     }
 }, { timestamps: true })
 

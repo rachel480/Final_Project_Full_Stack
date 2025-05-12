@@ -1,38 +1,24 @@
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 
-const questionSchema=new mongoose.Schema({
-    question:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Word",
-        required:true 
+const questionSchema = new mongoose.Schema({
+    question: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Word",
+        required: true
     },
-    userAnswer:{
-        type:String,
-        required:true,
-        default:"-",
-    },
-    correctAnswer:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Word",
-        required:true
-    },
-    grade:{
-        type:Number,
-        required:true,
-        default:0,
-        min:0,
-        max:10
+    correctAnswer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Word",
+        required: true
     },
     //אפשרויות למענה
-    options:{
-        type:[mongoose.Schema.Types.ObjectId],
-        ref:"Word",
-        required:true
+    options: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Word",
+        required: true
     }
 
+}, { timestamps: true })
 
 
-},{timestamps:true})
-
-
-module.exports=mongoose.model('Question',questionSchema)
+module.exports = mongoose.model('Question', questionSchema)
