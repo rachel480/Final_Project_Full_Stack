@@ -4,7 +4,7 @@ const path = require("path")
 //models
 const Word = require('../models/Word')
 const Question = require("../models/Question")
-
+const Challenge = require('../models/Challenge')
 
 //functions
 
@@ -69,18 +69,36 @@ const creatVegtablesQuestions = async () => {
     }
     return vegtablesQuestions
 }
+
 //vegtable challenge
 const creatVegtableChallenge = async () => {
-    const questionsFromDB = await Question.find().populate({
+    const questionsFromDB = await Question.find().populate({//find all question that the word is un category of vegtable
         path: "question",
         match: { categoryName: "vegtables" }
     }).lean()
-    const filterQuestions = questionsFromDB.filter((q) => {
+    const filteredQuestions = questionsFromDB.filter((q) => {
         return q.question !== null
     })
-    const challenge={question:filterQuestions}
+    //create object challenge
+    const challenge = { question: filteredQuestions }
     return challenge
+}
 
+//vegtable category
+const createVegtableCategory = async () => {
+    const challengeFromDB = await Challenge.find({}, { questions: 1 }).lean()
+    const filteredChallenges = challengeFromDB.find(async (challenge) => {
+        const foundQuestion = await Question.findById(challenge.questions[0]).lean()
+        const foundWord = await Word.findById(foundQuestion.question).lean()
+
+        return foundWord.categoryName === "vegtables"
+    })
+
+    //find the vegtable category
+    const wordsFromDB = await Word.find({ categoryName: "vegtables" }).lean() //get all words that category is vegtable
+     //create object category
+    const category={name:"vegtables",wordsList:wordsFromDB,challenge:filteredChallenges}
+    return category
 
 }
-module.exports = { words, creatVegtablesQuestions,creatVegtableChallenge }
+module.exports = { words, creatVegtablesQuestions, creatVegtableChallenge,createVegtableCategory }

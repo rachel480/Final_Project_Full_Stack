@@ -13,7 +13,7 @@ const categorySchema = new mongoose.Schema({
         ref: "Word"
     },
     challenge: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: "Challenge"
     }

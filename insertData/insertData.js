@@ -1,14 +1,16 @@
 //models
 const Word = require('../models/Word')
 const Question = require('../models/Question')
-const challenge = require('../models/Challenge')
+const Challenge = require('../models/Challenge')
+const Category=require('../models/Category')
 
 //data
-const { words, creatVegtablesQuestions, creatVegtableChallenge } = require('./data')
-const Challenge = require('../models/Challenge')
+const { words, creatVegtablesQuestions, creatVegtableChallenge ,createVegtableCategory} = require('./data')
+
 //functions 
 // insert words to dataBase
 const insertWord = async () => {
+    let wordCounter=0
     const checkWords = await Word.find().lean()
     if (!checkWords.length) {
         for (let i = 0; i < words.length; i++) {
@@ -23,14 +25,15 @@ const insertWord = async () => {
             })
             if (!newWord)
                 console.log(`error creating wordL${words[i].word}`)
+            else
+                wordCounter++
         }
-        console.log('words table was filled successfully')
+        console.log(`${wordCounter} words were inserted successfully to words table`)
     }
-    else
-        return
 }
 // insert questions to dataBase
 const insertQuestions = async () => {
+    let questionCounter=0
     const checkQuestions = await Question.find().lean()
     if (!checkQuestions.length) {
         // insert vegtable questions
@@ -43,12 +46,11 @@ const insertQuestions = async () => {
             })
             if (!newQuestion)
                 console.log(`error creating vegtable question`)
-
+            else 
+                questionCounter++
         }
-        console.log('questions table was filled successfully')
-
+        console.log(`${questionCounter} questions were inserted successfully to questions table`)
     }
-
 }
 
 //insert challenges to dataBase
@@ -60,10 +62,34 @@ const insertChallenges = async () => {
         const newChallenge = await Challenge.create({
             questions: vegtableChallenge.question
         })
-        if(!newChallenge)
+        if(!newChallenge){
             console.log(`error creating vegtable challenge`)
+            return
+        }
+            
         console.log('challenges table was filled successfully')
     }
 }
 
-module.exports = { insertWord, insertQuestions,insertChallenges }
+//insert categories to database
+const insertCategories=async()=>{
+    const checkCategoriea=await Category.find().lean()
+    if(!checkCategoriea.length){
+        //insert vegtable category
+        const vegtabltCategory=await createVegtableCategory()
+        const newCategory=await Category.create({
+            name:vegtabltCategory.name,
+            wordsList:vegtabltCategory.wordsList,
+            challenge:vegtabltCategory.challenge
+        })
+        if(!newCategory){
+            console.log(`error creating vegtable categories`)
+            return
+        }
+            
+        console.log('categories table was filled successfully')
+    }
+}
+
+
+module.exports = { insertWord, insertQuestions,insertChallenges,insertCategories }

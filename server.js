@@ -29,10 +29,12 @@ mongoose.connection.once('open',async()=>{
     await createInitialAdmin()
     //create words
     await insertData.insertWord()
-    //create question
+    //create questions
    await insertData.insertQuestions()
-   //create challenge
+   //create challenges
    await insertData.insertChallenges()
+   //creat categories
+   await insertData.insertCategories()
 })
 
 mongoose.connection.on('error',(err)=>{
