@@ -30,7 +30,14 @@ const getAllWords=async(req,res)=>{
       //required fields
       if (!word||!translation||!categoryName)
           return res.status(400).send('all fields are required')
-      const newWord=await Word.create({word,translation,categoryName})
+      if(!req.file)
+          return res.status(400).send('img is required') 
+
+      const imgData={
+        data:req.file.buffer,
+        contentType:req.file.mimetype
+      }
+      const newWord=await Word.create({word,translation,categoryName,img:imgData})
       if (!newWord)
           return res.status(400).json({ message: `error occurred while createing  the Word ` })
       return res.status(201).json({ message: `word ${word} created successfully` })

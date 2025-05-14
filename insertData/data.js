@@ -146,7 +146,7 @@ const words = [
     { word: "refrigerator", translation: "מקרר", categoryName: "furniture & Electrical", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "furnitureAndElectrical", "refrigerator.jpg")), contentType: "jpg" } },
     { word: "table", translation: "שולחן", categoryName: "furniture & Electrical", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "furnitureAndElectrical", "table.jpg")), contentType: "jpg" } },
     { word: "wash machine", translation: "מכונת כביסה", categoryName: "furniture & Electrical", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "furnitureAndElectrical", "washingMachine.jpg")), contentType: "jpg" } },
-    
+
     //colors
     { word: "black", translation: "שחור", categoryName: "colors", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "colors", "black.jpg")), contentType: "jpg" } },
     { word: "blue", translation: "כחול", categoryName: "colors", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "colors", "blue.jpg")), contentType: "jpg" } },

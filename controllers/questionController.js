@@ -21,7 +21,7 @@ const getSingleQuestion = async (req, res) => {
 }
 //create new Question for admin
 const createNewQuestion = async (req, res) => {
-    const { question, userAnswer, correctAnswer, grade, options } = req.body
+    const { question, correctAnswer, options } = req.body
     //validetion
     //chek if user is admin
     const user = req.user
@@ -39,7 +39,7 @@ const createNewQuestion = async (req, res) => {
 }
 //update Question for admin
 const updateQuestion = async (req, res) => {
-    const { question, userAnswer, correctAnswer, grade, options, id } = req.body
+    const { question, correctAnswer, options, id } = req.body
     //validetion
     //chek if user is admin
     const user = req.user
@@ -53,9 +53,7 @@ const updateQuestion = async (req, res) => {
         return res.status(400).json({ message: 'no questions found' })
     //update fields
     foundQuestion.question = question
-    foundQuestion.userAnswer = userAnswer?userAnswer:foundQuestion.userAnswer
     foundQuestion.correctAnswer = correctAnswer
-    foundQuestion.grade = grade?grade:foundQuestion.grade
     foundQuestion.options = options
     const updatedQuestion = await foundQuestion.save()
     if (!updatedQuestion)

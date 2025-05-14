@@ -21,7 +21,7 @@ const getSingleChallenge=async(req,res)=>{
 }
 //creat new challenge for admin
 const createNewChallenge=async(req,res)=>{
-    const { questions,finalGrade}=req.body
+    const { questions}=req.body
     //validetion
      //chek if user is admin
      const user = req.user
@@ -30,14 +30,14 @@ const createNewChallenge=async(req,res)=>{
     //required fields
     if (!questions)
         return res.status(400).send('question are required')
-    const newChallenge=await Challenge.create({questions,finalGrade})
+    const newChallenge=await Challenge.create({questions})
     if (!newChallenge)
         return res.status(400).json({ message: `error occurred while createing  the challenge ` })
     return res.status(201).json({ message: `challenge created successfully` })
 }
 //update challenge for admin
 const updateChallenge=async(req,res)=>{
-    const { questions,finalGrade,id}=req.body
+    const { questions,id}=req.body
     //validetion
     //chek if user is admin
     const user = req.user
@@ -50,7 +50,6 @@ const updateChallenge=async(req,res)=>{
     if (!foundChallenge)
         return res.status(400).json({ message: 'no challenges found' })
     //update fields
-    foundChallenge.finalGrade=finalGrade?finalGrade:foundChallenge.finalGrade
     foundChallenge.questions=questions
     const updatedChallenge=await foundChallenge.save()
     if (!updatedChallenge)

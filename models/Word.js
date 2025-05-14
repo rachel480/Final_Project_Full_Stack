@@ -19,8 +19,14 @@ const wordSchema = new mongoose.Schema({
 
   },
   img: {
-    data: Buffer,
-    contentType: String
+    data: {
+      type:Buffer,
+      required:true
+    },
+    contentType:{
+      type:String,
+      required:true
+    } 
 
   }
 }, { timestamps: true })
