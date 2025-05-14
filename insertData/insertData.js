@@ -6,7 +6,7 @@ const Category = require('../models/Category')
 const Course = require('../models/Course')
 
 //data
-const { words, creatVegtablesQuestions, creatVegtableChallenge, createVegtableCategory, createCourses } = require('./data')
+const { words, createQuestions, creatChallenges, createCategories, createCourses } = require('./data')
 
 //functions 
 // insert words to dataBase
@@ -38,12 +38,12 @@ const insertQuestions = async () => {
     const checkQuestions = await Question.find().lean()
     if (!checkQuestions.length) {
         // insert vegtable questions
-        const vegtablesQuestions = await creatVegtablesQuestions()
-        for (let i = 0; i < vegtablesQuestions.length; i++) {
+        const questions = await createQuestions()
+        for (let i = 0; i < questions.length; i++) {
             const newQuestion = await Question.create({
-                question: vegtablesQuestions[i].question,
-                correctAnswer: vegtablesQuestions[i].correctAnswer,
-                options: vegtablesQuestions[i].options,
+                question: questions[i].question,
+                correctAnswer: questions[i].correctAnswer,
+                options: questions[i].options,
             })
             if (!newQuestion)
                 console.log(`error creating vegtable question`)
@@ -57,41 +57,45 @@ const insertQuestions = async () => {
 //insert challenges to dataBase
 const insertChallenges = async () => {
     const checkChallenges = await Challenge.find().lean()
+    let challengeCounter = 0
     if (!checkChallenges.length) {
-        //insert vegtable challenge 
-        const vegtableChallenge = await creatVegtableChallenge()
-        const newChallenge = await Challenge.create({
-            questions: vegtableChallenge.question
-        })
-        if (!newChallenge) {
-            console.log(`error creating vegtable challenge`)
-            return
+        const challenges = await creatChallenges()
+        for (let i = 0; i < challenges.length; i++) {
+            const newChallenge = await Challenge.create({
+                questions: challenges[i].question
+            })
+            if (!newChallenge)
+                console.log(`error creating challenge`)
+            else
+                challengeCounter++
         }
-
-        console.log('challenges table was filled successfully')
+        console.log(`${challengeCounter} challenges were inserted successfully to challenges table`)
     }
 }
 
 //insert categories to database
 const insertCategories = async () => {
     const checkCategoriea = await Category.find().lean()
+    let categoriesCounter = 0
     if (!checkCategoriea.length) {
-        //insert vegtable category
-        const vegtabltCategory = await createVegtableCategory()
-        const newCategory = await Category.create({
-            name: vegtabltCategory.name,
-            wordsList: vegtabltCategory.wordsList,
-            challenge: vegtabltCategory.challenge,
-            level: vegtabltCategory.level
-        })
-        if (!newCategory) {
-            console.log(`error creating vegtable categories`)
-            return
+        const categories = await createCategories()
+        for (let i = 0; i < categories.length; i++) {
+            const newCategory = await Category.create({
+                name: categories[i].name,
+                wordsList: categories[i].wordsList,
+                challenge: categories[i].challenge,
+                level: categories[i].level
+            })
+            if (!newCategory)
+                console.log(`error creating  categories ${categories[i].name}`)
+            else
+                categoriesCounter++
         }
-
-        console.log('categories table was filled successfully')
+        console.log(`${categoriesCounter} categories were inserted successfully to categories table`)
     }
+    
 }
+
 
 // insert courses to dataBase
 const insertCourses = async () => {
@@ -114,4 +118,4 @@ const insertCourses = async () => {
 }
 
 
-module.exports = { insertWord, insertQuestions, insertChallenges, insertCategories,insertCourses }
+module.exports = { insertWord, insertQuestions, insertChallenges, insertCategories, insertCourses }
