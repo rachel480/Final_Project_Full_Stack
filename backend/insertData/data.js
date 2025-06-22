@@ -1,52 +1,51 @@
-const fs = require("fs")
-const path = require("path")
+const path = require('path')
+const fs = require('fs')
 
 //models
 const Word = require('../models/Word')
-const Question = require("../models/Question")
+const Question = require('../models/Question')
 const Challenge = require('../models/Challenge')
 const Category = require('../models/Category')
-const { machine } = require("os")
 
 //functions
-
-//help function that chekes if the word is already selected in questions
-const chekWordInQuestion = (id, questionArr) => {
-    for (let i = 0; i < questionArr.length; i++) {
+//help function that checks if the word is already selected in questions
+const chekWordInQuestions = (id, questionArr) => {
+    for (let i = 0; i < questionArr.length; i++)
         if (questionArr[i].question === id)
             return true
-    }
-    return false
-}
-//help function that chekes if the word is already selected in options
-const chekWordInOptions = (id, options) => {
-    for (let i = 0; i < options.length; i++) {
-        if (options[i] === id)
-            return true
-    }
     return false
 }
 
+//help function that checks if the word is already selected in options
+const chekWordInoptions = (id, options) => {
+    for (let i = 0; i < options.length; i++)
+        if (options[i] === id)
+            return true
+    return false
+}
+
+//creates questions acording to the parameter category
 const createQuestionsAcordingToCategory = async (categoryName) => {
     const questionArr = []
-    const wordsFromDB = await Word.find({ categoryName: categoryName }).lean() //get all words that category is vegtable
+    const wordsFromDB = await Word.find({ categoryName: categoryName }).lean()//get all words that category is vegtables
     for (let i = 0; i < wordsFromDB.length; i++)//loop that chooses in every round a word for the question
     {
-        let wordPosition = Math.floor(Math.random() * wordsFromDB.length)
-        while (chekWordInQuestion(wordsFromDB[wordPosition]._id, questionArr)) {
+        let wordPosition = Math.floor(Math.random() * wordsFromDB.length)//chooses the word
+        while (chekWordInQuestions(wordsFromDB[wordPosition]._id, questionArr))
             wordPosition = Math.floor(Math.random() * wordsFromDB.length)
-        }
+
         questionArr.push({ question: wordsFromDB[wordPosition]._id, correctAnswer: wordsFromDB[wordPosition]._id, options: [] })
         const correctPosition = Math.floor(Math.random() * 4)//choose where will the corect answer be
-        for (let j = 0; j < 4; j++) //insert random options to options
+        for (let j = 0; j < 4; j++)//insert random options to options
         {
             if (j === correctPosition)
                 questionArr[i].options.push(wordsFromDB[wordPosition]._id)
             else {
                 let optionPosition = Math.floor(Math.random() * wordsFromDB.length)
                 //chek if the word is not the corrected word or unique in options
-                while (chekWordInOptions(wordsFromDB[optionPosition]._id, questionArr[i].options) || wordsFromDB[optionPosition]._id === wordsFromDB[wordPosition]._id)
+                while (chekWordInoptions(wordsFromDB[optionPosition]._id, questionArr[i].options) || wordsFromDB[optionPosition]._id === wordsFromDB[wordPosition]._id)
                     optionPosition = Math.floor(Math.random() * wordsFromDB.length)
+
                 questionArr[i].options.push(wordsFromDB[optionPosition]._id)
             }
         }
@@ -54,11 +53,12 @@ const createQuestionsAcordingToCategory = async (categoryName) => {
     return questionArr
 }
 
+
 //data
-const categoryLists = ["vegetables", "vehicles", "fruits", "numbers", "animals", "colors", "furniture & Electrical"]
+const categoryList = ["vegetables", "vehicles", "fruits", "numbers", "animals", "colors", "furniture & Electrical"]
 
 const words = [
-    //vegtables 
+    //vegtables words
     { word: "pepper", translation: "פלפל", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "pepper.jpg")), contentType: "jpg" } },
     { word: "cucumber", translation: "מלפפון", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "cucumber.jpg")), contentType: "jpg" } },
     { word: "tomato", translation: "עגבניה", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "tomato.jpg")), contentType: "jpg" } },
@@ -67,16 +67,15 @@ const words = [
     { word: "onion", translation: "בצל", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "onion.jpg")), contentType: "jpg" } },
     { word: "sweet potato", translation: "בטטה", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "sweet potato.jpg")), contentType: "jpg" } },
     { word: "carrot", translation: "גזר", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "carrot.jpg")), contentType: "jpg" } },
-    { word: "mushroom", translation: "פטריה", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "mushroom.jpg")), contentType: "jpg" } },
+    { word: "mushroome", translation: "פטריה", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "mushroom.jpg")), contentType: "jpg" } },
     { word: "lettuce", translation: "חסה", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "lettuce.jpg")), contentType: "jpg" } },
     { word: "garlic", translation: "שום", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "garlic.jpg")), contentType: "jpg" } },
     { word: "cabbage", translation: "כרוב", categoryName: "vegetables", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vegetables", "cabbage.jpg")), contentType: "jpg" } },
 
-    //vehicles 
-
+    //vehicles
     { word: "airplane", translation: "מטוס", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "airplane.jpg")), contentType: "jpg" } },
     { word: "ambulance", translation: "אמבולנס", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "ambulance.jpg")), contentType: "jpg" } },
-    { word: "bike", translation: "אופנעים", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "bike.jpg")), contentType: "jpg" } },
+    { word: "bike", translation: "אופניים", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "bike.jpg")), contentType: "jpg" } },
     { word: "boat", translation: "סירה", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "boat.jpg")), contentType: "jpg" } },
     { word: "bus", translation: "אוטובוס", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "bus.jpg")), contentType: "jpg" } },
     { word: "cable car", translation: "רכבלית", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "cablecar.jpg")), contentType: "jpg" } },
@@ -87,8 +86,7 @@ const words = [
     { word: "train", translation: "רכבת", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "train.jpg")), contentType: "jpg" } },
     { word: "truck", translation: "משאית", categoryName: "vehicles", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "vehicles", "truck.jpg")), contentType: "jpg" } },
 
-    //fruits 
-
+    //Fruits
     { word: "apple", translation: "תפוח", categoryName: "fruits", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "fruits", "apple.jpg")), contentType: "jpg" } },
     { word: "apricot", translation: "משמש", categoryName: "fruits", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "fruits", "apricot.jpg")), contentType: "jpg" } },
     { word: "banana", translation: "בננה", categoryName: "fruits", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "fruits", "banana.jpg")), contentType: "jpg" } },
@@ -102,8 +100,7 @@ const words = [
     { word: "strawberry", translation: "תות", categoryName: "fruits", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "fruits", "strawberry.jpg")), contentType: "jpg" } },
     { word: "watermelon", translation: "אבטיח", categoryName: "fruits", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "fruits", "watermelon.jpg")), contentType: "jpg" } },
 
-    //numbers 
-
+    //numbers
     { word: "one", translation: "אחת", categoryName: "numbers", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "numbers", "one.jpg")), contentType: "jpg" } },
     { word: "two", translation: "שתיים", categoryName: "numbers", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "numbers", "two.jpg")), contentType: "jpg" } },
     { word: "three", translation: "שלוש", categoryName: "numbers", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "numbers", "three.jpg")), contentType: "jpg" } },
@@ -118,7 +115,6 @@ const words = [
     { word: "hundred", translation: "מאה", categoryName: "numbers", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "numbers", "hundred.jpg")), contentType: "jpg" } },
 
     //animals
-
     { word: "cat", translation: "חתול", categoryName: "animals", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "animals", "cat.jpg")), contentType: "jpg" } },
     { word: "cow", translation: "פרה", categoryName: "animals", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "animals", "cow.jpg")), contentType: "jpg" } },
     { word: "dog", translation: "כלב", categoryName: "animals", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "animals", "dog.jpg")), contentType: "jpg" } },
@@ -133,7 +129,6 @@ const words = [
     { word: "giraffe", translation: "גירפה", categoryName: "animals", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "animals", "giraffe.jpg")), contentType: "jpg" } },
 
     //furniture and Electrical
-
     { word: "air conditioner", translation: "מזגן", categoryName: "furniture & Electrical", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "furnitureAndElectrical", "airConditioner.jpg")), contentType: "jpg" } },
     { word: "bed", translation: "מיטה", categoryName: "furniture & Electrical", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "furnitureAndElectrical", "bed.jpg")), contentType: "jpg" } },
     { word: "chair", translation: "כיסא", categoryName: "furniture & Electrical", img: { data: fs.readFileSync(path.join(__dirname, "..", "images", "furnitureAndElectrical", "chair.jpg")), contentType: "jpg" } },
@@ -165,52 +160,54 @@ const words = [
 //create questions
 const createQuestions = async () => {
     const questions = []
-    //loop that creats a questions in very round for another category
-    for (let i = 0; i < categoryLists.length; i++) {
-        const newQuestion = await createQuestionsAcordingToCategory(categoryLists[i])
+    //loop that creates a question in every round for another category
+    for (let i = 0; i < categoryList.length; i++) {
+        const newQuestion = await createQuestionsAcordingToCategory(categoryList[i])
         questions.push(...newQuestion)
     }
     return questions
 }
 
-//create challenge
-const creatChallenges = async () => {
+//create challenges
+const createChallenges = async () => {
     const challenges = []
-    for (let i = 0; i < categoryLists.length; i++) {
-        const questionsFromDB = await Question.find().populate({//find all question that the word is un category
-            path: "question",
-            match: { categoryName: categoryLists[i] }
+    //find all questions that the word is in category:)
+    for (let i = 0; i < categoryList.length; i++) {
+        const questionsFromDB = await Question.find().populate({
+            path: 'question',
+            match: { categoryName: categoryList[i] }
         }).lean()
+
         const filteredQuestions = questionsFromDB.filter((q) => { return q.question !== null })
-        const newChallenge = { question: filteredQuestions }
+        const newChallenge = { questions: filteredQuestions }
         challenges.push({ ...newChallenge })
-        //create object challenge       
     }
     return challenges
 }
 
-//creat categories
+//create categories
 const createCategories = async () => {
-    const challengeFromDB = await Challenge.find({}, { questions: 1 }).lean()
+    const challengesFromDB = await Challenge.find({}, { questions: 1 }).lean()
     const categories = []
-    //loop that adds a category in every round
-    for (let i = 0; i < categoryLists.length; i++) {
-        const foundChallenges = challengeFromDB.find(async (challenge) => {
+
+    //loop that adds a category  in every round
+    for (let i = 0; i < categoryList.length; i++) {
+        const foundChallenge = challengesFromDB.find(async (challenge) => {
             const foundQuestion = await Question.findById(challenge.questions[0]).lean()
             const foundWord = await Word.findById(foundQuestion.question).lean()
-            return foundWord.categoryName === categoryLists.length
+            return foundWord.categoryName === categoryList[i]
         })
 
         //create object category
-        const newCategory = { name: categoryLists[i], challenge: foundChallenges, level: "Easy" }
+        const newCategory = { name: categoryList[i], challenge: foundChallenge, level: "Easy" }
         categories.push({ ...newCategory })
     }
     return categories
 }
 
-//course 
+//courses
 const createCourses = async () => {
-    //find all the categories 
+    //find all the categories
     const easyCategoriesFromDB = await Category.find({ level: "Easy" }).lean()
     const mediumCategoriesFromDB = await Category.find({ level: "Medium" }).lean()
     const hardCategoriesFromDB = await Category.find({ level: "Hard" }).lean()
@@ -221,8 +218,7 @@ const createCourses = async () => {
         { level: "Hard", categories: hardCategoriesFromDB }
     ]
     return courses
-
 }
 
 
-module.exports = { words, createQuestions, creatChallenges, createCategories, createCourses }
+module.exports = { words, createQuestions, createChallenges, createCategories, createCourses }

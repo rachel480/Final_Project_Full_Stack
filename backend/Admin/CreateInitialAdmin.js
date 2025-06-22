@@ -1,22 +1,26 @@
 require('dotenv').config()
-const bcypt=require('bcrypt')
+const bcrypt=require('bcrypt')
 const User=require('../models/User')
+
 const createInitialAdmin=async()=>{
     const adminUser=await User.findOne({roles:"Admin"}).lean()
-    if(!adminUser){
-        const hashPwd=await bcypt.hash(process.env.ADMIN_PASSWORD,10)
-        const newAdmit=await User.create({
+    if(!adminUser)
+    {
+        const hashPwd=await bcrypt.hash(process.env.ADMIN_PASSWORD,10)
+        const newAdmin=await User.create({
             userName:process.env.ADMIN_USERNAME,
             password:hashPwd,
-            email:process.env.ADMIN_EMAIL,
             fullName:process.env.ADMIN_FULLNAME,
+            email:process.env.ADMIN_EMAIL,
             roles:"Admin"
-        })
-        if(!newAdmit){
+        }) 
+        if(!newAdmin)
+        {
             console.log('Error creating admin user')
             return
         }
-       console.log('Admin user created')
+        console.log('Admin user created')
     }
 }
-module.exports=createInitialAdmin
+
+module.exports = createInitialAdmin
