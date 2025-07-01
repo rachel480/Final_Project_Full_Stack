@@ -1,6 +1,8 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt= require('jsonwebtoken')
+//a service that checks if userName is availble
+const checkUsernameUniqueness = require('../services/userService.js')
 
 const register = async (req, res) => {
     const { userName, password, fullName, email, phone } = req.body
@@ -13,7 +15,7 @@ const register = async (req, res) => {
     }
 
     //unique userName
-    const existUser = await User.findOne({userName:userName}).lean()
+    const existUser = await checkUsernameUniqueness(userName)
     if (existUser)
         return res.status(409).json({ message: 'userName must be unique' })
 
