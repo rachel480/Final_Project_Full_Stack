@@ -25,7 +25,7 @@ const registerSchema = z.object({
   password: z.string().min(8, "password must contain at least 8 characters").refine(val => validPassword(val), { message: "password must include a capital,small and special character" }),
   confirmPassword: z.string({ required_error: "confirm password is required" }),
   fullName: z.string({ required_error: "full name is required" }).min(1, "full name must contain at least 1 character"),
-  email: z.string({ required_error: "email is required" }).email("email is not valid"),
+  email: z.string({ required_error: "email is required" }).nonempty("email is required").email("email is not valid"),
   phone: z.string().min(9, "phone must contain at least 9 numbers")
 }).refine((data) => data.password === data.confirmPassword, {
   path: ['confirmPassword'],
