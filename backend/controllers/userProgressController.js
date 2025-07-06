@@ -1,7 +1,7 @@
 const UserProgress = require('../models/UserProgress')
 
 //get all user progress only for admin
-const getAllUsersProgress = async (req, res) => {
+const getAllUsersProgress= async (req, res) => {
     const user = req.user
     //chek if user is admin
     if (user.roles === "User")
@@ -13,20 +13,46 @@ const getAllUsersProgress = async (req, res) => {
 }
 
 //get one userProgress only for admin and user
-const getSingleUserProgress = async (req, res) => {
-    const { id } = req.params
-    if (!id)
-        return res.status(400).send('id is required')
-    //chek if user is admin or user
-    const user = req.user
-    let foundUserProgress
-    if (user.roles === "Admin")
-        foundUserProgress = await UserProgress.findById(id).lean()
-    else
-        foundUserProgress = await UserProgress.findOne({ id:id,user:user._id}).lean()
+const getSingleUserProgressByAdmin = async (req, res) => {
+    const { userId } = req.params;
+    if (!userId)
+        return res.status(400).send('userId is required');
+
+    const user = req.user;
+
+    if (!user.roles?.includes("Admin"))
+        return res.status(403).json({ message: 'forbidden' });
+
+    const foundUserProgress = await UserProgress.findOne({ user: userId }).populate([
+        { path: 'course' },
+        { path: 'completedCategories' },
+        { path: 'challengeResults.challenge' },
+        { path: 'challengeResults.answers.question' }
+    ]).lean();
+
     if (!foundUserProgress)
-        return res.status(400).json({ message: "no progress found" })
-    res.json(foundUserProgress)
+        return res.status(404).json({ message: "no progress found" });
+
+    res.json(foundUserProgress);
+}
+
+const getSingleUserProgressByUser = async (req, res) => {
+    const user = req.user;
+
+    if (user.roles?.includes("Admin"))
+        return res.status(403).json({ message: 'forbidden' });
+
+    const foundUserProgress = await UserProgress.findOne({ user: user._id }).populate([
+        { path: 'course' },
+        { path: 'completedCategories' },
+        { path: 'challengeResults.challenge' },
+        { path: 'challengeResults.answers.question' }
+    ]).lean();
+
+    if (!foundUserProgress)
+        return res.status(404).json({ message: "no progress found" });
+
+    res.json(foundUserProgress);
 }
 
 const createUserProgress = async () => {
@@ -96,4 +122,4 @@ const deleteUserProgress = async (req, res) => {
 }
 
 
-module.exports = { getAllUsersProgress, getSingleUserProgress,createUserProgress, updateUserProgress, deleteUserProgress}
+module.exports = { getAllUsersProgress, getSingleUserProgressByAdmin,getSingleUserProgressByUser,createUserProgress, updateUserProgress, deleteUserProgress}
