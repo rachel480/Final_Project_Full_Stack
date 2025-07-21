@@ -8,6 +8,7 @@ router.use(verifyJWT)
 
 router.get('/',courseController.getAllCourses)
 router.get('/getCourse/:id',courseController.getSingleCourse)
+router.get('/:id/categories',courseController.getCategoriesOfCourse)
 router.post('/',courseController.createNewCourse)
 router.put('/',courseController.updateCourse)
 router.delete('/',courseController.deleteCourse)
