@@ -36,7 +36,7 @@ const LoginForm = () => {
       setMessage(res.message)
       localStorage.setItem('userAccessToken', res.accessToken)
       dispatch(setUser(res.user)) 
-      setTimeout(() => {setMessage('');navigate('/userDashbord')}, 2000)
+      setTimeout(() => {setMessage('');navigate('/userDashboard')}, 2000)
     } catch (err) {
       setErrorMsg(err?.data?.message || "Something went wrong. Please try again!!")
     }
