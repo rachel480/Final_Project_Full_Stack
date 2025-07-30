@@ -8,6 +8,7 @@ router.use(verifyJWT)
 
 router.get('/',categoryController.getAllCategories)
 router.get('/getCategory/:id',categoryController.getSingleCategory)
+router.get('/:id/challenge',categoryController.getChallengeOfCategory)
 router.post('/',categoryController.createCategory)
 router.put('/',categoryController.updateCategory)
 router.delete('/',categoryController.deleteCategory)

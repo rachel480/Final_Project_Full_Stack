@@ -7,8 +7,15 @@ const categoryApi=baseApi.injectEndpoints({
                 url:`/category/getCategory/${categoryId}`,
                 method:'GET'
             })
+        }),
+        getCategoryChallenge:builder.query({
+            query:(categoryId)=>({
+                url:`/category/${categoryId}/challenge`,
+                method:"Get"
+            })
         })
     })
 })
 
-export const{useGetCategoryByIdQuery}=categoryApi
+
+export const{useGetCategoryByIdQuery,useGetCategoryChallengeQuery}=categoryApi
