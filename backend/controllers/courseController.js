@@ -92,6 +92,20 @@ const { id } = req.body
     if (!deletedCourse)
         return res.status(400).json({ message: `error occurred while deleting course with id ${id}` })
     return res.status(201).json({ message: `course with id ${id} was deleted successfully` })
+
 }
 
-module.exports = { getAllCourses, getSingleCourse, createNewCourse, updateCourse, deleteCourse }
+//get course with categories
+const getCategoriesOfCourse = async (req, res) => {
+    const { id } = req.params
+    if (!id)
+        return res.status(400).send('id is required')
+
+    const course = await Course.findById(id).populate('categories')
+    if (!course) 
+        return res.status(404).json({ message: 'Course not found' })
+    return res.json(course.categories)
+}
+
+
+module.exports = { getAllCourses, getSingleCourse, createNewCourse, updateCourse, deleteCourse ,getCategoriesOfCourse}

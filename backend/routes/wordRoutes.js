@@ -8,6 +8,7 @@ router.use(verifyJWT)
 
 router.get('/',wordController.getAllWords)
 router.get('/getWord/:id',wordController.getSingleWord)
+router.get('/getByCategory/:categoryName', wordController.getWordsByCategory)
 router.post('/',wordController.createNewWord)
 router.put('/',wordController.updateWord)
 router.delete('/',wordController.deleteWord)

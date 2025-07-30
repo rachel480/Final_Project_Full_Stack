@@ -9,7 +9,7 @@ const getAllCategories = async (req, res) => {
 }
 
 //get by id for admin and user
-const getSingleCategory = async (req,res) => {
+const getSingleCategory = async (req, res) => {
     const { id } = req.params
     if (!id)
         return res.status(400).send('id is required')
@@ -21,19 +21,19 @@ const getSingleCategory = async (req,res) => {
 
 //create only for admin
 const createCategory = async (req, res) => {
-    const { name, challenge,level} = req.body
+    const { name, challenge, level } = req.body
 
     //validation:
     //chek if user is admin
     const user = req.user
     if (user.roles === "User")
         return res.status(403).json({ message: 'forbidden' })
-    
+
     //required fields
     if (!name || !level || !challenge)
         return res.status(400).send('all fields are required')
 
-    const newCategory = await Category.create({ name,level,challenge})
+    const newCategory = await Category.create({ name, level, challenge })
     if (!newCategory)
         return res.status(400).json({ message: `error occurred while creating category ${name}` })
     return res.status(201).json({ message: `category ${name} was created successfully` })
@@ -41,7 +41,7 @@ const createCategory = async (req, res) => {
 
 //update only for admin
 const updateCategory = async (req, res) => {
-    const { id, name, challenge,level} = req.body
+    const { id, name, challenge, level } = req.body
 
     //validation:
     //chek if user is admin
@@ -69,8 +69,8 @@ const updateCategory = async (req, res) => {
 }
 
 //delete only for admin
-const deleteCategory=async(req,res)=>{
-    const {id}=req.body
+const deleteCategory = async (req, res) => {
+    const { id } = req.body
 
     //validation
     //chek if user is admin
@@ -87,9 +87,33 @@ const deleteCategory=async(req,res)=>{
         return res.status(400).json({ message: "no Category found" })
 
     const deletedCategory = await foundCategory.deleteOne()
-    if(!deletedCategory)
+    if (!deletedCategory)
         return res.status(400).json({ message: `error occurred while deleting category with id ${id}` })
-    return res.status(201).json({ message: `category with id ${id} was deleted successfully` }) 
+    return res.status(201).json({ message: `category with id ${id} was deleted successfully` })
 }
+    //get category with challenge
+    const getChallengeOfCategory = async (req, res) => {
+        const { id } = req.params
 
-module.exports={getAllCategories,getSingleCategory,createCategory,updateCategory,deleteCategory}
+        if (!id) return res.status(400).send("id is required")
+
+        const category = await Category.findById(id).populate({
+            path: "challenge",
+            populate: {
+                path: "questions",
+                model: "Question",
+                populate: [
+                    { path: "question", model: "Word" },
+                    { path: "correctAnswer", model: "Word" },
+                    { path: "options", model: "Word" },
+                ],
+            },
+        })
+
+        if (!category)
+            return res.status(404).json({ message: "Category not found" })
+        return res.json(category.challenge)
+    }
+
+
+module.exports = { getAllCategories, getSingleCategory, createCategory, updateCategory, deleteCategory, getChallengeOfCategory }

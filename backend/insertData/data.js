@@ -190,17 +190,34 @@ const createCategories = async () => {
     const challengesFromDB = await Challenge.find({}, { questions: 1 }).lean()
     const categories = []
 
-    //loop that adds a category  in every round
+    //loop that go's over all categories and findes for each the detailes
     for (let i = 0; i < categoryList.length; i++) {
-        const foundChallenge = challengesFromDB.find(async (challenge) => {
-            const foundQuestion = await Question.findById(challenge.questions[0]).lean()
-            const foundWord = await Word.findById(foundQuestion.question).lean()
-            return foundWord.categoryName === categoryList[i]
-        })
+        const categoryName = categoryList[i]
+        let foundChallenge = null
 
-        //create object category
-        const newCategory = { name: categoryList[i], challenge: foundChallenge, level: "Easy" }
-        categories.push({ ...newCategory })
+        //loop that go's over all the challenges for each category to find the matched challenge
+        for (let j = 0; j < challengesFromDB.length; j++) {
+            const challenge = challengesFromDB[j]
+
+            if (!challenge.questions || challenge.questions.length === 0) continue
+
+            //findes the first question
+            const foundQuestion = await Question.findById(challenge.questions[0]).lean()
+            if (!foundQuestion) continue
+
+            // finds the first word
+            const foundWord = await Word.findById(foundQuestion.question).lean()
+            if (!foundWord) continue
+
+            //checks if the category's name is equal to the category in the list
+            if (foundWord.categoryName === categoryName) {
+                foundChallenge = challenge
+                break
+            }
+        }
+
+        const newCategory = {name: categoryName,challenge: foundChallenge,level: "Easy"}
+        categories.push({...newCategory})
     }
     return categories
 }
