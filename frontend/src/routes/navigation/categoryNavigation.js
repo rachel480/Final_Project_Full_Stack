@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom"
 
-const CategoryNav=({categoryName})=>{
+const CategoryNavigation=({categoryName})=>{
 return (
     <nav>
     <NavLink to={`words/${categoryName}`}>words list</NavLink><br/>
@@ -8,4 +8,4 @@ return (
     </nav>
 )
 }
-export default CategoryNav
+export default CategoryNavigation
