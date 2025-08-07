@@ -6,7 +6,7 @@ import { useState } from 'react'
 import FormInput from '../../components/formInput'
 import { useDispatch } from 'react-redux'
 import { setUser } from './authSlice'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,Link } from 'react-router-dom'
 
 const loginSchema = z.object({
   userName: z.string({ required_error: "user name is required" }).min(4, "user name must contain at least 4 characters"),
@@ -36,13 +36,15 @@ const LoginForm = () => {
       setMessage(res.message)
       localStorage.setItem('userAccessToken', res.accessToken)
       dispatch(setUser(res.user)) 
-      setTimeout(() => {setMessage('');navigate('/userDashboard')}, 2000)
+      setTimeout(() => {setMessage('');navigate('/user')}, 2000)
     } catch (err) {
       setErrorMsg(err?.data?.message || "Something went wrong. Please try again!!")
     }
   }
 
   return (
+    <div>
+      <h1>התחברות</h1>
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormInput
         label="user name"
@@ -69,6 +71,8 @@ const LoginForm = () => {
       {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
       {message && <p style={{ color: "rgb(64, 255, 102)" }}>{message}</p>}
     </form>
+    <Link to="/register">הרשמה</Link>
+    </div>
   )
 }
 

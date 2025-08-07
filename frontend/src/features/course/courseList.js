@@ -16,7 +16,7 @@ const CourseList = () => {
             <h2>courses</h2>
                 {
                     courses.map((course)=>{
-                        return <button onClick={()=>navigate(`/courseDashboard/${course._id}`)}>{course.level}</button> 
+                        return <button onClick={()=>navigate(`/user/course/${course._id}`)}>{course.level}</button> 
                     })
                 }
         </div>

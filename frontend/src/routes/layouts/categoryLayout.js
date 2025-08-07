@@ -1,8 +1,8 @@
 import { Outlet, useParams } from "react-router-dom"
-import { useGetCategoryByIdQuery } from "../features/category/categoryApi"
-import CategoryNav from "../features/category/categoryNav"
+import { useGetCategoryByIdQuery } from "../../features/category/categoryApi"
+import CategoryNavigation from "../navigation/categoryNavigation"
 
-const CategoryDashboard=()=>{
+const CategoryLayout=()=>{
 const {categoryId}=useParams()
 const {data:category,isLoading,error}=useGetCategoryByIdQuery(categoryId)
 
@@ -14,9 +14,9 @@ const {data:category,isLoading,error}=useGetCategoryByIdQuery(categoryId)
     return(
         <div>
             <h1>{category.name} category</h1>
-            <CategoryNav categoryName={category.name}/>
+            <CategoryNavigation categoryName={category.name}/>
             <Outlet/>
         </div>
     )
 }
-export default CategoryDashboard
+export default CategoryLayout

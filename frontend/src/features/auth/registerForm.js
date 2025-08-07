@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRegisterMutation, useLazyCheckUserNameUniquenessQuery } from './authApi'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,Link } from 'react-router-dom'
 import FormInput from '../../components/formInput'
 
 const validPassword = (password) => {
@@ -70,6 +70,8 @@ const RegisterForm = () => {
   }
 
   return (
+    <div>
+      <h1>הרשמה</h1>
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormInput
         label="user name"
@@ -132,6 +134,8 @@ const RegisterForm = () => {
       {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
       {message && <p style={{ color: "rgb(64, 255, 102)" }}>{message}</p>}
     </form>
+     <Link to="/login">התחברות</Link>
+    </div>
   )
 }
 
