@@ -24,7 +24,7 @@ const getSingleCourse = async (req, res) => {
 
 //create new course for admin
 const createNewCourse = async (req, res) => {
-    const { level,categories} = req.body
+    const { level, categories } = req.body
 
     //validation
     //chek if user is admin
@@ -36,7 +36,7 @@ const createNewCourse = async (req, res) => {
     if (!level || !categories)
         return res.status(400).send('all fields are required')
 
-    const newCourse = await Course.create({ level,categories})
+    const newCourse = await Course.create({ level, categories })
     if (!newCourse)
         return res.status(400).json({ message: `error occurred while creating the course` })
     return res.status(201).json({ message: `course created successfully` })
@@ -44,7 +44,7 @@ const createNewCourse = async (req, res) => {
 
 //update course for admin
 const updateCourse = async (req, res) => {
-    const { level,categories,id} = req.body
+    const { level, categories, id } = req.body
 
     //validation
     //chek if user is admin
@@ -61,8 +61,8 @@ const updateCourse = async (req, res) => {
         return res.status(400).json({ message: "no course found" })
 
     //update fields
-    foundCourse.level=level
-    foundCourse.categories=categories
+    foundCourse.level = level
+    foundCourse.categories = categories
 
     const updatedCourse = await foundCourse.save()
     if (!updatedCourse)
@@ -72,14 +72,14 @@ const updateCourse = async (req, res) => {
 
 //delete course for admin
 const deleteCourse = async (req, res) => {
-const { id } = req.body
+    const { id } = req.body
 
     //validation
     //chek if user is admin
     const user = req.user
     if (user.roles === "User")
         return res.status(403).json({ message: 'forbidden' })
-    
+
     //required fields
     if (!id)
         return res.status(400).send('id is required')
@@ -102,10 +102,29 @@ const getCategoriesOfCourse = async (req, res) => {
         return res.status(400).send('id is required')
 
     const course = await Course.findById(id).populate('categories')
-    if (!course) 
+    if (!course)
         return res.status(404).json({ message: 'Course not found' })
     return res.json(course.categories)
 }
 
+const getWordsOfCourse = async (req, res) => {
+    const { id } = req.params
+    if (!id)
+        return res.status(400).send('id is required')
 
-module.exports = { getAllCourses, getSingleCourse, createNewCourse, updateCourse, deleteCourse ,getCategoriesOfCourse}
+    const course = await Course.findById(id)
+        .populate({
+            path: 'categories',
+            populate: {
+                path: 'words'
+            }
+        });
+
+    if (!course)
+        return res.status(404).json({ message: 'Course not found' })
+
+    const words = course.categories.flatMap(category => category.words)
+    return res.json(words)
+}
+
+module.exports = { getAllCourses, getSingleCourse, createNewCourse, updateCourse, deleteCourse, getCategoriesOfCourse, getWordsOfCourse }

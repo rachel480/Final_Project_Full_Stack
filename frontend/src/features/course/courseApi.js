@@ -19,7 +19,13 @@ const courseApi = baseApi.injectEndpoints({
                 url:`/course/${courseId}/categories`,
                 method:'GET'
             })
+        }),
+        getCourseWords:builder.query({
+            query:(courseId)=>({
+                url:`/course/${courseId}/words`,
+                method:'GET'
+            })
         })
     })
 })
-export const { useGetAllCoursesQuery ,useGetCourseByIdQuery,useGetCourseCategoriesQuery} = courseApi
+export const { useGetAllCoursesQuery ,useGetCourseByIdQuery,useGetCourseCategoriesQuery,useGetCourseWordsQuery} = courseApi
