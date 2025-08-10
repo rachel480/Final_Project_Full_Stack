@@ -5,7 +5,7 @@ import WordSectionTable from "./wordSectionTable"
 import { useState } from "react"
 import SearchInput from "../../components/searchInput"
 import WordSectionSort from "./wordSectionSort"
-
+import downloadWordFile from '../../utils/exportToWord'
 
 const WordSection = () => {
 
@@ -40,6 +40,7 @@ const WordSection = () => {
 
     return (
         <div>
+            <button onClick={()=>downloadWordFile(sortedWords)}>words</button>
             <WordSectionSort value={sortBy} handleSort={handleSort} />
             <SearchInput value={searchText} handleSearch={handleSearch} />
             <WordSectionTable words={sortedWords} handleSpeak={handleSpeak} />
