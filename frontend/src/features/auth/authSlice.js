@@ -1,10 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   user: null,
-  userProgress: null,
   isLoggedIn: false,
-};
+}
 
 const authSlice = createSlice({
   name: 'auth',
@@ -14,16 +13,12 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isLoggedIn = true;
     },
-    setUserProgress(state, action) {
-      state.userProgress = action.payload;
-    }
   },
-});
+})
 
-export const { setUser, setUserProgress} = authSlice.actions;
+export const { setUser} = authSlice.actions
 
-export const selectUser = (state) => state.auth.user;
-export const selectUserProgress = (state) => state.auth.userProgress;
-export const selectIsLoggedIn = (state) => state.auth.isLoggedIn;
+export const selectUser = (state) => state.auth.user
+export const selectIsLoggedIn = (state) => state.auth.isLoggedIn
 
-export default authSlice.reducer;
+export default authSlice.reducer
