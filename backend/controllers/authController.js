@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
-const jwt= require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 //a service that checks if userName is availble
 const checkUsernameUniqueness = require('../services/userService.js')
 
@@ -37,28 +37,30 @@ const login = async (req, res) => {
     //validation:
 
     //required fields
-    if (!userName || !password) 
-        return res.status(400).json({ message: 'userName and password are required'})
+    if (!userName || !password)
+        return res.status(400).json({ message: 'userName and password are required' })
 
     //exist user or active
-    const existUser=await User.findOne({userName}).lean()
-    if(!existUser || !existUser.active)
-        return res.status(401).json({message:"Unauthorized"})
+    const existUser = await User.findOne({ userName }).lean()
+    if (!existUser || !existUser.active)
+        return res.status(401).json({ message: "Unauthorized" })
 
     //correct password
-    const match=await bcrypt.compare(password,existUser.password)
-    if(!match)
-        return res.status(401).json({message:"Unauthorized"})
+    const match = await bcrypt.compare(password, existUser.password)
+    if (!match)
+        return res.status(401).json({ message: "Unauthorized" })
 
     //create token
-    const userInfo={_id:existUser._id,fullName:existUser.fullName,roles:existUser.roles,userName:existUser.userName,email:existUser.email}
-    const accessToken=jwt.sign(userInfo,process.env.ACCESS_TOKEN_SECRET)
+    const userInfo = { _id: existUser._id, fullName: existUser.fullName, roles: existUser.roles, userName: existUser.userName, email: existUser.email }
+    const accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET)
 
     res.status(201).json(
-        {message:"login successfully",
-            accessToken:accessToken,
-            user:{id:existUser._id,fullName:existUser.fullName,userName:existUser.userName,roles:existUser.roles}
-        })
+        {
+            message: "loged in successfully",
+            accessToken: accessToken,
+            user: { id:existUser._id,fullName:existUser.fullName,userName:existUser.userName,roles:existUser.roles}
+        }
+    )
 }
 
 module.exports = { login, register }

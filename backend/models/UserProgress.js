@@ -7,10 +7,9 @@ const userProgressSchema = new mongoose.Schema(
             required: true,
             ref: "User"
         },
-        course: {
-            type: mongoose.Schema.Types.ObjectId,
+        courses: {
+            type: [{type:mongoose.Schema.Types.ObjectId,ref:"course"}],
             required: true,
-            ref: "Course"
         },
         completedCategories: {
             type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],

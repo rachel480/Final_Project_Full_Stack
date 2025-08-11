@@ -8,7 +8,7 @@ const baseApi = createApi({
     prepareHeaders: (headers, { endpoint }) => {
       const noAuthEndpoints = ['login', 'register']
       if (!noAuthEndpoints.includes(endpoint)) {
-        const token = localStorage.getItem('userAcssesToken')
+        const token = localStorage.getItem('userAccessToken')
         if (token) {
           headers.set('Authorization', `Bearer ${token}`)
         }
