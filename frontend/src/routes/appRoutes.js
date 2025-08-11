@@ -9,6 +9,7 @@ import PublicLayout from "./layouts/publicLayout";
 import CourseLayout from "./layouts/courseLayout";
 import UserLayout from "./layouts/userLayout";
 import CategoryLayout from "./layouts/categoryLayout";
+import WordSection from "../features/course/wordSection";
 
 const AppRoutes = () => {
   return (
@@ -35,7 +36,7 @@ const AppRoutes = () => {
         <Route path='course/:courseId' element={<CourseLayout />}>
           <Route index element={<Navigate to='category' />} />
           <Route path='category' element={<CategoriesSection />} />
-          <Route path='words' element={<h1>רשימת מילים כוללת לקורס</h1>} />
+          <Route path='words' element={<WordSection/>} />
           <Route path='final-test' element={<h1>מבחן סופי על כל מילות הקורס</h1>} />
         </Route>
 

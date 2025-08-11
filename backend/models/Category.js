@@ -19,6 +19,10 @@ const CategorySchema = new mongoose.Schema({
         required: true,
         enum: ["Easy", "Medium", "Hard"]
     },
+    words:{
+        type:[{type:mongoose.Schema.Types.ObjectId,ref:"Word"}],
+            default:[]
+    }
 },
     {
         timestamps: true

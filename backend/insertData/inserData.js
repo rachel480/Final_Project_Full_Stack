@@ -88,7 +88,7 @@ const insertCategories = async () => {
         for (let i = 0; i < categories.length; i++) {
             const newCategory = await Category.create({
                 name: categories[i].name,
-                wordsList: categories[i].wordsList,
+                words: categories[i].words,
                 challenge: categories[i].challenge,
                 level:categories[i].level
             })
