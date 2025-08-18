@@ -24,6 +24,7 @@ const getSingleUserProgressByAdmin = async (req, res) => {
         return res.status(403).json({ message: 'forbidden' });
 
     const foundUserProgress = await UserProgress.findOne({ user: userId }).populate([
+         { path: 'courses' },
         { path: 'completedCategories' },
         { path: 'challengeResults.challenge' },
         { path: 'challengeResults.answers.question' }
@@ -39,10 +40,10 @@ const getSingleUserProgressByAdmin = async (req, res) => {
 const getSingleUserProgressByUser = async (req, res) => {
     const user = req.user;
 
-    if (user.roles?.includes("Admin"))
-        return res.status(403).json({ message: 'forbidden' });
-
+    if (user.roles === "Admin")
+        return res.status(403).json({ message: 'forbidden' })
     const foundUserProgress = await UserProgress.findOne({ user: user._id }).populate([
+        { path: 'courses' },
         { path: 'completedCategories' },
         { path: 'challengeResults.challenge' },
         { path: 'challengeResults.answers.question' }
@@ -60,7 +61,6 @@ const createUserProgress = async (req, res) => {
     if (!userId || !courseId)
         return res.status(400).send('user and course are required')
     const user = req.user
-    console.log('userId',userId,  '  user._id',user._id)
     //chek if the user parameter is the same of user only if user is not admin
     if (user.roles === "User") {
         if (user._id !== userId)

@@ -44,7 +44,7 @@ const AppRoutes = () => {
 
         <Route path='category/:categoryId' element={<CategoryLayout />}>
           <Route index element={<h1>about the category</h1>} />
-          <Route path='words/:categoryName' element={<CategoryWordSection />} />
+          <Route path='words' element={<CategoryWordSection />} />
           <Route path='challenge' element={<ChallengeSection />} />
         </Route>
 

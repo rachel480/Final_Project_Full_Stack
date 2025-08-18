@@ -4,7 +4,6 @@ import { useGetCategoryChallengeQuery } from "./categoryApi"
 const ChallengeSection = () => {
   const { categoryId } = useParams()
   const { data: challnge, error, isLoading } = useGetCategoryChallengeQuery(categoryId)
-   console.log("challenge data:", challnge)
   if (isLoading) return <p>loading challenge...</p>
   if (error) return <p>error loading challenge...</p>
 
