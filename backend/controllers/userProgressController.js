@@ -137,6 +137,24 @@ const deleteUserProgress = async (req, res) => {
         return res.status(400).json({ message: `error occurred while deleting user progress` })
     return res.status(201).json({ message: `user progress was deleted successfully` })
 }
+const updateChallengeResultInUserProgress=async(req,res)=>{
+    const {challengeResults, categoryId }=req.body
+    const user = req.user
+    
+    if(!challengeResults || !categoryId)
+        return res.status(400).send('challenge results and categoryId are required')
+    
+    const foundUserProgress = await UserProgress.findOne({user:user._id}).exec()
+    if (!foundUserProgress)
+        return res.status(400).json({ message: "no user progress found" })
+    
+    foundUserProgress.challengeResults = [...foundUserProgress.challengeResults,challengeResults]
+    foundUserProgress.completedCategories=[...foundUserProgress.completedCategories,categoryId]
+    const updatedUserProgress = await foundUserProgress.save()
+    if (!updatedUserProgress)
+        return res.status(400).json({ message: `error occurred while updating user progress` })
+    return res.status(201).json({ message: `user progress was updated successfully` })
+}
 
 
-module.exports = { getAllUsersProgress, getSingleUserProgressByAdmin, getSingleUserProgressByUser, createUserProgress, updateUserProgress, deleteUserProgress }
+module.exports = { getAllUsersProgress, getSingleUserProgressByAdmin, getSingleUserProgressByUser, createUserProgress, updateUserProgress, deleteUserProgress ,updateChallengeResultInUserProgress}

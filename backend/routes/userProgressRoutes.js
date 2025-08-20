@@ -10,6 +10,7 @@ router.get('/getUserProgress/:id',userProgressController.getSingleUserProgressBy
 router.get('/getUserProgress/',userProgressController.getSingleUserProgressByUser)
 router.post('/',userProgressController.createUserProgress)
 router.put('/',userProgressController.updateUserProgress)
+router.put('/challengeResults',userProgressController.updateChallengeResultInUserProgress)
 router.delete('/',userProgressController.deleteUserProgress)
 
 module.exports=router
