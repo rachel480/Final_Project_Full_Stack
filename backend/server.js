@@ -23,6 +23,7 @@ app.use('/api/question',require('./routes/questionsRoutes'))
 app.use('/api/word',require('./routes/wordRoutes'))
 app.use('/api/recommendion',require('./routes/recommendionRoutes'))
 app.use('/api/userProgress',require('./routes/userProgressRoutes'))
+app.use('/api/favoriteWord',require('./routes/favoriteWordRoute'))
 
 connectDB()
 
