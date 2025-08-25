@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom"
-import { useGetWordsByCategoryQuery } from "../word/wordApi"
 import WordCard from "../word/wordCard"
+import { useGetCategoryWordsQuery } from "./categoryApi"
 
 const WordsSection = () => {
-    const { categoryName } = useParams()
-    const { data: words, isLoading, error } = useGetWordsByCategoryQuery(categoryName)
+     const { categoryId} = useParams()
+     const { data: words, isLoading, error } = useGetCategoryWordsQuery(categoryId)
     
     if (isLoading)
         return <p>Loading words........</p>

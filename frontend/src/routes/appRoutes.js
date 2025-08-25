@@ -4,7 +4,7 @@ import LoginForm from "../features/auth/loginForm";
 import CourseList from "../features/course/courseList";
 import CategoryWordSection from "../features/category/wordsSection"
 import CategoriesSection from "../features/course/categoriesSection";
-import ChallengeSection from "../features/category/challengeSection";
+import ChallengeSection from "../features/category/challengeSection/challengeSection";
 import PublicLayout from "./layouts/publicLayout";
 import CourseLayout from "./layouts/courseLayout";
 import UserLayout from "./layouts/userLayout";
@@ -43,8 +43,8 @@ const AppRoutes = () => {
         </Route>
 
         <Route path='category/:categoryId' element={<CategoryLayout />}>
-          <Route index element={<h1>about the category</h1>} />
-          <Route path='words/:categoryName' element={<CategoryWordSection />} />
+          <Route index element={<Navigate to='words' />} />
+          <Route path='words' element={<CategoryWordSection />} />
           <Route path='challenge' element={<ChallengeSection />} />
         </Route>
 

@@ -40,8 +40,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <h1>Home Page</h1>
-
+        <h1>HELLO {user.fullName}</h1>
       {message && (
         <div
           style={{
