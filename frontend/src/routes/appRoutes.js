@@ -11,6 +11,8 @@ import UserLayout from "./layouts/userLayout";
 import CategoryLayout from "./layouts/categoryLayout";
 import WordSection from "../features/course/wordSection";
 import HomePage from "../pages/homePage";
+import MyWordNavigation from "./navigation/myWordNavigation";
+import FavoriteWordsList from "../features/favoriteWords/favoriteWordsList";
 
 const AppRoutes = () => {
   return (
@@ -31,7 +33,6 @@ const AppRoutes = () => {
         <Route index element={<Navigate to='home-page' />} />
         <Route path='home-page' element={<HomePage/>}/>
         <Route path='course-list' element={<CourseList />} />
-        <Route path='my-words' element={<h1>המילים שלי</h1>} />
         <Route path='fourums' element={<h1>פורומים</h1>} />
         <Route path='profile' element={<h1>הפרופיל שלי</h1>} />
 
@@ -47,7 +48,12 @@ const AppRoutes = () => {
           <Route path='words' element={<CategoryWordSection />} />
           <Route path='challenge' element={<ChallengeSection />} />
         </Route>
-
+         
+         <Route path='my-words'>
+              <Route index element={<MyWordNavigation/>} />
+              <Route path='favorite' element={<FavoriteWordsList/>}/>
+              <Route path='list' element={<h1>המילים שלי</h1>}/>
+         </Route>
       </Route>
       
     </Routes>)

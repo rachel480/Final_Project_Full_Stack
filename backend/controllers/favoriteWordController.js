@@ -1,29 +1,26 @@
+
 const FavoriteWord = require('../models/FavoriteWord')
 
 //get all favorite words for user
 const getAllFavoriteWords = async (req, res) => {
+    const page=Number(req.query.page) ||1
+    const limit=Number(req.query.limit)||10
+    let sortBy = req.query.sortBy
+    
+    if (!sortBy || sortBy === 'none' || sortBy === 'sort by') 
+        sortBy = 'createdAt'
+    
     const user = req.user
-    const foundWords = await FavoriteWord.find({ user: user._id }).populate('Word').lean()
+    const foundWords = await FavoriteWord.find({ user: user._id })
+    .populate('word')
+    .sort({[sortBy]:1})
+    .skip((page-1)*limit)
+    .limit(limit)
+    .lean()
     if (!foundWords)
         return res.status(400).json({ message: "no Words found" })
-    return res.json(foundWords)
-}
-
-//get single favorite word for user
-const getSingleFavoriteWord = async (req, res) => {
-    const { id } = req.params
-
-    //validation
-    //required fields
-    if (!id)
-        return res.status(400).send('id is required')
-
-    const user = req.user
-
-    const foundWord = await FavoriteWord.findOne({ user: user._id, _id: id }).populate('Word').lean()
-    if (!foundWord)
-        return res.status(400).json({ message: "no Word found" })
-    return res.json(foundWord)
+    const totalPages= Math.ceil(await FavoriteWord.countDocuments({ user: user._id })/limit)
+    return res.json({words:foundWords,totalPages})
 }
 
 //create favorite word for user
@@ -36,8 +33,8 @@ const createFavoriteWord = async (req, res) => {
         return res.status(400).send('word is required')
 
     const user = req.user
-
-    const newWord = await FavoriteWord.create({ word, user })
+    console.log("user",user)
+    const newWord = await FavoriteWord.create({ word, user:user._id })
     if (!newWord)
         return res.status(400).json({ message: `error occurred while creating the word` })
     return res.status(201).json({ message: `word created successfully` })
@@ -67,9 +64,14 @@ const updateFavoriteWordRaiting = async (req, res) => {
 
     //validation
     //required fields
-    if (!id || !rateing)
+    if (!id || !rateing === undefined || rateing === null)
         return res.status(400).send('id and rateing are required')
+    
+    //if rateing is valid
+    if(rateing<0|| rateing>5)
+        return res.status(400).send(' rateing must be between 0 to 5')
 
+    
     const foundWord = await FavoriteWord.findById(id).exec()
     if (!foundWord)
         return res.status(400).json({ message: "no word found" })
@@ -83,4 +85,4 @@ const updateFavoriteWordRaiting = async (req, res) => {
     return res.status(201).json({ message: `favorite word ratenig was updated successfully` })
 }
 
-module.exports = { getAllFavoriteWords, getSingleFavoriteWord, createFavoriteWord, deleteFavoriteWord ,updateFavoriteWordRaiting}
+module.exports = { getAllFavoriteWords, createFavoriteWord, deleteFavoriteWord ,updateFavoriteWordRaiting}
