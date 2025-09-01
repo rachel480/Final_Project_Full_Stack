@@ -16,7 +16,7 @@ const getAllMyWords = async (req, res) => {
     .skip((page-1)*limit)
     .limit(limit)
     .lean()
-    if (!foundWords)
+    if (!foundWords|| foundWords.length===0)
         return res.status(400).json({ message: "no Words found" })
     const totalPages= Math.ceil(await MyWord.countDocuments({ user: user._id })/limit)
     return res.json({words:foundWords,totalPages})
