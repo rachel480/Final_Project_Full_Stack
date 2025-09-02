@@ -8,8 +8,8 @@ router.use(verifyJWT)
 
 router.get('/',myWordController.getAllMyWords)
 router.post('/',myWordController.createMyWord)
-router.put('/',myWordController.updateMyWordRaiting)
-router.put('/rateing',myWordController.updateMyWord)
+router.put('/',myWordController.updateMyWord)
+router.put('/rateing',myWordController.updateMyWordRaiting)
 router.delete('/',myWordController.deleteMyWord)
 
 

@@ -29,7 +29,7 @@ const favoriteWordApi=baseApi.injectEndpoints({
        }),
        updateFavoriteWordRaiting:builder.mutation({
         query:(favoriteData)=>({
-             url:'/favoriteWord/',
+            url:'/favoriteWord/',
             method:'PUT',
             body:favoriteData
         }),
