@@ -4,6 +4,7 @@ import { z } from 'zod'
 import FormInput from '../../../components/formInput'
 import { useState } from 'react'
 import { useUpdateMyWordMutation } from './myWordApi'
+import WordFormSelectCategory from './wordFormSelectCategory'
 
 const updateMyWordSchema = z.object({
   word: z.object({
@@ -85,13 +86,11 @@ const UpdateWordForm = ({ setShowUpdateForm, myWord }) => {
           htmlFor="translation"
         />
 
-        <FormInput
+        <WordFormSelectCategory
           label="Category Name"
-          type="text"
-          register={register("word.categoryName")}
+          registerProps={register("word.categoryName")}
           error={errors.word?.categoryName?.message}
-          placeholder="Enter category name..."
-          htmlFor="categoryName"
+          placeholder="choose category name..."
         />
 
         <FormInput

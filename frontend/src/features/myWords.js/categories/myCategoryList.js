@@ -28,7 +28,10 @@ const MyCategoryList = () => {
 
                     </heder>
 
-                    {filteredcategories.map((category) => <h1><Categorycard category={category} setShowSingleCategory={setShowSingleCategory} /></h1>)}
+                    {
+                        filteredcategories.length===0?<h1>no categories found!!!!!!  </h1>:
+                       filteredcategories.map((category) => <h1><Categorycard category={category} setShowSingleCategory={setShowSingleCategory} /></h1>)
+                    }
 
                 </div>
             }

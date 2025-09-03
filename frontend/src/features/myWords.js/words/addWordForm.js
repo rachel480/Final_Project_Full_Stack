@@ -4,6 +4,7 @@ import { z } from "zod"
 import FormInput from "../../../components/formInput"
 import { useState } from "react"
 import { useCreateMyWordMutation } from "./myWordApi"
+import WordFormSelectCategory from "./wordFormSelectCategory"
 
 const addMyWordSchema = z.object({
   word: z.object({
@@ -15,7 +16,7 @@ const addMyWordSchema = z.object({
   rateing: z.number().min(0).max(5).default(0)
 })
 
-const AddWordForm = ({ setShowAddForm }) => {
+const AddWordForm = ({ setShowAddForm,currentCategory }) => {
   const [message, setMessage] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
 
@@ -29,7 +30,7 @@ const AddWordForm = ({ setShowAddForm }) => {
       word: {
         word: "",
         translation: "",
-        categoryName: "",
+        categoryName: currentCategory||"",
         img: null
       },
       rateing: 0
@@ -85,13 +86,12 @@ const AddWordForm = ({ setShowAddForm }) => {
           error={errors.word?.translation?.message}
           placeholder="enter translation..."
         />
-
-        <FormInput
+        <WordFormSelectCategory
+          currentCategory={currentCategory}
           label="Category"
-          type="text"
-          register={register("word.categoryName")}
+          registerProps={register("word.categoryName")}
           error={errors.word?.categoryName?.message}
-          placeholder="enter category name..."
+          placeholder="choose category name..."
         />
 
         <FormInput

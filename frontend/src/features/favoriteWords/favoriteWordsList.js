@@ -37,15 +37,17 @@ const FavoriteWordsList = () => {
     if (error)
         return <p>{error?.data?.message || "something went wrong"}</p>
 
-    if (favwords.length === 0)
-        return <h1>no words found</h1>
+    
     
     return <div>
         {message && (<div style={{ color: message.type === 'error' ? 'red' : 'green', marginBottom: '1rem', }}>{message.text}</div>)}
         <SearchInput searchText={searchText} setSearchText={setSearchText} placeholder={'Search word...'} />
         <SortSelect sortBy={sortBy} setSortBy={setSortBy} options={['words', 'rateing']} />
         <BackButton navigation={'/user/my-words'} />
-        {sortedFavWords.map((favWord) => (<FavoriteWordCard favWord={favWord} setShowModal={setShowModal} showModal={showModal} deleteFavoriteWord={deleteFavoriteWord} setMessage={setMessage} updateFavoriteWordRaiting={updateFavoriteWordRaiting}/>))}
+        {
+            sortedFavWords.length===0?<h1>No Words found!!!!</h1>:
+            sortedFavWords.map((favWord) => (<FavoriteWordCard favWord={favWord} setShowModal={setShowModal} showModal={showModal} deleteFavoriteWord={deleteFavoriteWord} setMessage={setMessage} updateFavoriteWordRaiting={updateFavoriteWordRaiting}/>))
+        }
         <Pagination page={page} setPage={setPage} totalPages={totalPages}/>
      </div>
 }
