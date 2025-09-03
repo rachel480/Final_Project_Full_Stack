@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import RegisterForm from "../features/auth/registerForm";
 import LoginForm from "../features/auth/loginForm";
 import CourseList from "../features/course/courseList";
-import CategoryWordSection from "../features/category/wordsSection"
+import CategoryWordSection from "../features/category/words/wordsSection"
 import CategoriesSection from "../features/course/categoriesSection";
 import ChallengeSection from "../features/category/challengeSection/challengeSection";
 import PublicLayout from "./layouts/publicLayout";

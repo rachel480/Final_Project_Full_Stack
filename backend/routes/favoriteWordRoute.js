@@ -7,7 +7,7 @@ const verifyJWT =require('../middleware/verifyJWT')
 router.use(verifyJWT)
 
 router.get('/',favoriteWordController.getAllFavoriteWords)
-router.post('/',favoriteWordController.createFavoriteWord)
+router.post('/',favoriteWordController.toggleFavoriteWord)
 router.put('/',favoriteWordController.updateFavoriteWordRaiting)
 router.delete('/',favoriteWordController.deleteFavoriteWord)
 

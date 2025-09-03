@@ -1,5 +1,5 @@
 
-import BackButton from "../../components/backButton"
+import NavigateButton from "../../components/navigateButton"
 import MyWordListLayout from "../../routes/layouts/myWordListLayout"
 
 
@@ -7,7 +7,7 @@ const MyWords=()=>{
 
 return (<div>
     <header style={{display:"flex"}}>
-        <BackButton navigation={'/user/my-words'} />
+        <NavigateButton navigation={'/user/my-words'} buttonText={'🔙'}/>
         <MyWordListLayout/>
     </header>
 </div>)

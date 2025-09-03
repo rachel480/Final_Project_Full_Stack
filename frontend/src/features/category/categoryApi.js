@@ -6,19 +6,22 @@ const categoryApi=baseApi.injectEndpoints({
             query:(categoryId)=>({
                 url:`/category/getCategory/${categoryId}`,
                 method:'GET'
-            })
+            }),
+             providesTags:["Category"]
         }),
         getCategoryChallenge:builder.query({
             query:(categoryId)=>({
                 url:`/category/${categoryId}/challenge`,
                 method:"Get"
-            })
+            }),
+             providesTags:["Category"]
         }),
         getCategoryWords:builder.query({
             query:(categoryId)=>({
                 url:`/category/${categoryId}/words`,
                 method:'GET'
-            })
+            }),
+            providesTags:["Category"]
         }),
     })
 })

@@ -6,6 +6,7 @@ import { useState } from "react"
 import SearchInput from "../../components/searchInput"
 import downloadWordFile from '../../utils/exportToWord'
 import SortSelect from "../../components/sortSelect"
+import NavigateButton from "../../components/navigateButton"
 
 const WordSection = () => {
 
@@ -36,6 +37,7 @@ const WordSection = () => {
     return (
         <div>
             <button onClick={()=>downloadWordFile(sortedWords)}>words</button>
+            <NavigateButton navigation={'/user/my-words/favorite'} buttonText={'to favorite words'}/>
             <SortSelect sortBy={sortBy} setSortBy={setSortBy} options={['words','categories']} />
             <SearchInput searchText={searchText} setSearchText={setSearchText}  placeholder={"Search word or translation..."}/>
             <WordSectionTable words={sortedWords} handleSpeak={handleSpeak} />

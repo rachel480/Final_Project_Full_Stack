@@ -1,4 +1,5 @@
 const Course = require('../models/Course')
+const FavoriteWord=require('../models/FavoriteWord')
 
 //get all courses for admin and user
 const getAllCourses = async (req, res) => {
@@ -107,10 +108,12 @@ const getCategoriesOfCourse = async (req, res) => {
     return res.json(course.categories)
 }
 
-const getWordsOfCourse = async (req, res) => {
+const getWordsOfCourseWithFavorites = async (req, res) => {
     const { id } = req.params
     if (!id)
         return res.status(400).send('id is required')
+
+    const user=req.user
 
     const course = await Course.findById(id)
         .populate({
@@ -118,13 +121,21 @@ const getWordsOfCourse = async (req, res) => {
             populate: {
                 path: 'words'
             }
-        });
+        })
 
     if (!course)
         return res.status(404).json({ message: 'Course not found' })
 
     const words = course.categories.flatMap(category => category.words)
-    return res.json(words)
-}
+    //get all favorite words
+    const favWords = await FavoriteWord.find({user:user._id},{word:1}).lean()
+    const favWordIds = favWords.map(f => f.word.toString());
 
-module.exports = { getAllCourses, getSingleCourse, createNewCourse, updateCourse, deleteCourse, getCategoriesOfCourse, getWordsOfCourse }
+    const wordsWithFavorites= words.map((word)=>({
+        ...word.toObject(),
+        isFavorite:favWordIds.includes(word._id.toString())
+    }))
+
+    return res.json(wordsWithFavorites)
+}
+module.exports = { getAllCourses, getSingleCourse, createNewCourse, updateCourse, deleteCourse, getCategoriesOfCourse, getWordsOfCourseWithFavorites }

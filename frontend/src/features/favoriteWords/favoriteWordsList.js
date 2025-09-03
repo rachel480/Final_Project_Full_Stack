@@ -2,9 +2,9 @@ import { useDeleteFavoriteWordMutation, useGetAllFavoriteWordsQuery, useUpdateFa
 import { useState } from "react"
 import SearchInput from "../../components/searchInput"
 import SortSelect from "../../components/sortSelect"
-import BackButton from "../../components/backButton"
 import FavoriteWordCard from "./favoriteWordCard"
 import Pagination from "../../components/pagination"
+import NavigateButton from "../../components/navigateButton"
 
 const FavoriteWordsList = () => {
     const [message, setMessage] = useState(null)
@@ -43,7 +43,7 @@ const FavoriteWordsList = () => {
         {message && (<div style={{ color: message.type === 'error' ? 'red' : 'green', marginBottom: '1rem', }}>{message.text}</div>)}
         <SearchInput searchText={searchText} setSearchText={setSearchText} placeholder={'Search word...'} />
         <SortSelect sortBy={sortBy} setSortBy={setSortBy} options={['words', 'rateing']} />
-        <BackButton navigation={'/user/my-words'} />
+        <NavigateButton navigation={'/user/my-words'} buttonText={'🔙'}/>
         {
             sortedFavWords.length===0?<h1>No Words found!!!!</h1>:
             sortedFavWords.map((favWord) => (<FavoriteWordCard favWord={favWord} setShowModal={setShowModal} showModal={showModal} deleteFavoriteWord={deleteFavoriteWord} setMessage={setMessage} updateFavoriteWordRaiting={updateFavoriteWordRaiting}/>))
