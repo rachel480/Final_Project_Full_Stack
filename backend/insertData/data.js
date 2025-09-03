@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs')
 
 //models
-const Word = require('../models/Word')
+const {Word} = require('../models/Word')
 const Question = require('../models/Question')
 const Challenge = require('../models/Challenge')
 const Category = require('../models/Category')

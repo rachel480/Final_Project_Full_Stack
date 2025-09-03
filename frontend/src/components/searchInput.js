@@ -1,12 +1,15 @@
-const SearchInput=({value,handleSearch})=>{
+const SearchInput=({searchText,setSearchText,placeholder})=>{
+    const handleSearch = (e) => {
+        setSearchText(e.target.value)
+    }
      return (
         <input
             type="text"
-            placeholder="Search word or translation..."
-            value={value}
-            onChange={(e) => handleSearch(e.target.value)}
+            placeholder={placeholder}
+            value={searchText}
+            onChange={(e) => handleSearch(e)}
             style={{
-                width: "100%",
+                width: "10%",
                 padding: "8px",
                 marginBottom: "16px",
                 fontSize: "16px",

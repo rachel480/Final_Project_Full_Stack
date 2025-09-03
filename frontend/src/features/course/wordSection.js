@@ -4,23 +4,17 @@ import speak from "../../utils/speech"
 import WordSectionTable from "./wordSectionTable"
 import { useState } from "react"
 import SearchInput from "../../components/searchInput"
-import WordSectionSort from "./wordSectionSort"
 import downloadWordFile from '../../utils/exportToWord'
+import SortSelect from "../../components/sortSelect"
 
 const WordSection = () => {
 
     const { courseId } = useParams()
     const [searchText, setSearchText] = useState("")
-    const [sortBy, setSortBy] = useState('words')
+    const [sortBy, setSortBy] = useState('sort by')
+    
     const handleSpeak = (word) => {
         speak(word)
-    }
-
-    const handleSearch = (word) => {
-        setSearchText(word)
-    }
-    const handleSort = (sortBy) => {
-        setSortBy(sortBy)
     }
     const { data: words = [], isLoading, error } = useGetCourseWordsQuery(courseId)
     console.log(words)
@@ -30,8 +24,9 @@ const WordSection = () => {
     const sortByCategory = (a, b) => a.categoryName.localeCompare(b.categoryName)
 
     const sortedWords = [...filteredWords].sort(
-        sortBy === "words" ? sortByWord : sortByCategory
+        sortBy === "words" ? sortByWord :sortBy==='categories' ? sortByCategory:()=>0
     )
+    
     if (isLoading)
         return <p>loading words...</p>
 
@@ -41,8 +36,8 @@ const WordSection = () => {
     return (
         <div>
             <button onClick={()=>downloadWordFile(sortedWords)}>words</button>
-            <WordSectionSort value={sortBy} handleSort={handleSort} />
-            <SearchInput value={searchText} handleSearch={handleSearch} />
+            <SortSelect sortBy={sortBy} setSortBy={setSortBy} options={['words','categories']} />
+            <SearchInput searchText={searchText} setSearchText={setSearchText}  placeholder={"Search word or translation..."}/>
             <WordSectionTable words={sortedWords} handleSpeak={handleSpeak} />
         </div>
     )
