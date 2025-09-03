@@ -8,7 +8,8 @@ const favoriteWordApi=baseApi.injectEndpoints({
             method:'POST',
             body:favoriteData
         }),
-        invalidatesTags: ["FavoriteWord"]
+        invalidatesTags: ["FavoriteWord","Course",'Category']
+
        }),
        
        getAllFavoriteWords:builder.query({

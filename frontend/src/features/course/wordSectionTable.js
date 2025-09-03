@@ -1,4 +1,5 @@
 import useFavoriteWord from "../favoriteWords/useFavoriteWordFavoriteWord"
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 const WordSectionTable = ({ words, handleSpeak }) => {
     const { handleCreateFavoriteWord, message } = useFavoriteWord()
@@ -7,6 +8,7 @@ const WordSectionTable = ({ words, handleSpeak }) => {
         <table id="wordTable" style={{ width: "80%", margin: "auto", borderCollapse: "collapse" }} >
             <thead>
                 <tr>
+                    
                     <th style={{ border: "1px solid black", padding: "8px" }}>Index</th>
                     <th style={{ border: "1px solid black", padding: "8px" }}>Word</th>
                     <th style={{ border: "1px solid black", padding: "8px" }}>Translation</th>
@@ -23,7 +25,7 @@ const WordSectionTable = ({ words, handleSpeak }) => {
                         <td style={{ border: "1px solid black", padding: "8px" }}>{word.categoryName}</td>
                         <td style={{ border: "1px solid black", padding: "8px" }}>
                             <button onClick={() => handleSpeak(word.word)}>🔊</button>
-                            <button onClick={()=>handleCreateFavoriteWord({word:word._id})}>💗</button>
+                            <button onClick={()=>handleCreateFavoriteWord({word:word._id})}>{word.isFavorite ? <AiFillHeart color="red" size={15} /> : <AiOutlineHeart color="white" size={15} />}</button>
                         </td>
                     </tr>
                 ))}

@@ -1,4 +1,5 @@
 const Category = require('../models/Category')
+const FavoriteWord=require('../models/FavoriteWord')
 
 //get all categories for admin and user
 const getAllCategories = async (req, res) => {
@@ -120,12 +121,20 @@ const getWordsOfCategory = async (req, res) => {
 
     if (!id) 
         return res.status(400).send("id is required");
-
+    const user=req.user
     const category = await Category.findById(id).populate({path: "words"})
 
     if (!category)
         return res.status(404).json({ message: "Category not found" });
-    return res.json(category.words)
+    //get all favorite words
+        const favWords = await FavoriteWord.find({user:user._id},{word:1}).lean()
+        const favWordIds = favWords.map(f => f.word.toString());
+    
+        const wordsWithFavorites= category.words.map((word)=>({
+            ...word.toObject(),
+            isFavorite:favWordIds.includes(word._id.toString())
+        }))
+    return res.json(wordsWithFavorites)
 }
 
 module.exports = { getAllCategories, getSingleCategory, createCategory, updateCategory, deleteCategory,getChallengeOfCategory,getWordsOfCategory}
