@@ -45,12 +45,11 @@ const AppRoutes = () => {
           <Route path='category' element={<CategoriesSection />} />
           <Route path='words' element={<WordSection />} />
           <Route path='final-test' element={<h1>מבחן סופי על כל מילות הקורס</h1>} />
-        </Route>
-
-        <Route path='category/:categoryId' element={<CategoryLayout />}>
+          <Route path='category/:categoryId' element={<CategoryLayout />}>
           <Route index element={<Navigate to='words' />} />
           <Route path='words' element={<CategoryWordSection />} />
           <Route path='challenge' element={<ChallengeSection />} />
+        </Route>
         </Route>
 
         <Route path='my-words'>

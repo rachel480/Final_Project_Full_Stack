@@ -9,7 +9,7 @@ const CourseLayout=()=>{
     if(isLoading)
         return <p>Loading course detailes...</p>
     if(error)
-        return <p>Error loading course detailes!!</p>
+        return <p>{error?.data?.message||'Error loading course detailes!!'}</p>
     
     return(
         <div>
