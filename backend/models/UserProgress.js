@@ -21,6 +21,7 @@ const userProgressSchema = new mongoose.Schema(
                     challenge: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge" },
                     answers: [{
                         question: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
+                        questionstatus:{type:Number,default:0,enum:[0,1]},
                         userAnswer: { type: String, default: "" },
                         isCorrect: { type: Boolean, default: false },
                         grade: { type: Number, default: 0 }

@@ -1,5 +1,5 @@
 import bufferToBase64 from "../../../utils/imageUtils"
-const OptionList=({options,status,handleUserAnswer,answer})=>{
+const OptionList=({options,status,handleUsersAnswer,answer})=>{
     return (
         <div style={{ display: "flex", gap: "1rem" }}>
                 {options.map((option, index) => {
@@ -16,7 +16,7 @@ const OptionList=({options,status,handleUserAnswer,answer})=>{
                             <p>{index + 1}</p>
                             {status === 0 ? (
                                 optionImageSrc ? (
-                                    <button onClick={()=>handleUserAnswer(option.word)} style={{borderColor:answer.userAnswer === option.word && "blue" }}>
+                                    <button onClick={()=>handleUsersAnswer(option.word)} style={{borderColor:answer.userAnswer === option.word && "blue" }}>
                                     <img
                                         src={optionImageSrc}
                                         alt={option.word}
@@ -26,7 +26,7 @@ const OptionList=({options,status,handleUserAnswer,answer})=>{
                                     <p>אין תמונה</p>
                                 )
                             ) : (
-                                <button onClick={()=>handleUserAnswer(option.word)} style={{borderColor:answer.userAnswer === option.word && "blue" }}>{option.word}</button>
+                                <button onClick={()=>handleUsersAnswer(option.word)} style={{borderColor:answer.userAnswer === option.word && "blue" }}>{option.word}</button>
                             )}
                         </div>
                     )

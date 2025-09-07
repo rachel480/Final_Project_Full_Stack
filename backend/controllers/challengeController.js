@@ -1,4 +1,5 @@
 const Challenge = require('../models/Challenge')
+const UserProgress = require('../models/UserProgress')
 
 //get all challenges for admin and user
 const getAllChallenges = async (req, res) => {
@@ -24,7 +25,7 @@ const getSingleChallenge = async (req, res) => {
 
 //create new challenge for admin
 const createNewChallenge = async (req, res) => {
-    const {questions} = req.body
+    const { questions } = req.body
 
     //validation
     //chek if user is admin
@@ -36,7 +37,7 @@ const createNewChallenge = async (req, res) => {
     if (!questions)
         return res.status(400).send('questions are required')
 
-    const newChallenge = await Challenge.create({ questions})
+    const newChallenge = await Challenge.create({ questions })
     if (!newChallenge)
         return res.status(400).json({ message: `error occurred while creating the challenge` })
     return res.status(201).json({ message: `challenge created successfully` })
@@ -78,7 +79,7 @@ const deleteChallenge = async (req, res) => {
     const user = req.user
     if (user.roles === "User")
         return res.status(403).json({ message: 'forbidden' })
-    
+
     //required fields
     if (!id)
         return res.status(400).send('id is required')
@@ -93,5 +94,47 @@ const deleteChallenge = async (req, res) => {
     return res.status(201).json({ message: `challenge with id ${id} was deleted successfully` })
 
 }
+//get challenge results
+const getChallengeResults = async (req, res) => {
+    try {
+        const { id } = req.params
+        const user = req.user
 
-module.exports = { getAllChallenges, getSingleChallenge, createNewChallenge, updateChallenge, deleteChallenge }
+        const foundChallenge = await Challenge.findById(id).populate({
+            path: 'questions',
+            populate: [
+                { path: 'question' },
+                { path: 'correctAnswer' },
+                { path: 'options'}
+            ]
+        })
+        if (!foundChallenge)
+            return res.status(404).json({ message: "Challenge not found" })
+
+        //find user progress
+        const foundUserProgress = await UserProgress.findOne({ user: user._id })
+        if (!foundUserProgress)
+            return res.status(404).json({ message: "User progress not found" })
+
+        //find the challenge result
+        const challengeResult = foundUserProgress.challengeResults.find(
+            (result) => result.challenge.toString() === id
+        )
+
+        const results = foundChallenge.questions.map((questio) => {
+            const userAnswer = challengeResult?.answers.find((answer) => answer.question.toString() === questio._id.toString()) || null
+            return {
+                ...questio.toObject(),
+                userAnswer,
+                status:userAnswer.questionstatus
+            }
+        })
+
+        res.json({ totalScore: challengeResult?.totalScore, questions: results })
+
+    } catch (err) {
+        res.status(500).json({ message: 'server error' })
+    }
+}
+
+module.exports = { getAllChallenges, getSingleChallenge, createNewChallenge, updateChallenge, deleteChallenge, getChallengeResults }
