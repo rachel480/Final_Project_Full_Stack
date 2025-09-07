@@ -1,10 +1,13 @@
 const expresss=require('express')
 const router=expresss.Router()
 const myCategoryController =require('../controllers/myCategoryController')
+
 const verifyJWT =require('../middleware/verifyJWT')
+const verifyRoles = require('../middleware/verifyRoles')
 
 //use middleware
 router.use(verifyJWT)
+router.use(verifyRoles('User'))
 
 router.get('/',myCategoryController.getAllCategories)
 router.get('/:id/words',myCategoryController.getWordsOfCategory)

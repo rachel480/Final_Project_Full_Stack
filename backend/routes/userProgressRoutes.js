@@ -1,16 +1,19 @@
 const express=require('express')
 const router=express.Router()
 const userProgressController=require('../controllers/userProgressController')
+
 const verifyJWT=require('../middleware/verifyJWT')
+const verifyRoles = require('../middleware/verifyRoles')
 
 //use middleware
 router.use(verifyJWT)
-router.get('/',userProgressController.getAllUsersProgress)
-router.get('/getUserProgress/:id',userProgressController.getSingleUserProgressByAdmin)
-router.get('/getUserProgress/',userProgressController.getSingleUserProgressByUser)
+
+router.get('/',verifyRoles('Admin'),userProgressController.getAllUsersProgress)
+router.get('/getUserProgress/:id',verifyRoles('Admin'),userProgressController.getSingleUserProgressByAdmin)
+router.get('/getUserProgress/',verifyRoles('User'),userProgressController.getSingleUserProgressByUser)
 router.post('/',userProgressController.createUserProgress)
 router.put('/',userProgressController.updateUserProgress)
 router.put('/challengeResults',userProgressController.updateChallengeResultInUserProgress)
-router.delete('/',userProgressController.deleteUserProgress)
+router.delete('/',verifyRoles('Admin'),userProgressController.deleteUserProgress)
 
 module.exports=router

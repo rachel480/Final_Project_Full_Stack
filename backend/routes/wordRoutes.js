@@ -1,16 +1,17 @@
 const expresss=require('express')
 const router=expresss.Router()
 const wordController =require('../controllers/wordController')
-const verifyJWT =require('../middleware/verifyJWT')
 
+const verifyJWT =require('../middleware/verifyJWT')
+const verifyRoles = require('../middleware/verifyRoles')
 //use middleware
 router.use(verifyJWT)
 
 router.get('/',wordController.getAllWords)
 router.get('/getWord/:id',wordController.getSingleWord)
 router.get('/getByCategory/:categoryName', wordController.getWordsByCategory)
-router.post('/',wordController.createNewWord)
-router.put('/',wordController.updateWord)
-router.delete('/',wordController.deleteWord)
+router.post('/',verifyRoles('Admin'),wordController.createNewWord)
+router.put('/',verifyRoles('Admin'),wordController.updateWord)
+router.delete('/',verifyRoles('Admin'),wordController.deleteWord)
 
 module.exports=router
