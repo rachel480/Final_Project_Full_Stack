@@ -8,7 +8,7 @@ const verifyRoles = require('../middleware/verifyRoles')
 router.use(verifyJWT)
 
 router.get('/',courseController.getAllCourses)
-router.get('/getCourse/:id',courseController.getSingleCourse)
+router.get('/:id',courseController.getSingleCourse)
 router.get('/:id/categories',courseController.getCategoriesOfCourse)
 router.get('/:id/words', courseController.getWordsOfCourseWithFavorites)
 router.post('/',verifyRoles('Admin'),courseController.createNewCourse)

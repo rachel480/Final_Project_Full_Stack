@@ -4,7 +4,7 @@ const categoryApi=baseApi.injectEndpoints({
     endpoints:(builder)=>({
         getCategoryById:builder.query({
             query:(categoryId)=>({
-                url:`/category/getCategory/${categoryId}`,
+                url:`/category/${categoryId}`,
                 method:'GET'
             }),
              providesTags:["Category"]

@@ -5,7 +5,7 @@ const verifyJWT =require('../middleware/verifyJWT')
 const verifyRoles = require('../middleware/verifyRoles')
 
 router.get('/',recommendtionController.getAllRecommendions)
-router.get('/getRecommendtion/:id',recommendtionController.getSingleRecommendion)
+router.get('/:id',recommendtionController.getSingleRecommendion)
 
 //use middleware
 router.use(verifyJWT)

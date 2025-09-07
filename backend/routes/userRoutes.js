@@ -9,7 +9,7 @@ router.get('/checkUniquness/:userName',userController.checkUserNameAvailability)
 
 router.use(verifyJWT)
 router.get('/',verifyRoles('Admin'),userController.getAllUsers)
-router.get('/getUser/:id',userController.getSingleUser)
+router.get('/:id',userController.getSingleUser)
 router.put('/', userController.updateUser)
 router.delete('/',verifyRoles('Admin'),userController.deleteUser)
 

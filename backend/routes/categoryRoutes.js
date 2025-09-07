@@ -8,7 +8,7 @@ const verifyRoles = require('../middleware/verifyRoles')
 router.use(verifyJWT)
 
 router.get('/',categoryController.getAllCategories)
-router.get('/getCategory/:id',categoryController.getSingleCategory)
+router.get('/:id',categoryController.getSingleCategory)
 router.get('/:id/challenge',categoryController.getChallengeOfCategory)
 router.get('/:id/words',categoryController.getWordsOfCategory)
 router.post('/', verifyRoles('Admin'),categoryController.createCategory)

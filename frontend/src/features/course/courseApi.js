@@ -11,7 +11,7 @@ const courseApi = baseApi.injectEndpoints({
         }),
         getCourseById:builder.query({
             query:(courseId)=>({
-                url:`/course/getCourse/${courseId}`,
+                url:`/course/${courseId}`,
                 method:"GET"
             }),
             providesTags: ["Course"]

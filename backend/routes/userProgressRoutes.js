@@ -9,7 +9,7 @@ const verifyRoles = require('../middleware/verifyRoles')
 router.use(verifyJWT)
 
 router.get('/',verifyRoles('Admin'),userProgressController.getAllUsersProgress)
-router.get('/getUserProgress/:id',verifyRoles('Admin'),userProgressController.getSingleUserProgressByAdmin)
+router.get('/:id/admin',verifyRoles('Admin'),userProgressController.getSingleUserProgressByAdmin)
 router.get('/getUserProgress/',verifyRoles('User'),userProgressController.getSingleUserProgressByUser)
 router.post('/',userProgressController.createUserProgress)
 router.put('/',userProgressController.updateUserProgress)
