@@ -10,6 +10,7 @@ const useProgressApi=baseApi.injectEndpoints({
             }),
             invalidatesTags: ["UserProgress"]
         }),
+        
         getUserProgressByUser:builder.query({
             query:()=>({
                 url:`/userProgress/getUserProgress/`,

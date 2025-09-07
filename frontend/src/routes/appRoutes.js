@@ -16,6 +16,7 @@ import FavoriteWordsList from "../features/favoriteWords/favoriteWordsList";
 import MyWords from "../features/myWords.js/myWords";
 import MyWordList from "../features/myWords.js/words/myWordList";
 import MyCategoryList from "../features/myWords.js/categories/myCategoryList";
+import ChallengeResults from "../features/category/challengeSection/results/challengeResults";
 
 
 const AppRoutes = () => {
@@ -48,7 +49,12 @@ const AppRoutes = () => {
           <Route path='category/:categoryId' element={<CategoryLayout />}>
           <Route index element={<Navigate to='words' />} />
           <Route path='words' element={<CategoryWordSection />} />
-          <Route path='challenge' element={<ChallengeSection />} />
+          
+          <Route path='challenge' >
+            <Route index element={<ChallengeSection />}/>
+            <Route path=":challengeId/results" element={<ChallengeResults/>}/>
+          </Route>
+        
         </Route>
         </Route>
 

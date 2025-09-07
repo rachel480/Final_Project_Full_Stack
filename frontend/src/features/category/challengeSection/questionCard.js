@@ -1,7 +1,7 @@
 import bufferToBase64 from "../../../utils/imageUtils"
 import OptionList from "./optionList"
 import QuestionMenu from "./questionMenu"
-const QuestionCard = ({ question, index,handleUserAnswer,questions ,setCurrentIndex}) => {
+const QuestionCard = ({ question, index,handleUsersAnswer,questions ,setCurrentIndex}) => {
     const questionImg = question.question.img
 
     let questionImageSrc = ""
@@ -13,6 +13,7 @@ const QuestionCard = ({ question, index,handleUserAnswer,questions ,setCurrentIn
     return (
         <div  style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "2rem" }}>
             <QuestionMenu questions={questions} setCurrentIndex={setCurrentIndex}/>
+            <p>שאלה {index}</p>
             <div>
                 {question.status === 0 ? (
                     <p>{question.question.word} ?</p>
@@ -28,7 +29,7 @@ const QuestionCard = ({ question, index,handleUserAnswer,questions ,setCurrentIn
                     )
                 )}
             </div>
-            <OptionList options={question.options} status={question.status} handleUserAnswer={handleUserAnswer} answer={question.answer}/>
+            <OptionList options={question.options} status={question.status} handleUsersAnswer={handleUsersAnswer} answer={question.answer}/>
         </div>
     )
 }

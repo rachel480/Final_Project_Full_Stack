@@ -144,6 +144,8 @@ const updateChallengeResultInUserProgress=async(req,res)=>{
     if(!challengeResults || !categoryId)
         return res.status(400).send('challenge results and categoryId are required')
     
+    const completedAt=new Date()
+    challengeResults.completedAt=completedAt
     const foundUserProgress = await UserProgress.findOne({user:user._id}).exec()
     if (!foundUserProgress)
         return res.status(400).json({ message: "no user progress found" })
