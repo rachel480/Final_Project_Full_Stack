@@ -21,7 +21,8 @@ const wordSchema = new mongoose.Schema(
         },
         img:{
             data:Buffer,
-            contentType:String
+            contentType:String,
+            default:null
         }
     },
     {

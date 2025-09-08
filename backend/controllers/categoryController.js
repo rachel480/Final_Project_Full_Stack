@@ -1,5 +1,7 @@
 const Category = require('../models/Category')
 const FavoriteWord = require('../models/FavoriteWord')
+const Challenge=require('./challengeController')
+const Course=require('./courseController')
 
 //get all categories for admin and user
 const getAllCategories = async (req, res) => {
@@ -73,26 +75,50 @@ const updateCategory = async (req, res) => {
     }
 }
 
-//delete only for admin
+// delete category only for admin
 const deleteCategory = async (req, res) => {
-    try {
-        const { id } = req.body
+  try {
+    const { id } = req.body
 
-        //validation
-        if (!id)
-            return res.status(400).send('id is required')
+    // validation
+    if (!id)
+      return res.status(400).send('id is required')
 
-        const foundCategory = await Category.findById(id).exec()
-        if (!foundCategory)
-            return res.status(400).json({ message: "no Category found" })
+    const foundCategory = await Category.findById(id).exec()
+    if (!foundCategory)
+      return res.status(400).json({ message: "no Category found" })
 
-        const deletedCategory = await foundCategory.deleteOne()
-        if (!deletedCategory)
-            return res.status(400).json({ message: `error occurred while deleting category with id ${id}` })
-        return res.status(201).json({ message: `category with id ${id} was deleted successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
+    //delete the category words
+    await Promise.all(
+      foundCategory.words.map(async (wordId) => {
+        const foundWord = await Word.findById(wordId).exec()
+        if (foundWord)
+          await foundWord.deleteOne()
+      })
+    )
+   //delete the category challenge
+    if (foundCategory.challenge) {
+      const foundChallenge = await Challenge.findById(foundCategory.challenge).exec()
+      if (foundChallenge)
+        await foundChallenge.deleteOne()
     }
+    //remoove category from course
+     const foundCourse = await Course.findOne({level:foundCategory.level})
+    if(foundCourse)
+    {
+        const newCategories = foundCourse.categories.filter((category)=>category._id !== foundCategory._id)
+        foundCourse.categories=newCategories
+        await foundCourse.save()
+    }
+    //delete category
+    const deletedCategory = await foundCategory.deleteOne()
+    if (!deletedCategory)
+      return res.status(400).json({ message: `error occurred while deleting category with id ${id}` })
+
+    return res.status(200).json({ message: `category with id ${id} was deleted successfully` })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
 }
 
 //get category with challenge

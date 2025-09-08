@@ -28,22 +28,38 @@ const getSingleWord = async (req, res) => {
   }
 }
 
-//create word only for admin
+// create new word only for admin
 const createNewWord = async (req, res) => {
   try {
     const { word, translation, categoryName } = req.body
 
-    //validation:
-
+    // validation
     if (!word || !translation || !categoryName)
       return res.status(400).send('all fields are required')
 
+    //search category
+    const foundCategory = await Category.findOne({ name: categoryName }).exec()
+    if (!foundCategory)
+      return res.status(404).json({ message: 'Category not found' })
+
+    //create word
     const newWord = await Word.create({ word, translation, categoryName })
     if (!newWord)
       return res.status(400).json({ message: `error occurred while creating word ${word}` })
+
+    //add word to category
+    foundCategory.words.push(newWord._id)
+    const updatedCategory = await foundCategory.save()
+
+    //delete word if update category failed
+    if (!updatedCategory) {
+      await Word.findByIdAndDelete(newWord._id)
+      return res.status(400).json({ message: `error occurred while updating category, word was not saved` })
+    }
+
     return res.status(201).json({ message: `word ${word} was created successfully` })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    return res.status(500).json({ message: "Internal server error" })
   }
 }
 

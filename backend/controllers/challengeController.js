@@ -1,5 +1,6 @@
 const Challenge = require('../models/Challenge')
 const UserProgress = require('../models/UserProgress')
+const Question=require('./questionController')
 
 //get all challenges for admin and user
 const getAllChallenges = async (req, res) => {
@@ -17,7 +18,7 @@ const getAllChallenges = async (req, res) => {
 const getSingleChallenge = async (req, res) => {
     try {
         const { id } = req.params
-         //validation
+        //validation
         if (!id)
             return res.status(400).send('id is required')
 
@@ -35,8 +36,8 @@ const getSingleChallenge = async (req, res) => {
 const createNewChallenge = async (req, res) => {
     try {
         const { questions } = req.body
-        
-         //validation
+
+        //validation
         if (!questions)
             return res.status(400).send('questions are required')
 
@@ -54,8 +55,8 @@ const createNewChallenge = async (req, res) => {
 const updateChallenge = async (req, res) => {
     try {
         const { questions, id } = req.body
-        
-         //validation
+
+        //validation
         if (!questions || !id)
             return res.status(400).send('questions and id are required')
 
@@ -79,15 +80,22 @@ const updateChallenge = async (req, res) => {
 const deleteChallenge = async (req, res) => {
     try {
         const { id } = req.body
-        
-         //validation
+
+        //validation
         if (!id)
             return res.status(400).send('id is required')
 
         const foundChallenge = await Challenge.findById(id).exec()
         if (!foundChallenge)
             return res.status(400).json({ message: "no challenge found" })
-
+        //delete the questions
+        await Promise.all(
+            foundChallenge.words.map(async (qustion) => {
+                const foundQuestion = await Question.findById(qustion).exec()
+                if (foundQuestion)
+                    await foundQuestion.deleteOne()
+            })
+        )
         const deletedChallenge = await foundChallenge.deleteOne()
         if (!deletedChallenge)
             return res.status(400).json({ message: `error occurred while deleting challenge with id ${id}` })
@@ -140,4 +148,4 @@ const getChallengeResults = async (req, res) => {
     }
 }
 
-module.exports = {getAllChallenges,getSingleChallenge,createNewChallenge,updateChallenge,deleteChallenge,getChallengeResults}
+module.exports = { getAllChallenges, getSingleChallenge, createNewChallenge, updateChallenge, deleteChallenge, getChallengeResults }
