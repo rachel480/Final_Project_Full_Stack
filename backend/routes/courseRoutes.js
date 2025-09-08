@@ -2,16 +2,17 @@ const expresss=require('express')
 const router=expresss.Router()
 const courseController =require('../controllers/courseController')
 const verifyJWT =require('../middleware/verifyJWT')
+const verifyRoles = require('../middleware/verifyRoles')
 
 //use middleware
 router.use(verifyJWT)
 
 router.get('/',courseController.getAllCourses)
-router.get('/getCourse/:id',courseController.getSingleCourse)
+router.get('/:id',courseController.getSingleCourse)
 router.get('/:id/categories',courseController.getCategoriesOfCourse)
 router.get('/:id/words', courseController.getWordsOfCourseWithFavorites)
-router.post('/',courseController.createNewCourse)
-router.put('/',courseController.updateCourse)
-router.delete('/',courseController.deleteCourse)
+router.post('/',verifyRoles('Admin'),courseController.createNewCourse)
+router.put('/',verifyRoles('Admin'),courseController.updateCourse)
+router.delete('/',verifyRoles('Admin'),courseController.deleteCourse)
 
 module.exports=router

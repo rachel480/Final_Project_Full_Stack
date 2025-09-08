@@ -1,141 +1,152 @@
 const Course = require('../models/Course')
-const FavoriteWord=require('../models/FavoriteWord')
+const FavoriteWord = require('../models/FavoriteWord')
 
-//get all courses for admin and user
+// get all courses for admin and user
 const getAllCourses = async (req, res) => {
-    const courses = await Course.find().lean()
-    if (!courses)
-        return res.status(400).json({ message: "no courses found" })
-    res.json(courses)
+    try {
+        const courses = await Course.find().lean()
+         //validation
+        if (!courses)
+            return res.status(400).json({ message: "no courses found" })
+        return res.json(courses)
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
 }
 
-//get course by id for admin and user
+// get course by id for admin and user
 const getSingleCourse = async (req, res) => {
-    const { id } = req.params
+    try {
+        const { id } = req.params
+         //validation
+        if (!id)
+            return res.status(400).send('id is required')
 
-    //validation
-    //required fields
-    if (!id)
-        return res.status(400).send('id is required')
-    const foundCourse = await Course.findById(id).lean()
-    if (!foundCourse)
-        return res.status(400).json({ message: "no course found" })
-    return res.json(foundCourse)
+        const foundCourse = await Course.findById(id).lean()
+        if (!foundCourse)
+            return res.status(400).json({ message: "no course found" })
+        return res.json(foundCourse)
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
 }
 
-//create new course for admin
+// create new course for admin
 const createNewCourse = async (req, res) => {
-    const { level, categories } = req.body
+    try {
+        const { level, categories } = req.body
 
-    //validation
-    //chek if user is admin
-    const user = req.user
-    if (user.roles === "User")
-        return res.status(403).json({ message: 'forbidden' })
+         //validation
+        if (!level || !categories)
+            return res.status(400).send('all fields are required')
 
-    //required fields
-    if (!level || !categories)
-        return res.status(400).send('all fields are required')
+        const newCourse = await Course.create({ level, categories })
+        if (!newCourse)
+            return res.status(400).json({ message: `error occurred while creating the course` })
 
-    const newCourse = await Course.create({ level, categories })
-    if (!newCourse)
-        return res.status(400).json({ message: `error occurred while creating the course` })
-    return res.status(201).json({ message: `course created successfully` })
+        return res.status(201).json({ message: `course created successfully` })
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
 }
 
-//update course for admin
+// update course for admin
 const updateCourse = async (req, res) => {
-    const { level, categories, id } = req.body
+    try {
+        const { level, categories, id } = req.body
+         //validation
+        if (!level || !categories || !id)
+            return res.status(400).send('all fields are required')
 
-    //validation
-    //chek if user is admin
-    const user = req.user
-    if (user.roles === "User")
-        return res.status(403).json({ message: 'forbidden' })
+        const foundCourse = await Course.findById(id).exec()
+        if (!foundCourse)
+            return res.status(400).json({ message: "no course found" })
 
-    //required fields
-    if (!level || !categories || !id)
-        return res.status(400).send('all fields are required')
+        foundCourse.level = level
+        foundCourse.categories = categories
 
-    const foundCourse = await Course.findById(id).exec()
-    if (!foundCourse)
-        return res.status(400).json({ message: "no course found" })
+        const updatedCourse = await foundCourse.save()
+        if (!updatedCourse)
+            return res.status(400).json({ message: `error occurred while updating course` })
 
-    //update fields
-    foundCourse.level = level
-    foundCourse.categories = categories
-
-    const updatedCourse = await foundCourse.save()
-    if (!updatedCourse)
-        return res.status(400).json({ message: `error occurred while updating course` })
-    return res.status(201).json({ message: `course was updated successfully` })
+        return res.status(201).json({ message: `course was updated successfully` })
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
 }
 
-//delete course for admin
+// delete course for admin
 const deleteCourse = async (req, res) => {
-    const { id } = req.body
+    try {
+        const { id } = req.body
+         //validation
+        if (!id)
+            return res.status(400).send('id is required')
 
-    //validation
-    //chek if user is admin
-    const user = req.user
-    if (user.roles === "User")
-        return res.status(403).json({ message: 'forbidden' })
+        const foundCourse = await Course.findById(id).exec()
+        if (!foundCourse)
+            return res.status(400).json({ message: "no course found" })
 
-    //required fields
-    if (!id)
-        return res.status(400).send('id is required')
+        const deletedCourse = await foundCourse.deleteOne()
+        if (!deletedCourse)
+            return res.status(400).json({ message: `error occurred while deleting course with id ${id}` })
 
-    const foundCourse = await Course.findById(id).exec()
-    if (!foundCourse)
-        return res.status(400).json({ message: "no course found" })
-
-    const deletedCourse = await foundCourse.deleteOne()
-    if (!deletedCourse)
-        return res.status(400).json({ message: `error occurred while deleting course with id ${id}` })
-    return res.status(201).json({ message: `course with id ${id} was deleted successfully` })
-
+        return res.status(201).json({ message: `course with id ${id} was deleted successfully` })
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
 }
 
-//get course with categories
+// get course with categories
 const getCategoriesOfCourse = async (req, res) => {
-    const { id } = req.params
-    if (!id)
-        return res.status(400).send('id is required')
+    try {
+        const { id } = req.params
+        if (!id)
+            return res.status(400).send('id is required')
 
-    const course = await Course.findById(id).populate('categories')
-    if (!course)
-        return res.status(404).json({ message: 'Course not found' })
-    return res.json(course.categories)
+        const course = await Course.findById(id).populate('categories')
+        if (!course)
+            return res.status(404).json({ message: 'Course not found' })
+
+        return res.json(course.categories)
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
 }
 
+// get words of course with favorites
 const getWordsOfCourseWithFavorites = async (req, res) => {
-    const { id } = req.params
-    if (!id)
-        return res.status(400).send('id is required')
+    try {
+        const { id } = req.params
+        if (!id)
+            return res.status(400).send('id is required')
 
-    const user=req.user
+        const user = req.user
 
-    const course = await Course.findById(id)
-        .populate({
-            path: 'categories',
-            populate: {
-                path: 'words'
-            }
-        })
+        const course = await Course.findById(id)
+            .populate({
+                path: 'categories',
+                populate: {
+                    path: 'words'
+                }
+            })
 
-    if (!course)
-        return res.status(404).json({ message: 'Course not found' })
+        if (!course)
+            return res.status(404).json({ message: 'Course not found' })
 
-    const words = course.categories.flatMap(category => category.words)
-    //get all favorite words
-    const favWords = await FavoriteWord.find({user:user._id},{word:1}).lean()
-    const favWordIds = favWords.map(f => f.word.toString());
+        const words = course.categories.flatMap(category => category.words)
+        const favWords = await FavoriteWord.find({ user: user._id }, { word: 1 }).lean()
+        const favWordIds = favWords.map(f => f.word.toString())
 
-    const wordsWithFavorites= words.map((word)=>({
-        ...word.toObject(),
-        isFavorite:favWordIds.includes(word._id.toString())
-    }))
+        const wordsWithFavorites = words.map((word) => ({
+            ...word.toObject(),
+            isFavorite: favWordIds.includes(word._id.toString())
+        }))
 
-    return res.json(wordsWithFavorites)
+        return res.json(wordsWithFavorites)
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
 }
+
 module.exports = { getAllCourses, getSingleCourse, createNewCourse, updateCourse, deleteCourse, getCategoriesOfCourse, getWordsOfCourseWithFavorites }

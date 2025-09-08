@@ -1,101 +1,104 @@
 const Category = require('../models/Category')
-const FavoriteWord=require('../models/FavoriteWord')
+const FavoriteWord = require('../models/FavoriteWord')
 
 //get all categories for admin and user
 const getAllCategories = async (req, res) => {
-    const categories = await Category.find().lean()
-    if (!categories)
-        return res.status(400).json({ message: "no categories found" })
-    res.json(categories)
+    try {
+        const categories = await Category.find().lean()
+        if (!categories)
+            return res.status(400).json({ message: "no categories found" })
+        res.json(categories)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 }
 
 //get by id for admin and user
 const getSingleCategory = async (req, res) => {
-    const { id } = req.params
-    if (!id)
-        return res.status(400).send('id is required')
-    const foundCategory = await Category.findById(id).lean()
-    if (!foundCategory)
-        return res.status(400).json({ message: "no Category found" })
-    res.json(foundCategory)
+    try {
+        const { id } = req.params
+        if (!id)
+            return res.status(400).send('id is required')
+        const foundCategory = await Category.findById(id).lean()
+        if (!foundCategory)
+            return res.status(400).json({ message: "no Category found" })
+        res.json(foundCategory)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 }
 
 //create only for admin
 const createCategory = async (req, res) => {
-    const { name, challenge, level } = req.body
+    try {
+        const { name, challenge, level } = req.body
 
-    //validation:
-    //chek if user is admin
-    const user = req.user
-    if (user.roles === "User")
-        return res.status(403).json({ message: 'forbidden' })
+        //validation
+        if (!name || !level || !challenge)
+            return res.status(400).send('all fields are required')
 
-    //required fields
-    if (!name || !level || !challenge)
-        return res.status(400).send('all fields are required')
-
-    const newCategory = await Category.create({ name, level, challenge })
-    if (!newCategory)
-        return res.status(400).json({ message: `error occurred while creating category ${name}` })
-    return res.status(201).json({ message: `category ${name} was created successfully` })
+        const newCategory = await Category.create({ name, level, challenge })
+        if (!newCategory)
+            return res.status(400).json({ message: `error occurred while creating category ${name}` })
+        return res.status(201).json({ message: `category ${name} was created successfully` })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 }
+
 
 //update only for admin
 const updateCategory = async (req, res) => {
-    const { id, name, challenge, level } = req.body
+    try {
+        const { id, name, challenge, level } = req.body
 
-    //validation:
-    //chek if user is admin
-    const user = req.user
-    if (user.roles === "User")
-        return res.status(403).json({ message: 'forbidden' })
+        //validation
+        if (!name || !challenge || !id || !level)
+            return res.status(400).send('all fields are required')
 
-    //required fields
-    if (!name || !challenge || !id || !level)
-        return res.status(400).send('all fields are required')
+        const foundCategory = await Category.findById(id).exec()
+        if (!foundCategory)
+            return res.status(400).json({ message: "no Category found" })
 
-    const foundCategory = await Category.findById(id).exec()
-    if (!foundCategory)
-        return res.status(400).json({ message: "no Category found" })
+        foundCategory.name = name
+        foundCategory.level = level
+        foundCategory.challenge = challenge
 
-    //update fields
-    foundCategory.name = name
-    foundCategory.level = level
-    foundCategory.challenge = challenge
-
-    const updatedCategory = await foundCategory.save()
-    if (!updatedCategory)
-        return res.status(400).json({ message: `error occurred while updating category ${name}` })
-    return res.status(201).json({ message: `category ${name} was updated successfully` })
+        const updatedCategory = await foundCategory.save()
+        if (!updatedCategory)
+            return res.status(400).json({ message: `error occurred while updating category ${name}` })
+        return res.status(201).json({ message: `category ${name} was updated successfully` })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 }
 
 //delete only for admin
 const deleteCategory = async (req, res) => {
-    const { id } = req.body
+    try {
+        const { id } = req.body
 
-    //validation
-    //chek if user is admin
-    const user = req.user
-    if (user.roles === "User")
-        return res.status(403).json({ message: 'forbidden' })
+        //validation
+        if (!id)
+            return res.status(400).send('id is required')
 
-    //required fields
-    if (!id)
-        return res.status(400).send('id is required')
+        const foundCategory = await Category.findById(id).exec()
+        if (!foundCategory)
+            return res.status(400).json({ message: "no Category found" })
 
-    const foundCategory = await Category.findById(id).exec()
-    if (!foundCategory)
-        return res.status(400).json({ message: "no Category found" })
-
-    const deletedCategory = await foundCategory.deleteOne()
-    if (!deletedCategory)
-        return res.status(400).json({ message: `error occurred while deleting category with id ${id}` })
-    return res.status(201).json({ message: `category with id ${id} was deleted successfully` })
+        const deletedCategory = await foundCategory.deleteOne()
+        if (!deletedCategory)
+            return res.status(400).json({ message: `error occurred while deleting category with id ${id}` })
+        return res.status(201).json({ message: `category with id ${id} was deleted successfully` })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 }
-    //get category with challenge
-    const getChallengeOfCategory = async (req, res) => {
-        const { id } = req.params
 
+//get category with challenge
+const getChallengeOfCategory = async (req, res) => {
+    try {
+        const { id } = req.params
         if (!id) return res.status(400).send("id is required")
 
         const category = await Category.findById(id).populate({
@@ -114,27 +117,35 @@ const deleteCategory = async (req, res) => {
         if (!category)
             return res.status(404).json({ message: "Category not found" })
         return res.json(category.challenge)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
     }
-
-const getWordsOfCategory = async (req, res) => {
-    const { id } = req.params
-
-    if (!id) 
-        return res.status(400).send("id is required");
-    const user=req.user
-    const category = await Category.findById(id).populate({path: "words"})
-
-    if (!category)
-        return res.status(404).json({ message: "Category not found" });
-    //get all favorite words
-        const favWords = await FavoriteWord.find({user:user._id},{word:1}).lean()
-        const favWordIds = favWords.map(f => f.word.toString());
-    
-        const wordsWithFavorites= category.words.map((word)=>({
-            ...word.toObject(),
-            isFavorite:favWordIds.includes(word._id.toString())
-        }))
-    return res.json(wordsWithFavorites)
 }
 
-module.exports = { getAllCategories, getSingleCategory, createCategory, updateCategory, deleteCategory,getChallengeOfCategory,getWordsOfCategory}
+const getWordsOfCategory = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id)
+            return res.status(400).send("id is required")
+
+        const user = req.user
+        const category = await Category.findById(id).populate({ path: "words" })
+
+        if (!category)
+            return res.status(404).json({ message: "Category not found" })
+
+        const favWords = await FavoriteWord.find({ user: user._id }, { word: 1 }).lean()
+        const favWordIds = favWords.map(f => f.word.toString())
+
+        const wordsWithFavorites = category.words.map((word) => ({
+            ...word.toObject(),
+            isFavorite: favWordIds.includes(word._id.toString())
+        }))
+
+        return res.json(wordsWithFavorites)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+}
+
+module.exports = { getAllCategories, getSingleCategory, createCategory, updateCategory, deleteCategory, getChallengeOfCategory, getWordsOfCategory }

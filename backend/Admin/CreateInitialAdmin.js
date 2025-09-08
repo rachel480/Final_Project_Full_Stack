@@ -12,7 +12,7 @@ const createInitialAdmin=async()=>{
             password:hashPwd,
             fullName:process.env.ADMIN_FULLNAME,
             email:process.env.ADMIN_EMAIL,
-            roles:"Admin"
+            roles:["Admin",'User']
         }) 
         if(!newAdmin)
         {
