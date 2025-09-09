@@ -17,6 +17,8 @@ import MyWords from "../features/myWords.js/myWords";
 import MyWordList from "../features/myWords.js/words/myWordList";
 import MyCategoryList from "../features/myWords.js/categories/myCategoryList";
 import ChallengeResults from "../features/category/challengeSection/results/challengeResults";
+import AdminRoute from "./AdminRoute";
+import AdminLayout from "./layouts/adminLayout";
 
 
 const AppRoutes = () => {
@@ -47,24 +49,33 @@ const AppRoutes = () => {
           <Route path='words' element={<WordSection />} />
           <Route path='final-test' element={<h1>מבחן סופי על כל מילות הקורס</h1>} />
           <Route path='category/:categoryId' element={<CategoryLayout />}>
-          <Route index element={<Navigate to='words' />} />
-          <Route path='words' element={<CategoryWordSection />} />
-          
-          <Route path='challenge' >
-            <Route index element={<ChallengeSection />}/>
-            <Route path=":challengeId/results" element={<ChallengeResults/>}/>
+            <Route index element={<Navigate to='words' />} />
+            <Route path='words' element={<CategoryWordSection />} />
+
+            <Route path='challenge' >
+              <Route index element={<ChallengeSection />} />
+              <Route path=":challengeId/results" element={<ChallengeResults />} />
+            </Route>
+
           </Route>
-        
-        </Route>
         </Route>
 
         <Route path='my-words'>
           <Route index element={<MyWordNavigation />} />
           <Route path='favorite' element={<FavoriteWordsList />} />
-          <Route path='list'  element={<MyWords />}>
-            <Route index element={<Navigate to='words'/>} />
+          <Route path='list' element={<MyWords />}>
+            <Route index element={<Navigate to='words' />} />
             <Route path="words" element={<MyWordList />} />
             <Route path="categories" element={<MyCategoryList />} />
+          </Route>
+        </Route>
+        <Route path='admin' element={<AdminRoute />}>
+          <Route  element={<AdminLayout />} >
+            <Route index element={<></>} /> 
+            <Route path='courses' element={<h1>קורסים</h1>} />
+            <Route path='categories' element={<h1>קטגוריות</h1>} />
+            <Route path='words' element={<h1>מילים</h1>} />
+            <Route path='users' element={<h1>משתמשים</h1>} />
           </Route>
         </Route>
       </Route>
