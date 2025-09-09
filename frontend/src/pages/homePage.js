@@ -9,7 +9,6 @@ const HomePage = () => {
   const [createUserProgress, { isLoading: isLoadingCreate }] = useCreateUserProgressMutation()
 
   const user = useSelector(selectUser)
-  console.log("Redux user:", user)
   const [message, setMessage] = useState(null)
 
   useEffect(() => {
@@ -63,10 +62,6 @@ const HomePage = () => {
             </button>
           </div>
         ))}
-      </div>
-
-      <div>
-        <h2>דירוגים</h2>
       </div>
     </div>
   )
