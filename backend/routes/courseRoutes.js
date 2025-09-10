@@ -7,7 +7,8 @@ const verifyRoles = require('../middleware/verifyRoles')
 //use middleware
 router.use(verifyJWT)
 
-router.get('/',courseController.getAllCourses)
+router.get('/',courseController.getAllCoursesForUser)
+router.get('/admin',verifyRoles('Admin'),courseController.getAllCoursesForAdmin)
 router.get('/:id',courseController.getSingleCourse)
 router.get('/:id/categories',courseController.getCategoriesOfCourse)
 router.get('/:id/words', courseController.getWordsOfCourseWithFavorites)

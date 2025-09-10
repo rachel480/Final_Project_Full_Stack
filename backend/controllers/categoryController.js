@@ -31,13 +31,13 @@ const getSingleCategory = async (req, res) => {
 //create only for admin
 const createCategory = async (req, res) => {
     try {
-        const { name, challenge, level } = req.body
+        const { name, challenge, course } = req.body
 
         //validation
-        if (!name || !level || !challenge)
+        if (!name || !course || !challenge)
             return res.status(400).send('all fields are required')
 
-        const newCategory = await Category.create({ name, level, challenge })
+        const newCategory = await Category.create({ name, course, challenge })
         if (!newCategory)
             return res.status(400).json({ message: `error occurred while creating category ${name}` })
         return res.status(201).json({ message: `category ${name} was created successfully` })
@@ -50,10 +50,10 @@ const createCategory = async (req, res) => {
 //update only for admin
 const updateCategory = async (req, res) => {
     try {
-        const { id, name, challenge, level } = req.body
+        const { id, name, challenge,  course } = req.body
 
         //validation
-        if (!name || !challenge || !id || !level)
+        if (!name || !challenge || !id || !course)
             return res.status(400).send('all fields are required')
 
         const foundCategory = await Category.findById(id).exec()
@@ -61,7 +61,7 @@ const updateCategory = async (req, res) => {
             return res.status(400).json({ message: "no Category found" })
 
         foundCategory.name = name
-        foundCategory.level = level
+        foundCategory.course = course
         foundCategory.challenge = challenge
 
         const updatedCategory = await foundCategory.save()

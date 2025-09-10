@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import RegisterForm from "../features/auth/registerForm";
 import LoginForm from "../features/auth/loginForm";
@@ -13,13 +14,13 @@ import WordSection from "../features/course/wordSection";
 import HomePage from "../pages/homePage";
 import MyWordNavigation from "./navigation/myWordNavigation";
 import FavoriteWordsList from "../features/favoriteWords/favoriteWordsList";
-import MyWords from "../features/myWords.js/myWords";
-import MyWordList from "../features/myWords.js/words/myWordList";
-import MyCategoryList from "../features/myWords.js/categories/myCategoryList";
+import MyWordList from "../features/myWords/words/myWordList";
+import MyCategoryList from "../features/myWords/categories/myCategoryList";
+import MyWords from "../features/myWords/myWords";
 import ChallengeResults from "../features/category/challengeSection/results/challengeResults";
-import AdminRoute from "./AdminRoute";
 import AdminLayout from "./layouts/adminLayout";
-
+import AdminCourseList from "../features/admin/course/courseList";
+import AddCourseForm from '../features/admin/course/addCourseForm'
 
 const AppRoutes = () => {
   return (
@@ -40,7 +41,7 @@ const AppRoutes = () => {
         <Route index element={<Navigate to='home-page' />} />
         <Route path='home-page' element={<HomePage />} />
         <Route path='course-list' element={<CourseList />} />
-        <Route path='fourums' element={<h1>פורומים</h1>} />
+        <Route path='forums' element={<h1>פורומים</h1>} />
         <Route path='profile' element={<h1>הפרופיל שלי</h1>} />
 
         <Route path='course/:courseId' element={<CourseLayout />}>
@@ -48,13 +49,14 @@ const AppRoutes = () => {
           <Route path='category' element={<CategoriesSection />} />
           <Route path='words' element={<WordSection />} />
           <Route path='final-test' element={<h1>מבחן סופי על כל מילות הקורס</h1>} />
+
           <Route path='category/:categoryId' element={<CategoryLayout />}>
             <Route index element={<Navigate to='words' />} />
             <Route path='words' element={<CategoryWordSection />} />
 
-            <Route path='challenge' >
+            <Route path='challenge'>
               <Route index element={<ChallengeSection />} />
-              <Route path=":challengeId/results" element={<ChallengeResults />} />
+              <Route path=':challengeId/results' element={<ChallengeResults />} />
             </Route>
 
           </Route>
@@ -62,25 +64,31 @@ const AppRoutes = () => {
 
         <Route path='my-words'>
           <Route index element={<MyWordNavigation />} />
-          <Route path='favorite' element={<FavoriteWordsList />} />
+          <Route path='favorites' element={<FavoriteWordsList />} />
           <Route path='list' element={<MyWords />}>
             <Route index element={<Navigate to='words' />} />
-            <Route path="words" element={<MyWordList />} />
-            <Route path="categories" element={<MyCategoryList />} />
+            <Route path='words' element={<MyWordList />} />
+            <Route path='categories' element={<MyCategoryList />} />
           </Route>
         </Route>
-        <Route path='admin' element={<AdminRoute />}>
-          <Route  element={<AdminLayout />} >
-            <Route index element={<></>} /> 
-            <Route path='courses' element={<h1>קורסים</h1>} />
-            <Route path='categories' element={<h1>קטגוריות</h1>} />
-            <Route path='words' element={<h1>מילים</h1>} />
-            <Route path='users' element={<h1>משתמשים</h1>} />
+
+        <Route path={'admin'} element={<AdminLayout />} >
+          <Route index element={<h1>הגעת ללוח הניהול כאן תוכל לנהל את הנתונים</h1>} />
+          <Route path='courses'  >
+            <Route index element={<AdminCourseList />} />
+            <Route path='add' element={<AddCourseForm/>}/>
           </Route>
+          <Route path='categories' element={<h1>קטגוריות</h1>} />
+          <Route path='words' element={<h1>מילים</h1>} />
+          <Route path='users' element={<h1>משתמשים</h1>} />
+          <Route path='challenges' element={<h1>אתגרים</h1>} />
+          <Route path='questions' element={<h1>שאלות</h1>} />
+          <Route path='recommendtions' element={<h1>המלצות</h1>} />
         </Route>
       </Route>
 
-    </Routes>)
+    </Routes>
+  )
 }
 
 export default AppRoutes

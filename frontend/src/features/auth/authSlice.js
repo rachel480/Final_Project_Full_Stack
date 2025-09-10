@@ -21,8 +21,6 @@ export const { setUser} = authSlice.actions
 
 export const selectUser = (state) => state.auth.user
 export const selectIsLoggedIn = (state) => state.auth.isLoggedIn
-
-export const selectUserRole = (state) => state.auth.user?.roles || []
 export const selectIsAdmin = (state) =>
   state.auth.user?.roles?.includes("Admin")
 

@@ -56,6 +56,7 @@ const HomePage = () => {
         {courses.map((course) => (
           <div key={course._id} style={{ marginBottom: '1rem' }}>
             <p>Level: {course.level}</p>
+            <p>course:{course.name}</p>
             <p>About the course</p>
             <button onClick={() => handleCreateUserProgress(course._id)} disabled={isLoadingCreate}>
               Sign up to course

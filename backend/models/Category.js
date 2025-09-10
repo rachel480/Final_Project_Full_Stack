@@ -14,10 +14,10 @@ const CategorySchema = new mongoose.Schema({
         ref: "Challenge",
     },
     
-    level: {
-        type: String,
+    course: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        enum: ["Easy", "Medium", "Hard"]
+        ref:'Course'
     },
     words:{
         type:[{type:mongoose.Schema.Types.ObjectId,ref:"Word"}],
