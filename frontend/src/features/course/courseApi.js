@@ -11,7 +11,7 @@ const courseApi = baseApi.injectEndpoints({
         }),
         getAllCoursesByAdmin:builder.query({
             query:()=>({
-                url:'/course/admi',
+                url:'/course/admin',
                 method:'GET'
             }),
             providesTags: ["Course"]

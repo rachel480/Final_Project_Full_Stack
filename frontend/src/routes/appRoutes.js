@@ -20,7 +20,7 @@ import MyWords from "../features/myWords/myWords";
 import ChallengeResults from "../features/category/challengeSection/results/challengeResults";
 import AdminLayout from "./layouts/adminLayout";
 import AdminCourseList from "../features/admin/course/courseList";
-import AddCourseForm from '../features/admin/course/addCourseForm'
+import CourseWizard from "../features/admin/course/courseWizard";
 
 const AppRoutes = () => {
   return (
@@ -76,7 +76,7 @@ const AppRoutes = () => {
           <Route index element={<h1>הגעת ללוח הניהול כאן תוכל לנהל את הנתונים</h1>} />
           <Route path='courses'  >
             <Route index element={<AdminCourseList />} />
-            <Route path='add' element={<AddCourseForm/>}/>
+            <Route path='add' element={<CourseWizard/>}/>
           </Route>
           <Route path='categories' element={<h1>קטגוריות</h1>} />
           <Route path='words' element={<h1>מילים</h1>} />
