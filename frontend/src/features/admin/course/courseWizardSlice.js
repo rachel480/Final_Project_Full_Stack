@@ -32,7 +32,7 @@ const courseWizardSlice = createSlice({
     
     setCategoryInfo: (state, action) => {
       const { name, words } = action.payload
-      const existingIndex = state.categories.findIndex(cat => cat.name === name)
+      const existingIndex = state.categories.findIndex(category => category.name === name)
 
       if (existingIndex !== -1) {
         state.categories[existingIndex] = { name, words }
@@ -54,14 +54,20 @@ const courseWizardSlice = createSlice({
     setChallengeInfo: (state, action) => {
       state.challenges.push(action.payload)
     },
-
+    
+    setQuestionInfo: (state, action) => {
+      state.questions.push(action.payload)
+    },
+    setChallengeInfoCategory:(state,action)=>{
+       state.categories=action.payload
+    },
     resetWizard() {
       return initialState
     },
   },
 })
 
-export const { goToStep, resetWizard, setCourseInfo, setCategoryInfo, setChallengeInfo, setWordInfo } = courseWizardSlice.actions
+export const { goToStep, resetWizard, setCourseInfo, setCategoryInfo, setChallengeInfo, setWordInfo,setQuestionInfo,setChallengeInfoCategory } = courseWizardSlice.actions
 export default courseWizardSlice.reducer
 
 export const selectWizardStep = (state) => state.courseWizard.step
