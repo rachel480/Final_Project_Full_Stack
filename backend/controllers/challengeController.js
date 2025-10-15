@@ -1,5 +1,7 @@
 const Challenge = require('../models/Challenge')
 const UserProgress = require('../models/UserProgress')
+const Question = require("../models/Question")
+const Category = require("../models/Category")
 
 //get all challenges for admin and user
 const getAllChallenges = async (req, res) => {
@@ -17,7 +19,8 @@ const getAllChallenges = async (req, res) => {
 const getSingleChallenge = async (req, res) => {
     try {
         const { id } = req.params
-         //validation
+
+        //validation
         if (!id)
             return res.status(400).send('id is required')
 
@@ -31,31 +34,57 @@ const getSingleChallenge = async (req, res) => {
     }
 }
 
-//create new challenge for admin
-const createNewChallenge = async (req, res) => {
-    try {
-        const { questions } = req.body
-        
-         //validation
-        if (!questions)
-            return res.status(400).send('questions are required')
-
-        const newChallenge = await Challenge.create({ questions })
-        if (!newChallenge)
-            return res.status(400).json({ message: `error occurred while creating the challenge` })
-
-        return res.status(201).json({ message: `challenge created successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
+const getFullChallengeById = async (req, res) => {
+  try {
+    const { id } = req.params
+    if (!id) {
+      return res.status(400).json({ message: "id is required" })
     }
+
+    const challenge = await Challenge.findById(id)
+      .populate({
+        path: "questions",
+        populate: [
+          { path: "question", model: "Word" },
+        ]
+      })
+      .lean()
+
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" })
+    }
+
+    return res.json(challenge)
+  } catch (err) {
+    console.error("getFullChallengeById error:", err)
+    return res.status(500).json({ message: "Internal server error" })
+  }
 }
+
+// //create new challenge for admin
+// const createNewChallenge = async (req, res) => {
+//     try {
+//         const { questions } = req.body
+
+//         //validation
+//         if (!questions)
+//             return res.status(400).send('questions are required')
+
+//         const newChallenge = await Challenge.create({ questions })
+//         if (!newChallenge)
+//             return res.status(400).json({ message: `error occurred while creating the challenge` })
+
+//         return res.status(201).json({ message: `challenge created successfully` })
+//     } catch (err) {
+//         res.status(500).json({ message: err.message })
+//     }
+// }
 
 //update challenge for admin
 const updateChallenge = async (req, res) => {
     try {
         const { questions, id } = req.body
-        
-         //validation
+
         if (!questions || !id)
             return res.status(400).send('questions and id are required')
 
@@ -79,8 +108,8 @@ const updateChallenge = async (req, res) => {
 const deleteChallenge = async (req, res) => {
     try {
         const { id } = req.body
-        
-         //validation
+
+        //validation
         if (!id)
             return res.status(400).send('id is required')
 
@@ -123,14 +152,14 @@ const getChallengeResults = async (req, res) => {
             (result) => result.challenge.toString() === id
         )
 
-        const results = foundChallenge.questions.map((questio) => {
+        const results = foundChallenge.questions.map((question) => {
             const userAnswer = challengeResult?.answers.find(
-                (answer) => answer.question.toString() === questio._id.toString()
+                (answer) => answer.question.toString() === question._id.toString()
             ) || null
             return {
-                ...questio.toObject(),
+                ...question.toObject(),
                 userAnswer,
-                status: userAnswer?.questionstatus
+                status: userAnswer?.questionStatus
             }
         })
 
@@ -140,4 +169,34 @@ const getChallengeResults = async (req, res) => {
     }
 }
 
-module.exports = {getAllChallenges,getSingleChallenge,createNewChallenge,updateChallenge,deleteChallenge,getChallengeResults}
+// create a challenge
+const createFullChallenge = async (req, res) => {
+  try {
+    const { questions, categoryId } = req.body
+
+    // step 1: add questions to DB
+    const createdQuestions = await Question.insertMany(questions)
+
+    // step 2: create challenge with question ids
+    const questionIds = createdQuestions.map((q) => q._id)
+    const createdChallenge = await Challenge.create({
+      questions: questionIds,
+    })
+
+    // step 3: attach challenge to category
+    const foundCategory = await Category.findById(categoryId).exec()
+    if (!foundCategory) {
+      return res.status(404).json({ message: "Category not found" })
+    }
+
+    foundCategory.challenge = createdChallenge._id
+    await foundCategory.save()
+
+    res.status(201).json({ message: "Challenge created successfully" })
+  } catch (err) {
+    console.error("createFullChallenge error:", err)
+    res.status(500).json({ message: "Server error", error: err.message })
+  }
+}
+
+module.exports = { getAllChallenges, getSingleChallenge,getFullChallengeById,createFullChallenge, updateChallenge, deleteChallenge, getChallengeResults }

@@ -8,12 +8,13 @@ const verifyRoles = require('../middleware/verifyRoles')
 router.use(verifyJWT)
 
 router.get('/',courseController.getAllCoursesForUser)
-router.get('/admin',verifyRoles('Admin'),courseController.getAllCoursesForAdmin)
+router.get('/admin',verifyRoles('Admin') ,courseController.getAllCoursesForAdmin)
 router.get('/:id',courseController.getSingleCourse)
+router.get("/:id/full", courseController.getFullCourseById)
 router.get('/:id/categories',courseController.getCategoriesOfCourse)
 router.get('/:id/words', courseController.getWordsOfCourseWithFavorites)
-router.post('/',verifyRoles('Admin'),courseController.createNewCourse)
-router.put('/',verifyRoles('Admin'),courseController.updateCourse)
-router.delete('/',verifyRoles('Admin'),courseController.deleteCourse)
+router.post("/createFullSimple", courseController.createFullCourseSimple)
+router.put('/',verifyRoles('Admin') ,courseController.updateCourse)
+router.delete('/',verifyRoles('Admin') ,courseController.deleteCourse)
 
 module.exports=router

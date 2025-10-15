@@ -1,4 +1,5 @@
-const Word = require('../models/Word')
+const { Word } = require('../models/Word')
+const Category= require('../models/Category')
 
 //get all words for admin and user
 const getAllWords = async (req, res) => {
@@ -31,16 +32,22 @@ const getSingleWord = async (req, res) => {
 //create word only for admin
 const createNewWord = async (req, res) => {
   try {
-    const { word, translation, categoryName } = req.body
+    const { word, translation, categoryName ,categoryId} = req.body
 
     //validation:
-
-    if (!word || !translation || !categoryName)
+    if (!word || !translation || !categoryName || !categoryId)
       return res.status(400).send('all fields are required')
 
     const newWord = await Word.create({ word, translation, categoryName })
     if (!newWord)
       return res.status(400).json({ message: `error occurred while creating word ${word}` })
+
+    //add the word to category array
+    const category = await Category.findById(categoryId).exec()
+    //update category
+    category.words.push(newWord._id)
+    await category.save()
+
     return res.status(201).json({ message: `word ${word} was created successfully` })
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -52,6 +59,7 @@ const updateWord = async (req, res) => {
   try {
     const { id, word, translation, categoryName } = req.body
 
+    //validation
     if (!word || !translation || !id || !categoryName)
       return res.status(400).send('all fields are required')
 
@@ -76,6 +84,8 @@ const updateWord = async (req, res) => {
 const deleteWord = async (req, res) => {
   try {
     const { id } = req.body
+
+    //validation
     if (!id)
       return res.status(400).send('id is required')
 

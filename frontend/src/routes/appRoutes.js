@@ -1,9 +1,8 @@
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import RegisterForm from "../features/auth/registerForm";
 import LoginForm from "../features/auth/loginForm";
 import CourseList from "../features/course/courseList";
-import CategoryWordSection from "../features/category/words/wordsSection"
+import CategoryWordSection from "../features/category/words/wordsSection";
 import CategoriesSection from "../features/course/categoriesSection";
 import ChallengeSection from "../features/category/challengeSection/challengeSection";
 import PublicLayout from "./layouts/publicLayout";
@@ -20,7 +19,16 @@ import MyWords from "../features/myWords/myWords";
 import ChallengeResults from "../features/category/challengeSection/results/challengeResults";
 import AdminLayout from "./layouts/adminLayout";
 import AdminCourseList from "../features/admin/course/courseList";
-import CourseWizard from "../features/admin/course/courseWizard";
+import CourseWizard from "../features/admin/course/CourseWizard";
+import SingleCourseCard from "../features/admin/course/singleCourseCard";
+import SingleCategoryCard from "../features/admin/category/singleCategoryCard";
+import SingleWordCard from "../features/admin/word/singleWordCard";
+import CategoryWizard from "../features/admin/category/categoryWizard";
+import SingleChallengeCard from "../features/admin/challenge/singleChallengeCard";
+import SingleQuestionCard from "../features/admin/question/singleQuestionCard";
+import ChallengeWizard from "../features/admin/challenge/challengeWizard";
+import QuestionWizard from "../features/admin/question/questionWizard";
+import AddWordInfo from "../features/admin/word/addWordInfo";
 
 const AppRoutes = () => {
   return (
@@ -73,18 +81,44 @@ const AppRoutes = () => {
         </Route>
 
         <Route path={'admin'} element={<AdminLayout />} >
-          <Route index element={<h1>הגעת ללוח הניהול כאן תוכל לנהל את הנתונים</h1>} />
-          <Route path='courses'  >
-            <Route index element={<AdminCourseList />} />
-            <Route path='add' element={<CourseWizard/>}/>
-          </Route>
-          <Route path='categories' element={<h1>קטגוריות</h1>} />
-          <Route path='words' element={<h1>מילים</h1>} />
+
+          <Route path='data'>
+            <Route index element={<Navigate to='courses' />} />
+
+            <Route path='courses'>
+              <Route index element={<AdminCourseList />} />
+              <Route path=':courseId' >
+                <Route index element={<SingleCourseCard />} />
+
+                <Route path="category/:categoryId" >
+                  <Route index element={<SingleCategoryCard />} />
+                  <Route path="words/:wordId" element={<SingleWordCard />} />
+
+                  <Route path='challenge/:challengeId'>
+                    <Route index  element={<SingleChallengeCard/>}/>
+                    <Route path='question/:questionId' element={<SingleQuestionCard/>}/>
+                    <Route path='question/add' element={<QuestionWizard/>}/>
+                  </Route>
+
+                  <Route path='challenge/add' element={<ChallengeWizard/>}/>
+                  <Route path='words/add' element={<AddWordInfo/>}/>
+                </Route>
+
+                <Route path='category/add' element={<CategoryWizard />} />
+
+              </Route>
+
+              <Route path='add' element={<CourseWizard />} />
+
+            </Route>
+
+          </Route >
+
           <Route path='users' element={<h1>משתמשים</h1>} />
-          <Route path='challenges' element={<h1>אתגרים</h1>} />
-          <Route path='questions' element={<h1>שאלות</h1>} />
           <Route path='recommendtions' element={<h1>המלצות</h1>} />
+
         </Route>
+
       </Route>
 
     </Routes>

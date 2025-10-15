@@ -1,5 +1,9 @@
 const Category = require('../models/Category')
 const FavoriteWord = require('../models/FavoriteWord')
+const { Word } = require("../models/Word");
+const Challenge = require("../models/Challenge");
+const Question = require("../models/Question");
+const Course = require('../models/Course')
 
 //get all categories for admin and user
 const getAllCategories = async (req, res) => {
@@ -28,29 +32,37 @@ const getSingleCategory = async (req, res) => {
     }
 }
 
-//create only for admin
-const createCategory = async (req, res) => {
-    try {
-        const { name, challenge, course } = req.body
+const getFullCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params
+    if (!id)
+      return res.status(400).json({ message: "id is required" })
 
-        //validation
-        if (!name || !course || !challenge)
-            return res.status(400).send('all fields are required')
+    const category = await Category.findById(id)
+      .populate("words")
+      .populate({
+        path: "challenge",
+        populate: {
+          path: "questions",
+          populate: { path: "question" } 
+        }
+      })
+      .lean()
 
-        const newCategory = await Category.create({ name, course, challenge })
-        if (!newCategory)
-            return res.status(400).json({ message: `error occurred while creating category ${name}` })
-        return res.status(201).json({ message: `category ${name} was created successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
-    }
+    if (!category)
+      return res.status(404).json({ message: "Category not found" })
+
+    return res.json(category)
+  } catch (err) {
+    console.error("getFullCategoryById error:", err)
+    return res.status(500).json({ message: "Internal server error" })
+  }
 }
-
 
 //update only for admin
 const updateCategory = async (req, res) => {
     try {
-        const { id, name, challenge,  course } = req.body
+        const { id, name, challenge, course } = req.body
 
         //validation
         if (!name || !challenge || !id || !course)
@@ -148,4 +160,48 @@ const getWordsOfCategory = async (req, res) => {
     }
 }
 
-module.exports = { getAllCategories, getSingleCategory, createCategory, updateCategory, deleteCategory, getChallengeOfCategory, getWordsOfCategory }
+const createFullCategorySimple = async (req, res) => {
+    try {
+        const { categoryInfo, questions, words, courseId } = req.body
+
+        //step 1: add words to DB
+        const createdWords = await Word.insertMany(words)
+
+        // step 2: add questions to DB
+        const questionsWithIds = questions.map(q => {
+
+            const questionWord = createdWords.find(w => w.word === q.question)
+
+            const optionsWords = q.options.map(opt => {
+                const word = createdWords.find(w => w.word === opt)
+                return word._id
+            })
+
+            return { question: questionWord._id, correctAnswer: questionWord._id, options: optionsWords }
+        })
+
+        const createdQuestions = await Question.insertMany(questionsWithIds)
+
+        //step 3: add challenge to DB
+        const questionsIds= createdQuestions.map((q)=>q._id)
+        const createdChallenge = await Challenge.create({questions:questionsIds})
+
+        //step 4: add category to DB
+        const wordsIds=createdWords.map(w => w._id)
+        const addCategoryData = {name:categoryInfo.name,course:courseId,challenge:createdChallenge._id,words:wordsIds}
+        const createdCategory = await Category.create(addCategoryData)
+
+        //step 5: update course categories
+        const foundCourse = await Course.findById(courseId).exec()
+        foundCourse.categories.push(createdCategory._id)
+        foundCourse.save()
+
+        res.status(201).json({ message:"created succsesfully"})
+    }
+    catch (err) {
+        console.error("createFullCourseSimple error:", err)
+        res.status(500).json({ message: "Server error", error: err.message })
+    }
+}
+
+module.exports = { getAllCategories, getSingleCategory, getFullCategoryById, createFullCourseSimple: createFullCategorySimple, updateCategory, deleteCategory, getChallengeOfCategory, getWordsOfCategory }

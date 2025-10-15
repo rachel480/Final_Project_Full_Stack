@@ -1,31 +1,31 @@
-const mongoose = require('mongoose')
+const mongoose=require('mongoose')
 
-const CourseSchema = new mongoose.Schema(
+const CourseSchema=new mongoose.Schema(
     {
-        name: {
-            type: String,
-            require: true,
-            lowerCase: true,
-            trim: true
-        },
-        level: {
-            type: String,
-            required: true,
-            enum: ["Easy", "Medium", "Hard"]
+        name:{
+            type:String,
+            required:true,
+            lowercase:true,
+            trim:true
         },
 
-        categories: {
-            type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
-            default: [],
+        level:{
+            type:String,
+            required:true,
+            enum:["Easy","Medium","Hard"]
         },
-        status: {
-         type: String, enum: ["draft", "published"],
-         default:"draft"
+
+        categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
+
+        status: { 
+            type: String,
+            enum: ["draft", "published"], 
+            default: "draft" 
         }
     },
     {
-        timestamps: true
+        timestamps:true
     }
 )
 
-module.exports = mongoose.model('Course', CourseSchema)
+module.exports=mongoose.model('Course',CourseSchema)

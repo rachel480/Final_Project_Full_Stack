@@ -1,10 +1,10 @@
 const Question = require('../models/Question')
+const Challenge = require('../models/Challenge')
 
 //get all Questions for admin and user
 const getAllQuestions = async (req, res) => {
     try {
         const questions = await Question.find().lean()
-         //validation
         if (!questions)
             return res.status(400).json({ message: "no question found" })
         res.json(questions)
@@ -17,7 +17,6 @@ const getAllQuestions = async (req, res) => {
 const getSingleQuestion = async (req, res) => {
     try {
         const { id } = req.params
-         //validation
         if (!id)
             return res.status(400).send('id is required')
 
@@ -30,17 +29,48 @@ const getSingleQuestion = async (req, res) => {
     }
 }
 
+const getFullQuestionById = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id) {
+            return res.status(400).json({ message: "id is required" })
+        }
+
+        const question = await Question.findById(id)
+            .populate({ path: "question", model: "Word" })        
+            .populate({ path: "correctAnswer", model: "Word" })   
+            .populate({ path: "options", model: "Word" })   
+            .lean()
+
+        if (!question) {
+            return res.status(404).json({ message: "Question not found" })
+        }
+
+        return res.json(question)
+    } catch (err) {
+        console.error("getFullQuestionById error:", err)
+        return res.status(500).json({ message: "Internal server error" })
+    }
+}
+
 //create new question for admin
 const createNewQuestion = async (req, res) => {
     try {
-        const { question, correctAnswer, options } = req.body
-         //validation
-        if (!question || !correctAnswer || !options)
+        const { question, correctAnswer, options ,challengeId} = req.body
+
+        //validation
+        if (!question || !correctAnswer || !options || !challengeId)
             return res.status(400).send('all fields are required')
 
         const newQuestion = await Question.create({ question, correctAnswer, options })
         if (!newQuestion)
             return res.status(400).json({ message: `error occurred while creating the question` })
+
+        //update challenge
+        const challenge = await Challenge.findById(challengeId).exec()
+        challenge.questions.push(newQuestion._id)
+        await challenge .save()
+
         return res.status(201).json({ message: `Question created successfully` })
     } catch (err) {
         return res.status(500).json({ message: "Internal server error" })
@@ -51,7 +81,8 @@ const createNewQuestion = async (req, res) => {
 const updateQuestion = async (req, res) => {
     try {
         const { question, correctAnswer, options, id } = req.body
-         //validation
+
+        //validation
         if (!question || !correctAnswer || !options || !id)
             return res.status(400).send('all fields are required')
 
@@ -76,7 +107,8 @@ const updateQuestion = async (req, res) => {
 const deleteQuestion = async (req, res) => {
     try {
         const { id } = req.body
-         //validation
+
+        //validation
         if (!id)
             return res.status(400).send('id is required')
 
@@ -93,4 +125,4 @@ const deleteQuestion = async (req, res) => {
     }
 }
 
-module.exports = { getAllQuestions, getSingleQuestion, createNewQuestion, updateQuestion, deleteQuestion }
+module.exports = { getAllQuestions, getSingleQuestion,getFullQuestionById, createNewQuestion, updateQuestion, deleteQuestion }

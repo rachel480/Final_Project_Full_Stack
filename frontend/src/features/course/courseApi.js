@@ -9,10 +9,11 @@ const courseApi = baseApi.injectEndpoints({
             }),
             providesTags: ["Course"]
         }),
-        getAllCoursesByAdmin:builder.query({
-            query:()=>({
-                url:'/course/admin',
-                method:'GET'
+
+        getAllCoursesByAdmin: builder.query({
+            query: () => ({
+                url: '/course/admin',
+                method: 'GET'
             }),
             providesTags: ["Course"]
         }),
@@ -20,6 +21,14 @@ const courseApi = baseApi.injectEndpoints({
         getCourseById: builder.query({
             query: (courseId) => ({
                 url: `/course/${courseId}`,
+                method: 'GET'
+            }),
+            providesTags: ["Course"]
+        }),
+
+        getFullCourseById: builder.query({
+            query: (courseId) => ({
+                url: `/course/${courseId}/full`,
                 method: 'GET'
             }),
             providesTags: ["Course"]
@@ -63,12 +72,22 @@ const courseApi = baseApi.injectEndpoints({
             query: (courseData) => ({
                 url: '/course',
                 method: 'DELETE',
-                body:courseData,
+                body: courseData,
             }),
             invalidatesTags: ["Course"]
         }),
 
-    })
+        createFullCourseSimple: builder.mutation({
+            query: (wizard) => ({
+                url: "/course/createFullSimple",
+                method: "POST",
+                body:  wizard , 
+            }),
+            invalidatesTags: ["Course"]
+        })
+
+    }),
+
 })
 
-export const { useGetAllCoursesQuery,useGetAllCoursesByAdminQuery, useGetCourseByIdQuery, useGetCourseCategoriesQuery, useGetCourseWordsQuery,useCreateCourseMutation,useUpdateCourseMutation,useDeleteCourseMutation} = courseApi
+export const { useGetAllCoursesQuery, useGetAllCoursesByAdminQuery, useGetCourseByIdQuery,useGetFullCourseByIdQuery, useGetCourseCategoriesQuery, useGetCourseWordsQuery, useCreateCourseMutation, useUpdateCourseMutation, useDeleteCourseMutation,useCreateFullCourseSimpleMutation} = courseApi

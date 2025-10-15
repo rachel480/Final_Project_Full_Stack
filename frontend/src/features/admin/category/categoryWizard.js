@@ -1,33 +1,36 @@
 import { useSelector, useDispatch } from "react-redux"
-import { selectWizardStep, setWordInfo, setQuestionInfo, setChallengeInfo, goToStep, selectWizardWords, selectWizardCategory, setCategoryInfo, setCallengeInfoInCategory } from "./courseWizardSlice"
-import AddCourseInfo from "./addCourseInfo"
-import AddChallengesInfo from "../challenge/addChallengesInfo"
+import { goToStep, selectWizardWords, setChallengeInfo, setWordInfo, selectWizardStep, setCategoryInfo, selectWizardCategory, setQuestionInfo, setCallengeInfoInCategory, selectWizardData, resetWizard } from "./categoryWizardSlice"
 import NavigateButton from "../../../components/navigateButton"
+import { useParams,useNavigate } from "react-router-dom"
 import AddWordsInfo from "../word/addWordsInfo"
-import AddCategoriesInfo from "../category/addCategoriesInfo"
-import { useState } from "react"
-import { useCreateFullCourseSimpleMutation } from "../../course/courseApi"
-import { useNavigate } from "react-router-dom"
-import {selectWizardData, resetWizard } from './courseWizardSlice'
+import AddCategoriesInfo from "./addCategoriesInfo"
+import AddChallengesInfo from "../challenge/addChallengesInfo"
 import FinalSaveButton from "../common/finalSaveButton"
+import { useState } from "react"
+import { useCreateFullCategorySimpleMutation } from "../../category/categoryApi"
 
-const CourseWizard = () => {
+const CategoryWizard = () => {
   const step = useSelector(selectWizardStep)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const [errorMsg, setErrorMsg] = useState("")
   const wizardData = useSelector(selectWizardData)
-  const [createFullCourse] = useCreateFullCourseSimpleMutation()
+  const dispatch = useDispatch()
+  const { courseId } = useParams()
+  const [errorMsg, setErrorMsg] = useState("")
+  const navigate = useNavigate()
 
-    const onClick = async () => {
+  const [createFullCategorySimple ] = useCreateFullCategorySimpleMutation()
+
+  const onClick = async () => {
     try {
       setErrorMsg(null)
-      if(!wizardData.courseInfo.name || !wizardData.categories.length || !wizardData.challenges.length || !wizardData.words.length)
-        return 
-      const addCourseData = { courseInfo: wizardData.courseInfo, categories: wizardData.categories, words: wizardData.words, questions: wizardData.questions, challenges: wizardData.challenges }
-      await createFullCourse(addCourseData).unwrap()
+      const addCategoryData = {
+        categoryInfo: wizardData.categoryInfo,
+        questions: wizardData.questions,
+        words: wizardData.words,
+        courseId
+      }
+      await createFullCategorySimple(addCategoryData)
       dispatch(resetWizard())
-      navigate("/user/admin/data/courses")
+      navigate(`/user/admin/data/courses/${courseId}`)
     }
     catch (err) {
       console.error(err)
@@ -43,21 +46,19 @@ const CourseWizard = () => {
         return <AddCategoriesInfo setCategoryInfo={setCategoryInfo} goToStep={goToStep} selectWizardCategory={selectWizardCategory} selectWizardWords={selectWizardWords} selectWizardStep={selectWizardStep} selectWizardData={selectWizardData}/>
       case 3:
         return <AddChallengesInfo setChallengeInfo={setChallengeInfo} goToStep={goToStep} selectWizardCategory={selectWizardCategory} setQuestionInfo={setQuestionInfo} setCallengeInfoInCategory={setCallengeInfoInCategory} selectWizardStep={selectWizardStep} />
-      case 4:
-        return <AddCourseInfo />
       default:
-        return <FinalSaveButton onClick={onClick} disabled={!wizardData.courseInfo.name || !wizardData.categories.length || !wizardData.challenges.length || !wizardData.words.length}/>
+        return <FinalSaveButton onClick={onClick} disabled={!wizardData.categoryInfo.name || !wizardData.challenge || !wizardData.words.length} />
     }
   }
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Create Course Wizard</h1>
+      <h1>Create Category Wizard</h1>
 
-      <NavigateButton navigation={"/user/admin/data/courses"} buttonText={"🔙"} />
+      <NavigateButton navigation={`/user/admin/data/courses/${courseId}`} buttonText={"🔙"} />
 
       <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
-        {[1, 2, 3, 4, 5].map((s) => (
+        {[1, 2, 3, 4].map((s) => (
           <div
             key={s}
             style={{
@@ -80,4 +81,4 @@ const CourseWizard = () => {
   )
 }
 
-export default CourseWizard
+export default CategoryWizard
