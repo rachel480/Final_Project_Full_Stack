@@ -1,8 +1,32 @@
+
 import { useNavigate } from "react-router-dom"
+import { useDeleteUserByAdminMutation } from "../../user/userApi"
+import { useState } from "react"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const UserCard = ({ user }) => {
-
   const navigate = useNavigate()
+  const [deleteUserByAdmin] = useDeleteUserByAdminMutation()
+  const [showConfirm, setShowConfirm] = useState(false)
+
+  const handleDelete = async () => {
+    setShowConfirm(false)
+    try {
+      await deleteUserByAdmin(user._id).unwrap()
+      toast.success(`User "${user.userName}" was deleted successfully!`, {
+        position: "top-right",
+        autoClose: 3000,
+      })
+    } catch (err) {
+      console.error("Delete error:", err)
+      const errorMsg = err?.data?.message || "Server error occurred while deleting the user."
+      toast.error(errorMsg, {
+        position: "top-right",
+        autoClose: 4000,
+      })
+    }
+  }
 
   return (
     <div
@@ -13,6 +37,7 @@ const UserCard = ({ user }) => {
         borderRadius: "8px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
         backgroundColor: "#f9f9f9",
+        position: "relative",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -33,7 +58,7 @@ const UserCard = ({ user }) => {
 
         <div style={{ display: "flex", gap: "8px" }}>
           <button
-            //onClick={handleDelete}
+            onClick={() => setShowConfirm(true)}
             style={{
               backgroundColor: "#e53935",
               color: "#fff",
@@ -62,6 +87,55 @@ const UserCard = ({ user }) => {
         </div>
       </div>
 
+      {/* ✅ Confirmation modal */}
+      {showConfirm && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            background: "#fff",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            padding: "20px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            zIndex: 10,
+          }}
+        >
+          <p>
+            Are you sure you want to delete user <strong>{user.userName}</strong>?
+          </p>
+          <div style={{ display: "flex", justifyContent: "space-around", marginTop: "15px" }}>
+            <button
+              onClick={handleDelete}
+              style={{
+                backgroundColor: "#e53935",
+                color: "white",
+                border: "none",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => setShowConfirm(false)}
+              style={{
+                backgroundColor: "#9e9e9e",
+                color: "white",
+                border: "none",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
