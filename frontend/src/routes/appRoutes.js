@@ -33,6 +33,7 @@ import UserList from "../features/admin/user/userList";
 import SingleUserCard from "../features/admin/user/singleUserCard";
 import AddUserForm from "../features/admin/user/addUserForm";
 import UpdateUserForm from "../features/admin/user/updateUserForm";
+import UpdateCourseForm from "../features/admin/course/updateCourseForm";
 
 const AppRoutes = () => {
   return (
@@ -93,11 +94,14 @@ const AppRoutes = () => {
               <Route index element={<AdminCourseList />} />
               <Route path=':courseId' >
                 <Route index element={<SingleCourseCard />} />
+                
+                <Route path='update' element={<UpdateCourseForm/>}/>
 
                 <Route path="category/:categoryId" >
                   <Route index element={<SingleCategoryCard />} />
+                  <Route path="update" element ={<h1>update category</h1>}/>
                   <Route path="words/:wordId" element={<SingleWordCard />} />
-
+        
                   <Route path='challenge/:challengeId'>
                     <Route index  element={<SingleChallengeCard/>}/>
                     <Route path='question/:questionId' element={<SingleQuestionCard/>}/>
@@ -109,10 +113,12 @@ const AppRoutes = () => {
                 </Route>
 
                 <Route path='category/add' element={<CategoryWizard />} />
+                
 
               </Route>
 
               <Route path='add' element={<CourseWizard />} />
+
 
             </Route>
 

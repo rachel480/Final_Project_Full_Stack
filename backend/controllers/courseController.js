@@ -83,7 +83,7 @@ const getFullCourseById = async (req, res) => {
 // update course for admin
 const updateCourse = async (req, res) => {
     try {
-        const { level, name, id } = req.body
+        const { level, name, id ,status} = req.body
 
         //validation
         if (!level || !name || !id)
@@ -95,6 +95,7 @@ const updateCourse = async (req, res) => {
 
         foundCourse.level = level
         foundCourse.name = name
+        foundCourse.status=status?status:foundCourse.status
 
         const updatedCourse = await foundCourse.save()
         if (!updatedCourse)

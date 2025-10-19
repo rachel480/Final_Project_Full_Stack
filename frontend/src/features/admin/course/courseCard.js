@@ -1,10 +1,8 @@
 import { useState } from "react"
-import UpdateCourseForm from "./updateCourseForm"
 import { useDeleteCourseMutation } from "../../course/courseApi"
 import { useNavigate } from "react-router-dom"
 
 const CourseCard = ({ course }) => {
-  const [showUpdateForm, setShowUpdateForm] = useState(false)
   const [message, setMessage] = useState(null)
 
   const navigate = useNavigate()
@@ -67,7 +65,7 @@ const CourseCard = ({ course }) => {
           </button>
 
           <button
-            onClick={() => setShowUpdateForm(true)}
+            onClick={() => navigate(`${course._id}/update`)}
             style={{
               backgroundColor: "#fbc02d",
               color: "#333",
@@ -82,9 +80,6 @@ const CourseCard = ({ course }) => {
         </div>
       </div>
 
-      {showUpdateForm && (
-        <UpdateCourseForm setShowUpdateForm={setShowUpdateForm} course={course} />
-      )}
 
       {message && (
         <div
