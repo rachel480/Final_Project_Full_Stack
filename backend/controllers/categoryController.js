@@ -87,24 +87,42 @@ const updateCategory = async (req, res) => {
 
 //delete only for admin
 const deleteCategory = async (req, res) => {
-    try {
-        const { id } = req.body
+  try {
+    const { id } = req.body
+    if (!id) return res.status(400).json({ message: "Category ID is required" })
 
-        //validation
-        if (!id)
-            return res.status(400).send('id is required')
+    // Step 1: Find the category
+    const category = await Category.findById(id).exec()
+    if (!category) return res.status(404).json({ message: "Category not found" })
 
-        const foundCategory = await Category.findById(id).exec()
-        if (!foundCategory)
-            return res.status(400).json({ message: "no Category found" })
+    // Step 2: Delete all words that belong to this category
+    await Word.deleteMany({ categoryName: category.name })
 
-        const deletedCategory = await foundCategory.deleteOne()
-        if (!deletedCategory)
-            return res.status(400).json({ message: `error occurred while deleting category with id ${id}` })
-        return res.status(201).json({ message: `category with id ${id} was deleted successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
+    // Step 3: Delete all questions and the challenge
+    if (category.challenge) {
+      const challenge = await Challenge.findById(category.challenge).exec()
+      if (challenge) { 
+        await Question.deleteMany({ _id: { $in: challenge.questions } })
+        await challenge.deleteOne()
+      }
     }
+
+    // Step 4: Remove this category from its course's "categories" array
+    await Course.updateOne(
+      { _id: category.course },
+      { $pull: { categories: category._id } }
+    )
+
+    // Step 5: Delete the category itself
+    await category.deleteOne()
+
+    return res.status(200).json({
+      message: `Category "${category.name}" and all its related data were deleted successfully.`,
+    })
+  } catch (err) {
+    console.error("Delete category error:", err)
+    return res.status(500).json({ message: "Internal server error" })
+  }
 }
 
 //get category with challenge

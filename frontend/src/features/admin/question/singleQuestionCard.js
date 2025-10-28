@@ -40,7 +40,6 @@ const SingleQuestionCard = () => {
         Question
       </h2>
 
-      {/* Question text */}
       <div
         style={{
           marginBottom: "15px",
@@ -53,7 +52,6 @@ const SingleQuestionCard = () => {
         <strong>Question:</strong> {question.question.word}
       </div>
 
-      {/* Options */}
       <div
         style={{
           marginBottom: "15px",
@@ -71,7 +69,6 @@ const SingleQuestionCard = () => {
         </ul>
       </div>
 
-      {/* Correct Answer */}
       <div
         style={{
           padding: "10px",
@@ -85,41 +82,6 @@ const SingleQuestionCard = () => {
         ✅ Correct Answer: {question.correctAnswer.word}
       </div>
 
-      {/* Buttons for actions */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: "8px",
-          marginTop: "20px",
-        }}
-      >
-        <button
-          style={{
-            backgroundColor: "#fbc02d",
-            color: "#333",
-            border: "none",
-            padding: "6px 10px",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          ✏️ Edit
-        </button>
-
-        <button
-          style={{
-            backgroundColor: "#e53935",
-            color: "#fff",
-            border: "none",
-            padding: "6px 10px",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          🗑️ Delete
-        </button>
-      </div>
     </div>
   )
 }

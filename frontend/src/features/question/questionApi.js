@@ -16,10 +16,19 @@ const questionApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Challenge", "Question","Category"]
-    })
+      invalidatesTags: ["Challenge", "Question", "Category"]
+    }),
+
+    deleteQuestion: builder.mutation({
+      query: (data) => ({
+        url: "/question/",
+        method: 'DELETE',
+        body: data,
+      }),
+      invalidatesTags: ["Question", "Challenge","Category"]
+    }),
   }),
 })
 
-export const { useGetFullQuestionByIdQuery,useCreateQuestionMutation } = questionApi
+export const { useGetFullQuestionByIdQuery, useCreateQuestionMutation,useDeleteQuestionMutation } = questionApi
 export default questionApi

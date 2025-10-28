@@ -61,25 +61,6 @@ const getFullChallengeById = async (req, res) => {
   }
 }
 
-// //create new challenge for admin
-// const createNewChallenge = async (req, res) => {
-//     try {
-//         const { questions } = req.body
-
-//         //validation
-//         if (!questions)
-//             return res.status(400).send('questions are required')
-
-//         const newChallenge = await Challenge.create({ questions })
-//         if (!newChallenge)
-//             return res.status(400).json({ message: `error occurred while creating the challenge` })
-
-//         return res.status(201).json({ message: `challenge created successfully` })
-//     } catch (err) {
-//         res.status(500).json({ message: err.message })
-//     }
-// }
-
 //update challenge for admin
 const updateChallenge = async (req, res) => {
     try {
@@ -106,25 +87,35 @@ const updateChallenge = async (req, res) => {
 
 //delete challenge for admin
 const deleteChallenge = async (req, res) => {
-    try {
-        const { id } = req.body
+  try {
+    const { id } = req.body
+    if (!id) return res.status(400).json({ message: "Challenge ID is required" })
 
-        //validation
-        if (!id)
-            return res.status(400).send('id is required')
+    // Step 1: Find the challenge
+    const challenge = await Challenge.findById(id).exec()
+    if (!challenge) return res.status(404).json({ message: "Challenge not found" })
 
-        const foundChallenge = await Challenge.findById(id).exec()
-        if (!foundChallenge)
-            return res.status(400).json({ message: "no challenge found" })
-
-        const deletedChallenge = await foundChallenge.deleteOne()
-        if (!deletedChallenge)
-            return res.status(400).json({ message: `error occurred while deleting challenge with id ${id}` })
-
-        return res.status(201).json({ message: `challenge with id ${id} was deleted successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
+    // Step 2: Delete all questions associated with this challenge
+    if (challenge.questions && challenge.questions.length > 0) {
+      await Question.deleteMany({ _id: { $in: challenge.questions } })
     }
+
+    // Step 3: Remove the challenge reference from any category
+    await Category.updateMany(
+      { challenge: id },
+      { $unset: { challenge: "" } }
+    )
+
+    // Step 4: Delete the challenge itself
+    await challenge.deleteOne()
+
+    return res.status(200).json({
+      message: `Challenge with ID "${id}" and all its questions were deleted successfully.`,
+    })
+  } catch (err) {
+    console.error("Delete challenge error:", err)
+    return res.status(500).json({ message: "Internal server error" })
+  }
 }
 
 //get challenge results

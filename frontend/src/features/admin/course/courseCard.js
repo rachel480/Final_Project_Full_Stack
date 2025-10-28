@@ -1,23 +1,30 @@
 import { useState } from "react"
-import { useDeleteCourseMutation } from "../../course/courseApi"
 import { useNavigate } from "react-router-dom"
+import { useDeleteCourseMutation } from "../../course/courseApi"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import ConfirmDeleteModal from "../../../components/confirmDeleteModal"
 
 const CourseCard = ({ course }) => {
-  const [message, setMessage] = useState(null)
-
   const navigate = useNavigate()
-  const [deleteCourse, { isLoading: deleting }] = useDeleteCourseMutation()
+  const [deleteCourse] = useDeleteCourseMutation()
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const handleDelete = async () => {
-    setMessage(null)
+    setShowConfirm(false)
     try {
-      const res = await deleteCourse({ id: course._id }).unwrap()
-      setMessage({ type: "success", text: res?.message || "Deleted successfully" })
+      await deleteCourse({ id: course._id }).unwrap()
+      toast.success(`Course "${course.name}" was deleted successfully!`, {
+        position: "top-right",
+        autoClose: 3000,
+      })
     } catch (err) {
-      const errorMsg = err?.data?.message || err?.error || "Unknown error"
-      setMessage({ type: "error", text: errorMsg })
-    } finally {
-      setTimeout(() => setMessage(null), 2000)
+      console.error("Delete error:", err)
+      const errorMsg = err?.data?.message || "Server error occurred while deleting the course."
+      toast.error(errorMsg, {
+        position: "top-right",
+        autoClose: 4000,
+      })
     }
   }
 
@@ -30,6 +37,7 @@ const CourseCard = ({ course }) => {
         borderRadius: "8px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
         backgroundColor: "#f9f9f9",
+        position: "relative",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -50,8 +58,7 @@ const CourseCard = ({ course }) => {
 
         <div style={{ display: "flex", gap: "8px" }}>
           <button
-            onClick={handleDelete}
-            disabled={deleting}
+            onClick={() => setShowConfirm(true)}
             style={{
               backgroundColor: "#e53935",
               color: "#fff",
@@ -61,7 +68,7 @@ const CourseCard = ({ course }) => {
               cursor: "pointer",
             }}
           >
-            {deleting ? "Deleting..." : "🗑️"}
+            🗑️
           </button>
 
           <button
@@ -80,17 +87,13 @@ const CourseCard = ({ course }) => {
         </div>
       </div>
 
-
-      {message && (
-        <div
-          style={{
-            color: message.type === "error" ? "red" : "green",
-            marginTop: "10px",
-            fontWeight: "bold",
-          }}
-        >
-          {message.text}
-        </div>
+      {/* ✅ Confirmation modal */}
+      {showConfirm && (
+        <ConfirmDeleteModal
+          itemName={course.name}
+          handleDelete={handleDelete}
+          setShowConfirm={setShowConfirm}
+        />
       )}
     </div>
   )

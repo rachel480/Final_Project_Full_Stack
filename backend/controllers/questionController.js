@@ -105,24 +105,33 @@ const updateQuestion = async (req, res) => {
 
 //delete question for admin
 const deleteQuestion = async (req, res) => {
-    try {
-        const { id } = req.body
+  try {
+    const { id } = req.body
+    if (!id) return res.status(400).json({ message: "Question ID is required" })
 
-        //validation
-        if (!id)
-            return res.status(400).send('id is required')
+    // Step 1: Find the question
+    const question = await Question.findById(id).exec()
+    if (!question) return res.status(404).json({ message: "Question not found" })
 
-        const foundQuestion = await Question.findById(id).exec()
-        if (!foundQuestion)
-            return res.status(400).json({ message: "no question found" })
+    // Step 2: Find the challenge that contains this question
+    const challenge = await Challenge.findOne({ questions: question._id }).exec()
 
-        const deletedQuestion = await foundQuestion.deleteOne()
-        if (!deletedQuestion)
-            return res.status(400).json({ message: `error occurred while deleting question with id ${id}` })
-        return res.status(201).json({ message: `question with id ${id} was deleted successfully` })
-    } catch (err) {
-        return res.status(500).json({ message: "Internal server error" })
+    // Step 3: Remove the question ID from the challenge.questions array
+    if (challenge) {
+      challenge.questions = challenge.questions.filter(
+        qId => qId.toString() !== question._id.toString()
+      )
+      await challenge.save()
     }
+
+    // Step 4: Delete the question itself
+    await question.deleteOne()
+
+    return res.status(200).json({ message: `Question "${question.question}" deleted successfully.` })
+  } catch (err) {
+    console.error("Delete question error:", err)
+    return res.status(500).json({ message: "Internal server error" })
+  }
 }
 
 module.exports = { getAllQuestions, getSingleQuestion,getFullQuestionById, createNewQuestion, updateQuestion, deleteQuestion }

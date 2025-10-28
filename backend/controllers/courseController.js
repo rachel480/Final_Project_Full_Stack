@@ -95,7 +95,7 @@ const updateCourse = async (req, res) => {
 
         foundCourse.level = level
         foundCourse.name = name
-        foundCourse.status=status?status:foundCourse.status
+        foundCourse.status=status? status:foundCourse.status
 
         const updatedCourse = await foundCourse.save()
         if (!updatedCourse)
@@ -109,25 +109,44 @@ const updateCourse = async (req, res) => {
 
 // delete course for admin
 const deleteCourse = async (req, res) => {
-    try {
-        const { id } = req.body
+  try {
+    const { id } = req.body
+    if (!id) return res.status(400).json({ message: "Course ID is required" })
 
-        //validation
-        if (!id)
-            return res.status(400).send('id is required')
+    // step 1 : Find the course
+    const course = await Course.findById(id).exec()
+    if (!course) return res.status(404).json({ message: "Course not found" })
 
-        const foundCourse = await Course.findById(id).exec()
-        if (!foundCourse)
-            return res.status(400).json({ message: "no course found" })
+    // step 2: Find all categories that belong to this course
+    const categories = await Category.find({ course: id }).exec()
 
-        const deletedCourse = await foundCourse.deleteOne()
-        if (!deletedCourse)
-            return res.status(400).json({ message: `error occurred while deleting course with id ${id}` })
+    for (const category of categories) {
+      // step 3: Delete all words that belong to this category
+      await Word.deleteMany({ categoryName: category.name })
 
-        return res.status(201).json({ message: `course with id ${id} was deleted successfully` })
-    } catch (err) {
-        return res.status(500).json({ message: "Internal server error" })
+      // step 4: Delete all questions in the category's challenge
+      if (category.challenge) {
+        const challenge = await Challenge.findById(category.challenge).exec()
+        if (challenge) {
+          await Question.deleteMany({ _id: { $in: challenge.questions } })
+          await challenge.deleteOne()
+        }
+      }
+
+      //step 5: Delete the category
+      await category.deleteOne()
     }
+
+    // step 6: Delete the course
+    await course.deleteOne()
+
+    return res.status(200).json({
+      message: `Course "${course.name}" and all its related data were deleted successfully.`,
+    })
+  } catch (err) {
+    console.error("Delete course error:", err)
+    return res.status(500).json({ message: "Internal server error" })
+  }
 }
 
 // get course with categories

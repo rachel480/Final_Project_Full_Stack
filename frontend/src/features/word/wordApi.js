@@ -11,15 +11,25 @@ const wordApi = baseApi.injectEndpoints({
             providesTags: ["Word"]
         }),
 
-        createNewWord:builder.mutation({
-            query:(wordData)=>({
-                url:'/word/',
-                method:'POST',
-                body:wordData
+        createNewWord: builder.mutation({
+            query: (wordData) => ({
+                url: '/word/',
+                method: 'POST',
+                body: wordData
             }),
-            invalidatesTags: [ "Word","Category"]
-        })
+            invalidatesTags: ["Word", "Category"]
+        }),
+
+        deleteword: builder.mutation({
+            query: (data) => ({
+                url: "/word/",
+                method: 'DELETE',
+                body: data,
+            }),
+            invalidatesTags: ["Word", "Question", "Category"]
+        }),
     })
+
 })
 
-export const { useGetWordByIdQuery, useCreateNewWordMutation} = wordApi
+export const { useGetWordByIdQuery, useCreateNewWordMutation,useDeletewordMutation } = wordApi

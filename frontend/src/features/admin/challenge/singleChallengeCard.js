@@ -1,12 +1,42 @@
 import { NavLink, useParams ,useNavigate} from "react-router-dom"
 import NavigateButton from "../../../components/navigateButton"
 import { useGetFullChallengeByIdQuery } from "../../challenge/challengeApi"
-import { use } from "react"
+import { useState } from "react"
+import { useDeleteQuestionMutation } from "../../question/questionApi"
+import ConfirmDeleteModal from "../../../components/confirmDeleteModal"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const SingleChallengeCard = () => {
   const navigate = useNavigate()
   const { challengeId, courseId, categoryId } = useParams()
   const { data: challenge, isLoading, error } = useGetFullChallengeByIdQuery(challengeId)
+
+  const [deleteQuestion] = useDeleteQuestionMutation()
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [selectedQuestion, setSelectedQuestion] = useState(null)
+
+  const handleDeleteQuestion = async () => {
+    if (!selectedQuestion) return
+    setShowConfirm(false)
+
+    try {
+      await deleteQuestion({ id: selectedQuestion._id }).unwrap()
+      toast.success(`Question "${selectedQuestion.question.word}" deleted successfully ✅`, {
+        position: "top-right",
+        autoClose: 3000,
+      })
+    } catch (err) {
+      console.error("Delete question error:", err)
+      const errorMsg = err?.data?.message || "Failed to delete question ❌"
+      toast.error(errorMsg, {
+        position: "top-right",
+        autoClose: 4000,
+      })
+    } finally {
+      setSelectedQuestion(null)
+    }
+  }
 
   if (isLoading) return <p>Loading challenge...</p>
   if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
@@ -44,34 +74,34 @@ const SingleChallengeCard = () => {
 
       <div>
         <strong>Questions:</strong>
-        {/* Add question button */}
-          <div
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "10px",
+            marginTop: "12px",
+            border: "1px dashed #aaa",
+            borderRadius: "6px",
+            backgroundColor: "#fafafa",
+          }}
+        >
+          <span style={{ fontWeight: "bold", color: "#555" }}>Add Question</span>
+          <button
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "10px",
-              marginTop: "12px",
-              border: "1px dashed #aaa",
-              borderRadius: "6px",
-              backgroundColor: "#fafafa",
+              backgroundColor: "#2196f3",
+              color: "#fff",
+              border: "none",
+              padding: "6px 10px",
+              borderRadius: "4px",
+              cursor: "pointer",
             }}
+            onClick={() => navigate(`question/add`)}
           >
-            <span style={{ fontWeight: "bold", color: "#555" }}>Add Question</span>
-            <button
-              style={{
-                backgroundColor: "#2196f3",
-                color: "#fff",
-                border: "none",
-                padding: "6px 10px",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-              onClick={() => navigate(`question/add`)}
-            >
-              ➕
-            </button>
-          </div>
+            ➕
+          </button>
+        </div>
+
         <div style={{ marginTop: "12px" }}>
           {challenge.questions.map((question) => (
             <div
@@ -105,6 +135,10 @@ const SingleChallengeCard = () => {
 
               <div style={{ display: "flex", gap: "6px" }}>
                 <button
+                  onClick={() => {
+                    setSelectedQuestion(question)
+                    setShowConfirm(true)
+                  }}
                   style={{
                     backgroundColor: "#e53935",
                     color: "#fff",
@@ -118,6 +152,7 @@ const SingleChallengeCard = () => {
                 </button>
 
                 <button
+                  onClick={() => navigate(`question/${question._id}/update`)}
                   style={{
                     backgroundColor: "#fbc02d",
                     color: "#333",
@@ -132,9 +167,17 @@ const SingleChallengeCard = () => {
               </div>
             </div>
           ))}
-
         </div>
       </div>
+
+      {/* ✅ Confirm modal for delete question */}
+      {showConfirm && selectedQuestion && (
+        <ConfirmDeleteModal
+          itemName={selectedQuestion.question.word}
+          handleDelete={handleDeleteQuestion}
+          setShowConfirm={setShowConfirm}
+        />
+      )}
     </div>
   )
 }

@@ -125,7 +125,7 @@ const updateUserByAdmin = async (req, res) => {
 
         //update fileds
         foundUser.roles = roles ? roles : foundUser.roles
-        foundUser.active = active ===null?  foundUser.active:active
+        foundUser.active = active ===null ? foundUser.active: active 
 
         const updatedUser = await foundUser.save()
         if (!updatedUser)

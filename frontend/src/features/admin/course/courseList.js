@@ -7,7 +7,6 @@ const CourseList = () => {
 
   if (isLoading) return <p>Loading courses...</p>
   if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
-  if (!courses?.length) return <p>No courses found</p>
 
   return (
     <div
@@ -24,9 +23,13 @@ const CourseList = () => {
       </div>
 
       <div>
-        {courses.map((course) => (
-          <CourseCard key={course._id} course={course} />
-        ))}
+
+        {courses.length ?
+          courses.map((course) => (
+            <CourseCard key={course._id} course={course} />
+          ))
+          :
+          <p>No courses found!!</p>}
       </div>
     </div>
   )

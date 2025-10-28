@@ -1,12 +1,13 @@
-import { useParams,useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import AddWordForm from "./addWordForm"
 import { useGetCategoryByIdQuery } from "../../category/categoryApi"
 import { useCreateNewWordMutation } from "../../word/wordApi"
 import { useState } from "react"
+import NavigateButton from "../../../components/navigateButton"
 
 const AddWordInfo = () => {
-  const navigate=useNavigate()
-  const { categoryId ,courseId} = useParams()
+  const navigate = useNavigate()
+  const { categoryId, courseId } = useParams()
   const { data: category, isLoading, error } = useGetCategoryByIdQuery(categoryId)
   const [createNewWord] = useCreateNewWordMutation()
   const [errorMsg, setErrorMsg] = useState("")
@@ -28,8 +29,8 @@ const AddWordInfo = () => {
       //create word in DB
       await createNewWord(addWordData).unwrap()
 
-      const addQuestion=window.confirm('whould you like to add a question for this word???')
-      if(addQuestion)
+      const addQuestion = window.confirm('whould you like to add a question for this word???')
+      if (addQuestion)
         navigate(`/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${category.challenge}/question/add`)
       else
         navigate(`/user/admin/data/courses/${courseId}/category/${categoryId}`)
@@ -41,6 +42,11 @@ const AddWordInfo = () => {
   }
 
   return <div>
+    <NavigateButton
+      navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}`}
+      buttonText={"🔙"}
+    />
+
     <AddWordForm handleData={handleData} />
     {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
   </div>

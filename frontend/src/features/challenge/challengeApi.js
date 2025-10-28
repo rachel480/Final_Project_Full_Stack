@@ -26,9 +26,18 @@ const challengeApi = baseApi.injectEndpoints({
                 body: data,
             }),
             invalidatesTags: ["Category", "Challenge"]
+        }),
+
+        deleteChallenge:builder.mutation({
+            query: (data) => ({
+                url: "/challenge/",
+                method: 'DELETE',
+                body: data,
+            }),
+            invalidatesTags: ["Challenge","Category","Question"]
         })
 
     })
 })
 
-export const { useGetChallengeResultsQuery, useGetFullChallengeByIdQuery ,useCreateFullChallengeMutation} = challengeApi
+export const { useGetChallengeResultsQuery, useGetFullChallengeByIdQuery ,useCreateFullChallengeMutation,useDeleteChallengeMutation} = challengeApi
