@@ -19,7 +19,7 @@ import MyWords from "../features/myWords/myWords";
 import ChallengeResults from "../features/category/challengeSection/results/challengeResults";
 import AdminLayout from "./layouts/adminLayout";
 import AdminCourseList from "../features/admin/course/courseList";
-import CourseWizard from "../features/admin/course/CourseWizard";
+import CourseWizard from "../features/admin/course/courseWizard";
 import SingleCourseCard from "../features/admin/course/singleCourseCard";
 import SingleCategoryCard from "../features/admin/category/singleCategoryCard";
 import SingleWordCard from "../features/admin/word/singleWordCard";
