@@ -5,4 +5,5 @@ return (
     <button onClick={()=>navigate(navigation)}>{buttonText}</button>
 )
 }
+
 export default NavigateButton

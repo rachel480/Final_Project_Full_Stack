@@ -140,7 +140,7 @@ const SingleCategoryCard = () => {
                     borderRadius: "4px",
                     cursor: "pointer"
                   }}
-                  onClick={() => navigate(`challenge/${category.challenge._id}/edit`)}
+                  onClick={() => navigate(`challenge/${category.challenge._id}/update`)}
                 >
                   ✏️
                 </button>
@@ -259,7 +259,7 @@ const SingleCategoryCard = () => {
                     borderRadius: "4px",
                     cursor: "pointer"
                   }}
-                  onClick={() => navigate(`words/${word._id}/edit`)}
+                  onClick={() => navigate(`words/${word._id}/update`)}
                 >
                   ✏️
                 </button>

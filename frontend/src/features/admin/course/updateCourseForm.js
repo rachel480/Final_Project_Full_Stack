@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react"
-import { useParams, useNavigate, Link } from "react-router-dom"
+import { useEffect } from "react"
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom"
 import { useGetFullCourseByIdQuery, useUpdateCourseMutation } from "../../course/courseApi"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "react-toastify"
+import NavigateButton from "../../../components/navigateButton"
 
 const updateCourseSchema = z.object({
   name: z.string().min(1, "Course name is required"),
@@ -15,12 +16,17 @@ const updateCourseSchema = z.object({
 const UpdateCourseForm = () => {
   const { courseId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const { data: course, isLoading, error } = useGetFullCourseByIdQuery(courseId)
   const [updateCourse] = useUpdateCourseMutation()
-  const [message, setMessage] = useState(null)
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(updateCourseSchema),
     defaultValues: {
       name: "",
@@ -46,43 +52,60 @@ const UpdateCourseForm = () => {
   const onSubmit = async (data) => {
     try {
       await updateCourse({ id: courseId, ...data }).unwrap()
-
       toast.success(`Course "${data.name}" updated successfully!`, {
         position: "top-right",
         autoClose: 3000,
       })
 
       setTimeout(() => {
-        navigate("/user/admin/data/courses") 
+        navigate("/user/admin/data/courses")
       }, 3000)
     } catch (err) {
       console.error(err)
-      setMessage({ type: "error", text: err?.data?.message || "Update failed" })
+      toast.error(err?.data?.message || "Update failed", {
+        position: "top-right",
+        autoClose: 3000,
+      })
     }
   }
 
   return (
-    <div style={{
-      maxWidth: 500,
-      margin: "40px auto",
-      padding: 20,
-      border: "1px solid #ddd",
-      borderRadius: 10,
-      boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-      backgroundColor: "#fff",
-      fontFamily: "Arial, sans-serif"
-    }}>
-      <h2><strong>Update course:</strong> {course.name}</h2>
+    <div
+      style={{
+        maxWidth: 500,
+        margin: "40px auto",
+        padding: 20,
+        border: "1px solid #ddd",
+        borderRadius: 10,
+        boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
+        backgroundColor: "#fff",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <NavigateButton buttonText={'🔙'} navigation={'/user/admin/data/courses'}/>
+      <h2>
+        <strong>Update course:</strong> {course.name}
+      </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 15 }}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 15 }}
+      >
         {/* Name */}
         <label style={{ fontWeight: "bold" }}>Course Name</label>
-        <input type="text" {...register("name")} style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }} />
+        <input
+          type="text"
+          {...register("name")}
+          style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
+        />
         {errors.name && <p style={{ color: "red" }}>{errors.name.message}</p>}
 
         {/* Level */}
         <label style={{ fontWeight: "bold" }}>Level</label>
-        <select {...register("level")} style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}>
+        <select
+          {...register("level")}
+          style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
+        >
           <option value="Easy">Easy</option>
           <option value="Medium">Medium</option>
           <option value="Hard">Hard</option>
@@ -91,7 +114,10 @@ const UpdateCourseForm = () => {
 
         {/* Status */}
         <label style={{ fontWeight: "bold" }}>Status</label>
-        <select {...register("status")} style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}>
+        <select
+          {...register("status")}
+          style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
+        >
           <option value="draft">Draft</option>
           <option value="published">Published</option>
         </select>
@@ -100,14 +126,19 @@ const UpdateCourseForm = () => {
         {/* Categories as links */}
         <label style={{ fontWeight: "bold" }}>Categories</label>
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          {(course.categories || []).map(category => {
+          {(course.categories || []).map((category) => {
             const catId = typeof category === "string" ? category : category._id
             const catName = typeof category === "string" ? category : category.name
             return (
               <Link
                 key={catId}
                 to={`/user/admin/data/courses/${course._id}/category/${catId}/update`}
-                style={{ textDecoration: "none", color: "#007bff", marginBottom: 4 }}
+                state={{ from: location.pathname }}
+                style={{
+                  textDecoration: "none",
+                  color: "#007bff",
+                  marginBottom: 4,
+                }}
               >
                 {catName}
               </Link>
@@ -115,11 +146,21 @@ const UpdateCourseForm = () => {
           })}
         </div>
 
-        <button type="submit" style={{ marginTop: 10, backgroundColor: "#4caf50", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 4, cursor: "pointer", fontWeight: "bold" }}>
+        <button
+          type="submit"
+          style={{
+            marginTop: 10,
+            backgroundColor: "#4caf50",
+            color: "#fff",
+            border: "none",
+            padding: "8px 12px",
+            borderRadius: 4,
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
           Save
         </button>
-
-        {message && <p style={{ color: message.type === "error" ? "red" : "green" }}>{message.text}</p>}
       </form>
     </div>
   )

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate ,useLocation} from "react-router-dom"
 import { useGetFullCourseByIdQuery } from "../../course/courseApi"
 import { useDeleteCategoryMutation } from "../../category/categoryApi"
 import NavigateButton from "../../../components/navigateButton"
@@ -11,6 +11,7 @@ const SingleCourseCard = () => {
   const { courseId } = useParams()
   const { data: course, isLoading, error } = useGetFullCourseByIdQuery(courseId)
   const navigate = useNavigate()
+  const location=useLocation()
 
   const [deleteCategory] = useDeleteCategoryMutation()
   const [showConfirm, setShowConfirm] = useState(false)
@@ -150,7 +151,7 @@ const SingleCourseCard = () => {
                 </button>
 
                 <button
-                  onClick={() => navigate(`category/${category._id}/update`)}
+                  onClick={() => navigate(`category/${category._id}/update`,{state:{from:location.pathname}})}
                   style={{
                     backgroundColor: "#fbc02d",
                     color: "#333",

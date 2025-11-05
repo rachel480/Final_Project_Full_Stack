@@ -61,27 +61,61 @@ const updateWord = async (req, res) => {
   try {
     const { id, word, translation, categoryName } = req.body
 
-    //validation
-    if (!word || !translation || !id || !categoryName)
-      return res.status(400).send('all fields are required')
+    // Basic validation
+    if (!id || !word || !translation || !categoryName)
+      return res.status(400).json({ message: "All fields are required" })
 
+    // Find the existing word
     const foundWord = await Word.findById(id).exec()
     if (!foundWord)
-      return res.status(400).json({ message: "no word found" })
+      return res.status(404).json({ message: "Word not found" })
 
+    // Check if category name changed
+    const oldCategoryName = foundWord.categoryName
+    const isCategoryChanged =
+      oldCategoryName.toLowerCase() !== categoryName.toLowerCase()
+
+    // Update basic fields
     foundWord.word = word
     foundWord.translation = translation
-    foundWord.categoryName = categoryName
+    foundWord.categoryName = categoryName.toLowerCase()
 
+    // Save updated word
     const updatedWord = await foundWord.save()
-    if (!updatedWord)
-      return res.status(400).json({ message: `error occurred while updating word ${word}` })
-    return res.status(201).json({ message: `word ${word} was updated successfully` })
+
+    // If category changed – handle category arrays
+    if (isCategoryChanged) {
+      // Find old and new categories
+      const oldCategory = await Category.findOne({ name: oldCategoryName }).exec()
+      const newCategory = await Category.findOne({ name: categoryName }).exec()
+
+      if (!newCategory)
+        return res.status(400).json({ message: `Category '${categoryName}' not found` })
+
+      // Remove from old category
+      if (oldCategory) {
+        oldCategory.words = oldCategory.words.filter(
+          (wId) => wId.toString() !== foundWord._id.toString()
+        )
+        await oldCategory.save()
+      }
+
+      // Add to new category (if not already there)
+      if (!newCategory.words.includes(foundWord._id)) {
+        newCategory.words.push(foundWord._id)
+        await newCategory.save()
+      }
+    }
+
+    return res.status(200).json({
+      message: `Word '${word}' was updated successfully`,
+      word: updatedWord,
+    })
   } catch (error) {
+    console.error("Error updating word:", error)
     res.status(500).json({ message: error.message })
   }
 }
-
 //delete word only for admin
 const deleteWord = async (req, res) => {
   try {

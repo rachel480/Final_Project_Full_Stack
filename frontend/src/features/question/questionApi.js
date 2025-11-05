@@ -27,8 +27,16 @@ const questionApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Question", "Challenge","Category"]
     }),
+    updateQuestion: builder.mutation({
+      query: (data) => ({
+        url: `/question/`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Question", "Challenge"],
+    })
   }),
 })
 
-export const { useGetFullQuestionByIdQuery, useCreateQuestionMutation,useDeleteQuestionMutation } = questionApi
+export const { useGetFullQuestionByIdQuery, useCreateQuestionMutation,useDeleteQuestionMutation,useUpdateQuestionMutation } = questionApi
 export default questionApi

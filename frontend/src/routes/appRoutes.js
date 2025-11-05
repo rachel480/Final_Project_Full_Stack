@@ -34,6 +34,10 @@ import SingleUserCard from "../features/admin/user/singleUserCard";
 import AddUserForm from "../features/admin/user/addUserForm";
 import UpdateUserForm from "../features/admin/user/updateUserForm";
 import UpdateCourseForm from "../features/admin/course/updateCourseForm";
+import UpdateCategoryForm from "../features/admin/category/updateCategoryForm";
+import UpdateChallengeForm from "../features/admin/challenge/updateChallengeForm";
+import UpdateWordForm from "../features/admin/word/updateWordForm";
+import UpdateQuestionForm from "../features/admin/question/updateQuestionForm";
 
 const AppRoutes = () => {
   return (
@@ -99,12 +103,21 @@ const AppRoutes = () => {
 
                 <Route path="category/:categoryId" >
                   <Route index element={<SingleCategoryCard />} />
-                  <Route path="update" element ={<h1>update category</h1>}/>
-                  <Route path="words/:wordId" element={<SingleWordCard />} />
-        
+                  <Route path="update" element ={<UpdateCategoryForm/>}/>
+                  
+                  <Route path="words/:wordId"  >
+                   <Route index element={<SingleWordCard />}/>
+                   <Route path="update" element ={<UpdateWordForm/>}/>
+                  </Route>
+                  
                   <Route path='challenge/:challengeId'>
                     <Route index  element={<SingleChallengeCard/>}/>
-                    <Route path='question/:questionId' element={<SingleQuestionCard/>}/>
+                    <Route path="update" element ={<UpdateChallengeForm/>}/>
+                    <Route path='question/:questionId' >
+                    <Route index element={<SingleQuestionCard/>} />
+                    <Route path="update" element ={<UpdateQuestionForm/>}/>
+                    </Route>
+                    
                     <Route path='question/add' element={<QuestionWizard/>}/>
                   </Route>
 
@@ -132,7 +145,6 @@ const AppRoutes = () => {
             </Route>
             <Route path="add" element={<AddUserForm/>}/>
           </Route>
-          <Route path='recommendtions' element={<h1>המלצות</h1>} />
 
         </Route>
 

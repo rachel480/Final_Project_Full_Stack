@@ -80,18 +80,16 @@ const createNewQuestion = async (req, res) => {
 //update question for admin
 const updateQuestion = async (req, res) => {
     try {
-        const { question, correctAnswer, options, id } = req.body
+        const {  options, id } = req.body
 
         //validation
-        if (!question || !correctAnswer || !options || !id)
+        if ( !options || !id)
             return res.status(400).send('all fields are required')
 
         const foundQuestion = await Question.findById(id).exec()
         if (!foundQuestion)
             return res.status(400).json({ message: "no question found" })
 
-        foundQuestion.question = question
-        foundQuestion.correctAnswer = correctAnswer
         foundQuestion.options = options
 
         const updatedQuestion = await foundQuestion.save()

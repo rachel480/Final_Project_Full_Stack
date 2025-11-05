@@ -1,4 +1,4 @@
-import { NavLink, useParams ,useNavigate} from "react-router-dom"
+import { NavLink, useParams ,useNavigate, useLocation} from "react-router-dom"
 import NavigateButton from "../../../components/navigateButton"
 import { useGetFullChallengeByIdQuery } from "../../challenge/challengeApi"
 import { useState } from "react"
@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css"
 
 const SingleChallengeCard = () => {
   const navigate = useNavigate()
+  const location=useLocation()
   const { challengeId, courseId, categoryId } = useParams()
   const { data: challenge, isLoading, error } = useGetFullChallengeByIdQuery(challengeId)
 
@@ -152,7 +153,7 @@ const SingleChallengeCard = () => {
                 </button>
 
                 <button
-                  onClick={() => navigate(`question/${question._id}/update`)}
+                  onClick={() => navigate(`question/${question._id}/update`,{state:{form:location.pathname}})}
                   style={{
                     backgroundColor: "#fbc02d",
                     color: "#333",

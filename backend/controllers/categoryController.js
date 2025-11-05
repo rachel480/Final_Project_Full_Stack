@@ -40,6 +40,7 @@ const getFullCategoryById = async (req, res) => {
 
     const category = await Category.findById(id)
       .populate("words")
+      .populate('course')
       .populate({
         path: "challenge",
         populate: {
@@ -58,31 +59,56 @@ const getFullCategoryById = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" })
   }
 }
-
-//update only for admin
+// update category by admin
 const updateCategory = async (req, res) => {
-    try {
-        const { id, name, challenge, course } = req.body
+  try {
+    const { id, name, course } = req.body
 
-        //validation
-        if (!name || !challenge || !id || !course)
-            return res.status(400).send('all fields are required')
+    //Validation
+    if (!id || !name || !course)
+      return res.status(400).json({ message: "All fields are required" })
 
-        const foundCategory = await Category.findById(id).exec()
-        if (!foundCategory)
-            return res.status(400).json({ message: "no Category found" })
+    //Find existing category
+    const foundCategory = await Category.findById(id).exec()
+    if (!foundCategory)
+      return res.status(404).json({ message: "Category not found" })
 
-        foundCategory.name = name
-        foundCategory.course = course
-        foundCategory.challenge = challenge
+    const oldCourseId = foundCategory.course?.toString()
+    const newCourseId = course.toString()
 
-        const updatedCategory = await foundCategory.save()
-        if (!updatedCategory)
-            return res.status(400).json({ message: `error occurred while updating category ${name}` })
-        return res.status(201).json({ message: `category ${name} was updated successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
+    //Update category fields
+    foundCategory.name = name
+    foundCategory.course = newCourseId
+
+    //If course has changed
+    if (oldCourseId !== newCourseId) {
+      // 1. Remove category from old course
+      if (oldCourseId) {
+        await Course.findByIdAndUpdate(oldCourseId, {
+          $pull: { categories: id },
+        })
+      }
+
+      // 2. Add category to new course
+      await Course.findByIdAndUpdate(newCourseId, {
+        $addToSet: { categories: id },
+      })
     }
+
+    //Save updated category
+    const updatedCategory = await foundCategory.save()
+    if (!updatedCategory)
+      return res
+        .status(400)
+        .json({ message: `Error occurred while updating category ${name}` })
+
+    return res
+      .status(200)
+      .json({ message: `Category "${name}" was updated successfully` })
+  } catch (err) {
+    console.error("Error updating category:", err)
+    res.status(500).json({ message: err.message })
+  }
 }
 
 //delete only for admin
