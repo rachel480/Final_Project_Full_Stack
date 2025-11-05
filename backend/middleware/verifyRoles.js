@@ -1,4 +1,5 @@
 
+
 const verifyRoles = (requiredRole) => {
   return (req, res, next) => {
     try {
@@ -9,8 +10,8 @@ const verifyRoles = (requiredRole) => {
       }
 
       const hasRole = Array.isArray(user.roles)
-        ? user.roles.includes(requiredRole)
-        : user.roles === requiredRole
+        ? user.roles.includes(requiredRole) || user.roles.includes('Admin')
+        : user.roles === requiredRole || user.roles === 'Admin'
 
       if (!hasRole) {
         return res.status(403).json({ message: "Forbidden: Access denied" })
@@ -22,4 +23,5 @@ const verifyRoles = (requiredRole) => {
     }
   }
 }
-module.exports=verifyRoles
+
+module.exports = verifyRoles

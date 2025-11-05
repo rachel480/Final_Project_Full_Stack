@@ -4,7 +4,6 @@ const Recommendion = require('../models/Recommendion')
 const getAllRecommendions = async (req, res) => {
     try {
         const recommendions = await Recommendion.find().lean()
-
         if (!recommendions)
             return res.status(400).json({ message: "no recommendions found" })
         res.json(recommendions)
@@ -33,7 +32,8 @@ const getSingleRecommendion = async (req, res) => {
 const createNewRecommendion = async (req, res) => {
     try {
         const { recommendtion, userName, rating } = req.body
-         //validation
+
+        //validation
         if (!recommendtion || !userName || !rating)
             return res.status(400).send('all fields are required')
 
@@ -46,12 +46,12 @@ const createNewRecommendion = async (req, res) => {
     }
 }
 
-
 //delete Recommendion only for admin
 const deleteRecommendion = async (req, res) => {
     try {
         const { id } = req.body
-         //validation
+
+        //validation
         if (!id)
             return res.status(400).send('id is required')
 

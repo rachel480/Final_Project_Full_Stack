@@ -1,5 +1,9 @@
 const Category = require('../models/Category')
 const FavoriteWord = require('../models/FavoriteWord')
+const { Word } = require("../models/Word");
+const Challenge = require("../models/Challenge");
+const Question = require("../models/Question");
+const Course = require('../models/Course')
 
 //get all categories for admin and user
 const getAllCategories = async (req, res) => {
@@ -28,71 +32,123 @@ const getSingleCategory = async (req, res) => {
     }
 }
 
-//create only for admin
-const createCategory = async (req, res) => {
-    try {
-        const { name, challenge, level } = req.body
+const getFullCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params
+    if (!id)
+      return res.status(400).json({ message: "id is required" })
 
-        //validation
-        if (!name || !level || !challenge)
-            return res.status(400).send('all fields are required')
+    const category = await Category.findById(id)
+      .populate("words")
+      .populate('course')
+      .populate({
+        path: "challenge",
+        populate: {
+          path: "questions",
+          populate: { path: "question" } 
+        }
+      })
+      .lean()
 
-        const newCategory = await Category.create({ name, level, challenge })
-        if (!newCategory)
-            return res.status(400).json({ message: `error occurred while creating category ${name}` })
-        return res.status(201).json({ message: `category ${name} was created successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
-    }
+    if (!category)
+      return res.status(404).json({ message: "Category not found" })
+
+    return res.json(category)
+  } catch (err) {
+    console.error("getFullCategoryById error:", err)
+    return res.status(500).json({ message: "Internal server error" })
+  }
 }
-
-
-//update only for admin
+// update category by admin
 const updateCategory = async (req, res) => {
-    try {
-        const { id, name, challenge, level } = req.body
+  try {
+    const { id, name, course } = req.body
 
-        //validation
-        if (!name || !challenge || !id || !level)
-            return res.status(400).send('all fields are required')
+    //Validation
+    if (!id || !name || !course)
+      return res.status(400).json({ message: "All fields are required" })
 
-        const foundCategory = await Category.findById(id).exec()
-        if (!foundCategory)
-            return res.status(400).json({ message: "no Category found" })
+    //Find existing category
+    const foundCategory = await Category.findById(id).exec()
+    if (!foundCategory)
+      return res.status(404).json({ message: "Category not found" })
 
-        foundCategory.name = name
-        foundCategory.level = level
-        foundCategory.challenge = challenge
+    const oldCourseId = foundCategory.course?.toString()
+    const newCourseId = course.toString()
 
-        const updatedCategory = await foundCategory.save()
-        if (!updatedCategory)
-            return res.status(400).json({ message: `error occurred while updating category ${name}` })
-        return res.status(201).json({ message: `category ${name} was updated successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
+    //Update category fields
+    foundCategory.name = name
+    foundCategory.course = newCourseId
+
+    //If course has changed
+    if (oldCourseId !== newCourseId) {
+      // 1. Remove category from old course
+      if (oldCourseId) {
+        await Course.findByIdAndUpdate(oldCourseId, {
+          $pull: { categories: id },
+        })
+      }
+
+      // 2. Add category to new course
+      await Course.findByIdAndUpdate(newCourseId, {
+        $addToSet: { categories: id },
+      })
     }
+
+    //Save updated category
+    const updatedCategory = await foundCategory.save()
+    if (!updatedCategory)
+      return res
+        .status(400)
+        .json({ message: `Error occurred while updating category ${name}` })
+
+    return res
+      .status(200)
+      .json({ message: `Category "${name}" was updated successfully` })
+  } catch (err) {
+    console.error("Error updating category:", err)
+    res.status(500).json({ message: err.message })
+  }
 }
 
 //delete only for admin
 const deleteCategory = async (req, res) => {
-    try {
-        const { id } = req.body
+  try {
+    const { id } = req.body
+    if (!id) return res.status(400).json({ message: "Category ID is required" })
 
-        //validation
-        if (!id)
-            return res.status(400).send('id is required')
+    // Step 1: Find the category
+    const category = await Category.findById(id).exec()
+    if (!category) return res.status(404).json({ message: "Category not found" })
 
-        const foundCategory = await Category.findById(id).exec()
-        if (!foundCategory)
-            return res.status(400).json({ message: "no Category found" })
+    // Step 2: Delete all words that belong to this category
+    await Word.deleteMany({ categoryName: category.name })
 
-        const deletedCategory = await foundCategory.deleteOne()
-        if (!deletedCategory)
-            return res.status(400).json({ message: `error occurred while deleting category with id ${id}` })
-        return res.status(201).json({ message: `category with id ${id} was deleted successfully` })
-    } catch (err) {
-        res.status(500).json({ message: err.message })
+    // Step 3: Delete all questions and the challenge
+    if (category.challenge) {
+      const challenge = await Challenge.findById(category.challenge).exec()
+      if (challenge) { 
+        await Question.deleteMany({ _id: { $in: challenge.questions } })
+        await challenge.deleteOne()
+      }
     }
+
+    // Step 4: Remove this category from its course's "categories" array
+    await Course.updateOne(
+      { _id: category.course },
+      { $pull: { categories: category._id } }
+    )
+
+    // Step 5: Delete the category itself
+    await category.deleteOne()
+
+    return res.status(200).json({
+      message: `Category "${category.name}" and all its related data were deleted successfully.`,
+    })
+  } catch (err) {
+    console.error("Delete category error:", err)
+    return res.status(500).json({ message: "Internal server error" })
+  }
 }
 
 //get category with challenge
@@ -148,4 +204,48 @@ const getWordsOfCategory = async (req, res) => {
     }
 }
 
-module.exports = { getAllCategories, getSingleCategory, createCategory, updateCategory, deleteCategory, getChallengeOfCategory, getWordsOfCategory }
+const createFullCategorySimple = async (req, res) => {
+    try {
+        const { categoryInfo, questions, words, courseId } = req.body
+
+        //step 1: add words to DB
+        const createdWords = await Word.insertMany(words)
+
+        // step 2: add questions to DB
+        const questionsWithIds = questions.map(q => {
+
+            const questionWord = createdWords.find(w => w.word === q.question)
+
+            const optionsWords = q.options.map(opt => {
+                const word = createdWords.find(w => w.word === opt)
+                return word._id
+            })
+
+            return { question: questionWord._id, correctAnswer: questionWord._id, options: optionsWords }
+        })
+
+        const createdQuestions = await Question.insertMany(questionsWithIds)
+
+        //step 3: add challenge to DB
+        const questionsIds= createdQuestions.map((q)=>q._id)
+        const createdChallenge = await Challenge.create({questions:questionsIds})
+
+        //step 4: add category to DB
+        const wordsIds=createdWords.map(w => w._id)
+        const addCategoryData = {name:categoryInfo.name,course:courseId,challenge:createdChallenge._id,words:wordsIds}
+        const createdCategory = await Category.create(addCategoryData)
+
+        //step 5: update course categories
+        const foundCourse = await Course.findById(courseId).exec()
+        foundCourse.categories.push(createdCategory._id)
+        foundCourse.save()
+
+        res.status(201).json({ message:"created succsesfully"})
+    }
+    catch (err) {
+        console.error("createFullCourseSimple error:", err)
+        res.status(500).json({ message: "Server error", error: err.message })
+    }
+}
+
+module.exports = { getAllCategories, getSingleCategory, getFullCategoryById, createFullCourseSimple: createFullCategorySimple, updateCategory, deleteCategory, getChallengeOfCategory, getWordsOfCategory }

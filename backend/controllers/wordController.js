@@ -1,4 +1,7 @@
-const Word = require('../models/Word')
+const { Word } = require('../models/Word')
+const Category= require('../models/Category')
+const Challenge = require('../models/Challenge')
+const Question = require('../models/Question')
 
 //get all words for admin and user
 const getAllWords = async (req, res) => {
@@ -31,16 +34,22 @@ const getSingleWord = async (req, res) => {
 //create word only for admin
 const createNewWord = async (req, res) => {
   try {
-    const { word, translation, categoryName } = req.body
+    const { word, translation, categoryName ,categoryId} = req.body
 
     //validation:
-
-    if (!word || !translation || !categoryName)
+    if (!word || !translation || !categoryName || !categoryId)
       return res.status(400).send('all fields are required')
 
     const newWord = await Word.create({ word, translation, categoryName })
     if (!newWord)
       return res.status(400).json({ message: `error occurred while creating word ${word}` })
+
+    //add the word to category array
+    const category = await Category.findById(categoryId).exec()
+    //update category
+    category.words.push(newWord._id)
+    await category.save()
+
     return res.status(201).json({ message: `word ${word} was created successfully` })
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -52,43 +61,116 @@ const updateWord = async (req, res) => {
   try {
     const { id, word, translation, categoryName } = req.body
 
-    if (!word || !translation || !id || !categoryName)
-      return res.status(400).send('all fields are required')
+    // Basic validation
+    if (!id || !word || !translation || !categoryName)
+      return res.status(400).json({ message: "All fields are required" })
 
+    // Find the existing word
     const foundWord = await Word.findById(id).exec()
     if (!foundWord)
-      return res.status(400).json({ message: "no word found" })
+      return res.status(404).json({ message: "Word not found" })
 
+    // Check if category name changed
+    const oldCategoryName = foundWord.categoryName
+    const isCategoryChanged =
+      oldCategoryName.toLowerCase() !== categoryName.toLowerCase()
+
+    // Update basic fields
     foundWord.word = word
     foundWord.translation = translation
-    foundWord.categoryName = categoryName
+    foundWord.categoryName = categoryName.toLowerCase()
 
+    // Save updated word
     const updatedWord = await foundWord.save()
-    if (!updatedWord)
-      return res.status(400).json({ message: `error occurred while updating word ${word}` })
-    return res.status(201).json({ message: `word ${word} was updated successfully` })
+
+    // If category changed – handle category arrays
+    if (isCategoryChanged) {
+      // Find old and new categories
+      const oldCategory = await Category.findOne({ name: oldCategoryName }).exec()
+      const newCategory = await Category.findOne({ name: categoryName }).exec()
+
+      if (!newCategory)
+        return res.status(400).json({ message: `Category '${categoryName}' not found` })
+
+      // Remove from old category
+      if (oldCategory) {
+        oldCategory.words = oldCategory.words.filter(
+          (wId) => wId.toString() !== foundWord._id.toString()
+        )
+        await oldCategory.save()
+      }
+
+      // Add to new category (if not already there)
+      if (!newCategory.words.includes(foundWord._id)) {
+        newCategory.words.push(foundWord._id)
+        await newCategory.save()
+      }
+    }
+
+    return res.status(200).json({
+      message: `Word '${word}' was updated successfully`,
+      word: updatedWord,
+    })
   } catch (error) {
+    console.error("Error updating word:", error)
     res.status(500).json({ message: error.message })
   }
 }
-
 //delete word only for admin
 const deleteWord = async (req, res) => {
   try {
     const { id } = req.body
-    if (!id)
-      return res.status(400).send('id is required')
+    if (!id) return res.status(400).json({ message: "Word ID is required" })
 
-    const foundWord = await Word.findById(id).exec()
-    if (!foundWord)
-      return res.status(400).json({ message: "no word found" })
+    // Step 1: Find the word
+    const word = await Word.findById(id).exec()
+    if (!word) return res.status(404).json({ message: "Word not found" })
 
-    const deletedWord = await foundWord.deleteOne()
-    if (!deletedWord)
-      return res.status(400).json({ message: `error occurred while deleting word with id ${id}` })
-    return res.status(201).json({ message: `word with id ${id} was deleted successfully` })
-  } catch (error) {
-    res.status(500).json({ message: error.message })
+    // Step 2: Find the category this word belongs to
+    const category = await Category.findOne({ name: word.categoryName }).exec()
+
+    // Step 3: Remove the word from category.words array
+    if (category) {
+      category.words = category.words.filter(
+        w => w.toString() !== word._id.toString()
+      )
+      await category.save()
+    }
+
+    // Step 4: Remove questions that reference this word
+    if (category?.challenge) {
+      const challenge = await Challenge.findById(category.challenge).exec()
+      if (challenge) {
+        // Find questions that have this word in correctAnswer or in options array
+        const questionsToDelete = await Question.find({
+          _id: { $in: challenge.questions },
+          $or: [
+            { correctAnswer: word._id },
+            { options: word._id } ,
+            {question:word._id}
+          ]
+        }).exec()
+
+        // Delete these questions
+        for (const q of questionsToDelete) {
+          // Remove from challenge.questions array
+          challenge.questions = challenge.questions.filter(
+            id => id.toString() !== q._id.toString()
+          )
+          await q.deleteOne()
+        }
+
+        await challenge.save()
+      }
+    }
+
+    // Step 5: Delete the word itself
+    await word.deleteOne()
+
+    return res.status(200).json({ message: `Word "${word.word}" deleted successfully.` })
+  } catch (err) {
+    console.error("Delete word error:", err)
+    return res.status(500).json({ message: "Internal server error" })
   }
 }
 

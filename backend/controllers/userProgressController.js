@@ -18,6 +18,7 @@ const getSingleUserProgressByAdmin = async (req, res) => {
         const { userId } = req.params
         if (!userId)
             return res.status(400).send('userId is required')
+
         const foundUserProgress = await UserProgress.findOne({ user: userId }).populate([
             { path: 'courses' },
             { path: 'completedCategories' },
@@ -38,6 +39,7 @@ const getSingleUserProgressByAdmin = async (req, res) => {
 const getSingleUserProgressByUser = async (req, res) => {
     try {
         const user = req.user
+
         const foundUserProgress = await UserProgress.findOne({ user: user._id }).populate([
             { path: 'courses' },
             { path: 'completedCategories' },
@@ -62,7 +64,7 @@ const createUserProgress = async (req, res) => {
             return res.status(400).send('user and course are required')
 
         const user = req.user
-        if (!user.roles.includes('Admin') ) {
+        if (!user.roles.includes("Admin")) {
             if (user._id !== userId)
                 return res.status(403).json({ message: 'forbidden!!!! you can create for yourself only' })
         }
@@ -74,7 +76,9 @@ const createUserProgress = async (req, res) => {
             if (!newUserProgress)
                 return res.status(400).json({ message: `error occurred while creating user progress` })
             return res.status(201).json({ message: `user's progress was created successfully` })
-        } else {
+        } 
+        
+        else {
             if (foundUserProgress.courses.includes(courseId))
                 return res.status(400).json({ message: `course exsists` })
 
@@ -164,4 +168,4 @@ const updateChallengeResultInUserProgress = async (req, res) => {
     }
 }
 
-module.exports = {getAllUsersProgress,getSingleUserProgressByAdmin,getSingleUserProgressByUser,createUserProgress,updateUserProgress,deleteUserProgress,updateChallengeResultInUserProgress}
+module.exports = { getAllUsersProgress, getSingleUserProgressByAdmin, getSingleUserProgressByUser, createUserProgress, updateUserProgress, deleteUserProgress, updateChallengeResultInUserProgress }

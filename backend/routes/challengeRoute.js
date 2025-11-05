@@ -6,11 +6,13 @@ const verifyRoles = require('../middleware/verifyRoles')
 
 //use middleware
 router.use(verifyJWT)
-router.get('/', challengeController.getAllChallenges)
+
+router.get('/',challengeController.getAllChallenges)
 router.get('/:id',challengeController.getSingleChallenge)
 router.get('/:id/results',challengeController.getChallengeResults)
-router.post('/',verifyRoles('Admin'),challengeController.createNewChallenge)
-router.put('/',verifyRoles('Admin'),challengeController.updateChallenge)
-router.delete('/',verifyRoles('Admin'),challengeController.deleteChallenge)
+router.get("/:id/full",challengeController.getFullChallengeById)
+router.post('/',verifyRoles('Admin') ,challengeController.createFullChallenge)
+router.put('/',verifyRoles('Admin') ,challengeController.updateChallenge)
+router.delete('/',verifyRoles('Admin') ,challengeController.deleteChallenge)
 
 module.exports=router

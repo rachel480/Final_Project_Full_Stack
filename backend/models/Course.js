@@ -2,16 +2,26 @@ const mongoose=require('mongoose')
 
 const CourseSchema=new mongoose.Schema(
     {
+        name:{
+            type:String,
+            required:true,
+            lowercase:true,
+            trim:true
+        },
+
         level:{
             type:String,
             required:true,
             enum:["Easy","Medium","Hard"]
         },
 
-        categories:{
-            type:[{type:mongoose.Schema.Types.ObjectId,ref:"Category"}],
-            required:true,
-        },
+        categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
+
+        status: { 
+            type: String,
+            enum: ["draft", "published"], 
+            default: "draft" 
+        }
     },
     {
         timestamps:true
