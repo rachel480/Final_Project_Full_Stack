@@ -1,11 +1,24 @@
 import { configureStore } from "@reduxjs/toolkit"
+import { persistStore, persistReducer } from "redux-persist"
+import storage from "redux-persist/lib/storage"
 import baseApi from "./baseApi"
 import rootReducer from "./rootReducer"
 
-const store=configureStore({
-reducer:rootReducer,
-middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware),
+const persistConfig = {
+    key: "root",
+    storage,
+    whitelist: ["auth", "questionWizard", "challengeWizard", "categoryWizard", "courseWizard"],
+}
+
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+const store = configureStore({
+    reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware(
+            { serializableCheck: false, }
+        ).concat(baseApi.middleware),
 })
 
 export default store
+export const persistor = persistStore(store)
