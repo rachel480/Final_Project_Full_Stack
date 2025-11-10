@@ -35,11 +35,31 @@ const userApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["User"]
         }),
+
+        updateUser: builder.mutation({
+            query: (data) => ({
+                url: "/user/update",
+                method: "PUT",
+                body: data,
+            }),
+
+            invalidatesTags: ["User"]
+        }),
+
+        updatePassword: builder.mutation({
+            query: (data) => ({
+                url: "/user/updatePassword",
+                method: "PUT",
+                body: data,
+            }),
+            invalidatesTags: ["User"]
+        }),
+
         deleteUserByAdmin: builder.mutation({
             query: (id) => ({
                 url: "/user/",
                 method: "DELETE",
-                body: {id} ,
+                body: { id },
             }),
             invalidatesTags: ["User"]
         }),
@@ -47,4 +67,4 @@ const userApi = baseApi.injectEndpoints({
     })
 })
 
-export const { useGetAllUsersQuery, useGetSingleUserQuery, useCreateNewUserMutation, useUpdateUserByAdminMutation,useDeleteUserByAdminMutation} = userApi
+export const { useGetAllUsersQuery, useGetSingleUserQuery, useCreateNewUserMutation, useUpdateUserByAdminMutation, useUpdatePasswordMutation,useUpdateUserMutation, useDeleteUserByAdminMutation } = userApi

@@ -75,12 +75,12 @@ const createNewUserByAdmin = async (req, res) => {
 //put only for user and admin
 const updateUserByUser = async (req, res) => {
     try {
-        const { id, fullName, email, phone, password, userName } = req.body
+        const { id, fullName, email, phone} = req.body
 
         //validation
         //required fields
-        if (!id || !fullName || !email || !password)
-            return res.status(400).send('id fullName email and paswword are required')
+        if (!id || !fullName || !email )
+            return res.status(400).send('id fullName and email are required')
 
         const user = req.user
         foundUser = await User.findOne({ userName: user.userName, _id: id }).exec()
@@ -89,27 +89,45 @@ const updateUserByUser = async (req, res) => {
             return res.status(400).json({ message: "no user found" })
 
         const prevUserName = foundUser.userName
+
         //update fields
-        foundUser.userName = userName ? userName : user.userName
-        foundUser.password = password
         foundUser.phone = phone
         foundUser.email = email
         foundUser.fullName = fullName
 
-        //chek if userName is unique
-        if (userName != prevUserName) {
-            const existUser = await checkUsernameUniqueness(userName)
-            if (existUser)
-                return res.status(409).json({ message: 'userName must be unique' })
-        }
         const updatedUser = await foundUser.save()
+
         if (!updatedUser)
-            return res.status(400).json({ message: `error occurred while updating user ${userName}` })
+            return res.status(400).json({ message: `error occurred while updating user ${user.userName}` })
+
         return res.status(201).json({ message: `user ${user.userName} was updated successfully` })
     } catch (err) {
         res.status(500).json({ message: "server error" })
     }
 }
+
+const updatePassword = async (req, res) => {
+  try {
+    const { id, oldPassword, newPassword } = req.body;
+    if (!id || !oldPassword || !newPassword)
+      return res.status(400).json({ message: "id, oldPassword, and newPassword are required" });
+
+    const foundUser = await User.findById(id).exec();
+    if (!foundUser) return res.status(404).json({ message: "User not found" });
+
+    const match = await bcrypt.compare(oldPassword, foundUser.password);
+    if (!match) return res.status(401).json({ message: "Incorrect old password" });
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    foundUser.password = hashed;
+    await foundUser.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 const updateUserByAdmin = async (req, res) => {
     try {
@@ -171,4 +189,4 @@ const checkUserNameAvailability = async (req, res) => {
     }
 }
 
-module.exports = { getAllUsers, getSingleUser, createNewUserByAdmin, updateUserByUser, updateUserByAdmin, deleteUser, checkUserNameAvailability }
+module.exports = { getAllUsers, getSingleUser, createNewUserByAdmin, updateUserByUser, updateUserByAdmin, deleteUser, checkUserNameAvailability ,updatePassword}
