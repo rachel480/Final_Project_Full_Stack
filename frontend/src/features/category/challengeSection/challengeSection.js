@@ -69,7 +69,7 @@ const ChallengeSection = () => {
     //updates the questions
     setQuestions(questionsWithAnswers)
 
-  }, [challnge,userProgress,isNewAttempt])
+  }, [challnge,userProgress,isNewAttempt,navigate])
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1)
