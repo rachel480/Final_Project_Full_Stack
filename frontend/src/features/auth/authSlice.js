@@ -14,10 +14,14 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isLoggedIn = true;
     },
+    logout(state) {
+      state.user = null;
+      state.isLoggedIn = false;
+    },
   },
 })
 
-export const { setUser} = authSlice.actions
+export const { setUser,logout} = authSlice.actions
 
 export const selectUser = (state) => state.auth.user
 export const selectIsLoggedIn = (state) => state.auth.isLoggedIn

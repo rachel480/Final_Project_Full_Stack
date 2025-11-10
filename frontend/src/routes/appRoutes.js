@@ -38,6 +38,9 @@ import UpdateCategoryForm from "../features/admin/category/updateCategoryForm";
 import UpdateChallengeForm from "../features/admin/challenge/updateChallengeForm";
 import UpdateWordForm from "../features/admin/word/updateWordForm";
 import UpdateQuestionForm from "../features/admin/question/updateQuestionForm";
+import ProtectedRoute from "../components/protectedRoute";
+import UserProfileForm from "../features/user/userProfileForm";
+import ResetPasswordForm from "../features/user/resetPasswordForm";
 
 const AppRoutes = () => {
   return (
@@ -53,13 +56,14 @@ const AppRoutes = () => {
       </Route>
 
       {/* Layout פרטי - רק לאחר התחברות */}
-      <Route path='/user' element={<UserLayout />}>
+      <Route path='/user' element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
 
         <Route index element={<Navigate to='home-page' />} />
         <Route path='home-page' element={<HomePage />} />
         <Route path='course-list' element={<CourseList />} />
         <Route path='forums' element={<h1>פורומים</h1>} />
-        <Route path='profile' element={<h1>הפרופיל שלי</h1>} />
+        <Route path='profile' element={<UserProfileForm/>} />
+        <Route path='reset-password' element={<ResetPasswordForm/>}/>
 
         <Route path='course/:courseId' element={<CourseLayout />}>
           <Route index element={<Navigate to='category' />} />
