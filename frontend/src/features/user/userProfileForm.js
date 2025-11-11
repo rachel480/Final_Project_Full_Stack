@@ -6,21 +6,26 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useGetSingleUserQuery, useUpdateUserMutation } from "./userApi";
 import EditableFormInput from "../../components/editableFormInput";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import FormContainer from "../../components/formContainer";
+import SubmitButton from "../../components/submitButton";
+import CustomLink from "../../components/customLink";
+import FormTitle from "../../components/formTitle";
+import InfoIcon from '@mui/icons-material/Info';
+import Tooltip from '@mui/material/Tooltip';
 
 const userSchema = z.object({
-    fullName: z.string({ required_error: "full name is required" }).min(1, "full name must contain at least 1 character"),
-      email: z.string({ required_error: "email is required" }).nonempty("email is required").email("email is not valid"),
+    fullName: z.string({ required_error: "חובה להכניס שם מלא" }).min(1, "שם מלא חייב להכיל לפחות תו 1"),
+    email: z.string({ required_error: "חובה להכניס אימייל" }).nonempty("חובה להכניס אימייל").email("אימייל לא חוקי"),
     phone: z.string().optional()
-    .refine(val => !val || val.length >= 9, {
-      message: "phone must contain at least 9 numbers",
-    }),
-});
+        .refine(val => !val || val.length >= 9, {
+            message: "מספר טלפון חייב להכיל לפחות 9 תווים",
+        }),
+})
 
 const UserProfileForm = () => {
-    const userId = useSelector((state) => state.auth.user?.id);
-    const { data: user, isLoading, error } = useGetSingleUserQuery(userId);
-    const [updateUser] = useUpdateUserMutation();
+    const userId = useSelector((state) => state.auth.user?.id)
+    const { data: user, isLoading, error } = useGetSingleUserQuery(userId)
+    const [updateUser, { isLoading: loadingUpdate }] = useUpdateUserMutation()
 
     const {
         register,
@@ -34,7 +39,7 @@ const UserProfileForm = () => {
             email: "",
             phone: "",
         },
-    });
+    })
 
     useEffect(() => {
         if (user) {
@@ -42,60 +47,47 @@ const UserProfileForm = () => {
                 fullName: user.fullName,
                 email: user.email,
                 phone: user.phone || "",
-            });
+            })
         }
-    }, [user, reset]);
+    }, [user, reset])
 
-    if (isLoading) return <p>Loading user detailes ...</p>;
+    if (isLoading) return <p>טוען פרטי משתמש...</p>
 
     if (error)
-        return <p>{error?.data?.message || "something went wrong"}</p>
+        return <p>{error?.data?.message || "משהו השתבש!!"}</p>
 
-    if (!user) return <p>No user found</p>;
+    if (!user) return <p>משתמש לא נמצא</p>
 
     const onSubmit = async (data) => {
         const hasChanges = Object.keys(data).some((key) => {
-            const original = user[key] ?? "";
-            return data[key] !== original;
-        });
+            const original = user[key] ?? ""
+            return data[key] !== original
+        })
 
         if (!hasChanges) {
-            toast.info('No changes were made', { position: "top-right", autoClose: 2000 });
-            return;
+            toast.info('לא בוצעו שינויים', { position: "top-right", autoClose: 2000 })
+            return
         }
 
-        const payload = {
-            id: userId,
-            ...data,
-            phone: data.phone || "",
-        };
+        const payload = { id: userId, ...data, phone: data.phone || "" }
 
         try {
-            await updateUser(payload).unwrap();
-            toast.success("Profile was updated successfully", { position: "top-right", autoClose: 3000 });
+            await updateUser(payload).unwrap()
+            toast.success("פרופיל עודכן בהצלחה", { position: "top-right", autoClose: 3000 })
         } catch (err) {
-            toast.error(err?.data?.message || "update failed", { position: "top-right", autoClose: 3000 });
+            toast.error(err?.data?.message || "שגיאה בעדכון פרופיל!!", { position: "top-right", autoClose: 3000 })
         }
-    };
+    }
 
     return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-            style={{
-                maxWidth: "600px",
-                margin: "40px auto",
-                padding: "20px",
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-                boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-                backgroundColor: "#fff",
-                direction: "rtl",
-            }}
-        >
-            <h2 style={{ textAlign: "center", marginBottom: "20px" }}><strong>{user.userName}-</strong> User profile</h2>
+        <FormContainer onSubmit={handleSubmit(onSubmit)}>
+
+            <FormTitle text={`פרופיל משתמש`} />
+
+            <p className="text-center text-gray-600">{user.userName} :שם משתמש</p>
 
             <EditableFormInput
-                label="full name"
+                label="שם מלא"
                 htmlFor="fullName"
                 register={register("fullName")}
                 error={errors.fullName?.message}
@@ -103,7 +95,7 @@ const UserProfileForm = () => {
             />
 
             <EditableFormInput
-                label="email"
+                label="אימייל"
                 htmlFor="email"
                 register={register("email")}
                 error={errors.email?.message}
@@ -111,40 +103,28 @@ const UserProfileForm = () => {
             />
 
             <EditableFormInput
-                label="phone"
+                label="טלפון (אופציונלי)"
                 htmlFor="phone"
                 register={register("phone")}
                 error={errors.phone?.message}
-                placeholder={user.phone || "enter phone number"}
+                placeholder={user.phone || "הכנס מספר טלפון..."}
             />
 
-            <button
-                type="submit"
-                style={{
-                    marginTop: "20px",
-                    backgroundColor: "#4caf50",
-                    color: "#fff",
-                    border: "none",
-                    padding: "8px 12px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                }}
-            >
-                Save changes
-            </button>
+            <SubmitButton text="שמירת שינויים" isLoading={loadingUpdate} />
 
-            <p style={{ textAlign: "center", marginTop: "10px", color: "#666" }}>
-                (לחיצה כפולה על שדה מאפשרת עריכה)
+            <p className="text-center text-gray-600 flex justify-center items-center gap-1">
+                <Tooltip title="לחיצה כפולה על שדה מאפשרת לערוך את הערך שלו">
+                    <InfoIcon fontSize="small" className="cursor-pointer text-gray-500" />
+                </Tooltip>
+                <span>לשנות את השדות</span>
             </p>
 
-            <p style={{ textAlign: "center", marginTop: "10px" }}>
-                <Link to="/user/reset-password" style={{ color: "#007bff", textDecoration: "none" }}>
-                    to reset password
-                </Link>
+            <p className="mt-4 text-center text-sm">
+                <CustomLink to="/user/reset-password">לאיפוס סיסמא</CustomLink>
             </p>
-        </form>
-    );
-};
+
+        </FormContainer>
+    )
+}
 
 export default UserProfileForm

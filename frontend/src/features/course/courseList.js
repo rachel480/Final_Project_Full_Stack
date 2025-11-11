@@ -1,26 +1,31 @@
-import {useNavigate}from 'react-router-dom'
 import { useGetUserProgressByUserQuery } from '../userProgress/userProgressApi'
+import SideMenu from '../../components/sideMenu'
+import CustomNavLink from '../../components/customNavlink'
+import PageTitle from '../../components/pageTitle'
 
 const CourseList = () => {
-     const { data: userProgress, isLoading, error } = useGetUserProgressByUserQuery()
+    const { data: userProgress, isLoading, error } = useGetUserProgressByUserQuery()
     const courses = userProgress?.courses ?? []
-    const navigate=useNavigate()
+
     if (isLoading)
         return <p>loading courses...</p>
 
     if (error)
-         return <p>{error?.data?.message || "something went wrong"}</p>
-        
-    if(courses.length===0)
+        return <p>{error?.data?.message || "something went wrong"}</p>
+
+    if (courses.length === 0)
         return <h1>no courses found</h1>
+
     return (
-        <div>
-            <h2>courses</h2>
+        <div className="mt-[64px] p-4">
+            <PageTitle text={'בחר קורס'}/>
+            <SideMenu>
                 {
-                    courses.map((course)=>{
-                        return <button onClick={()=>navigate(`/user/course/${course._id}`)}>{course.level}</button> 
+                    courses.map((course) => {
+                        return <CustomNavLink to={`/user/course/${course._id}`}>{course.name}</CustomNavLink>
                     })
                 }
+            </SideMenu>
         </div>
     )
 }

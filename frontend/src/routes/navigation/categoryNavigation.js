@@ -1,11 +1,13 @@
-import { NavLink } from "react-router-dom"
+import SideMenu from "../../components/sideMenu"
+import CustomNavLink from "../../components/customNavlink"
 
-const CategoryNavigation=()=>{
-return (
-    <nav>
-    <NavLink to={'words'}>words list</NavLink><br/>
-    <NavLink to={'challenge'}>category challenge</NavLink><br/>
-    </nav>
-)
+const CategoryNavigation = () => {
+    return (
+        <SideMenu>
+            <CustomNavLink to='words'>רשימת מילים</CustomNavLink>
+            <CustomNavLink to='challenge'>אתגר של קטגוריה</CustomNavLink>
+        </SideMenu>
+    )
 }
+
 export default CategoryNavigation

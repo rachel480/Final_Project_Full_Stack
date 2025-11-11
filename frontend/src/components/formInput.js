@@ -1,10 +1,48 @@
-const formInput=({label,type,register,error,placeholder,htmlFor})=>{
-    return(
-        <div>
-            <label htmlFor={htmlFor} >{label} </label >
-            <input id={htmlFor} type={type} {...register} placeholder={placeholder}/>
-            {error&& <p style={{color:"red"}}>{error}</p>}
-        </div>
-    )
+import TextField from "@mui/material/TextField"
+
+const FormInput = ({ label, htmlFor, type, register, error, placeholder }) => {
+  return (
+    <div>
+      <TextField
+        id={htmlFor}
+        label={label}
+        type={type}
+        placeholder={placeholder}
+        fullWidth
+        {...register}
+        error={!!error}
+        helperText={error}
+        variant="outlined"
+        inputProps={{
+          style: { textAlign: "right" },
+        }}
+        InputLabelProps={{
+          sx: {
+            color: "black",
+            fontWeight: "normal",
+            '&.Mui-focused': {
+              color: "rgba(229,145,42,0.62)",
+              fontWeight: "bold",
+            },
+          },
+        }}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: 'rgba(173, 216, 230, 0.2)',
+            '& fieldset': {
+              borderColor: 'rgba(229,145,42,0.62)',
+            },
+            '&:hover fieldset': {
+              borderColor: 'rgba(229,145,42,0.8)',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'rgba(229,145,42,1)',
+            },
+          },
+        }}
+      />
+    </div>
+  )
 }
-export default formInput
+
+export default FormInput

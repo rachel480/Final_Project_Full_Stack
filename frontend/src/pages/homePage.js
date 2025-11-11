@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useGetAllCoursesQuery } from '../features/course/courseApi'
 import { selectUser } from '../features/auth/authSlice'
 import { useCreateUserProgressMutation } from '../features/userProgress/userProgressApi'
+import PageTitle from '../components/pageTitle'
 
 const HomePage = () => {
   const { data: courses, isLoading: isLoadingCourses, error: errorCourses } = useGetAllCoursesQuery()
@@ -38,8 +39,9 @@ const HomePage = () => {
   }
 
   return (
-    <div>
-        <h1>HELLO {user.fullName}</h1>
+    <div className="mt-[64px] p-4">
+      <PageTitle text={`HELLO ${user.fullName}`}/>
+
       {message && (
         <div
           style={{
@@ -55,14 +57,18 @@ const HomePage = () => {
         <h2>Courses</h2>
         {courses.map((course) => (
           <div key={course._id} style={{ marginBottom: '1rem' }}>
+            <p>name:{course.name}</p>
             <p>Level: {course.level}</p>
-            <p>course:{course.name}</p>
             <p>About the course</p>
             <button onClick={() => handleCreateUserProgress(course._id)} disabled={isLoadingCreate}>
               Sign up to course
             </button>
           </div>
         ))}
+      </div>
+
+      <div>
+        <h2>דירוגים</h2>
       </div>
     </div>
   )

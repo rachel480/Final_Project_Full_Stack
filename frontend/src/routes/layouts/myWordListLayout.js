@@ -1,4 +1,4 @@
-import MyWordListNavigation from "../navigation/myWordListNavigation"
+import MyWordListNavigation from "../navigation/myWordsListNavigation"
 import {Outlet} from 'react-router-dom'
 const MyWordListLayout=()=>{
 return <div>

@@ -11,7 +11,7 @@ import UserLayout from "./layouts/userLayout";
 import CategoryLayout from "./layouts/categoryLayout";
 import WordSection from "../features/course/wordSection";
 import HomePage from "../pages/homePage";
-import MyWordNavigation from "./navigation/myWordNavigation";
+import MyWordNavigation from "./navigation/myWordsNavigation";
 import FavoriteWordsList from "../features/favoriteWords/favoriteWordsList";
 import MyWordList from "../features/myWords/words/myWordList";
 import MyCategoryList from "../features/myWords/categories/myCategoryList";
@@ -61,7 +61,6 @@ const AppRoutes = () => {
         <Route index element={<Navigate to='home-page' />} />
         <Route path='home-page' element={<HomePage />} />
         <Route path='course-list' element={<CourseList />} />
-        <Route path='forums' element={<h1>פורומים</h1>} />
         <Route path='profile' element={<UserProfileForm/>} />
         <Route path='reset-password' element={<ResetPasswordForm/>}/>
 
@@ -94,6 +93,7 @@ const AppRoutes = () => {
         </Route>
 
         <Route path={'admin'} element={<AdminLayout />} >
+        <Route index element={<Navigate to='data'/>}/>
 
           <Route path='data'>
             <Route index element={<Navigate to='courses' />} />
