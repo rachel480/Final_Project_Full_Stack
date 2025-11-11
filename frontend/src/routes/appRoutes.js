@@ -11,7 +11,6 @@ import UserLayout from "./layouts/userLayout";
 import CategoryLayout from "./layouts/categoryLayout";
 import WordSection from "../features/course/wordSection";
 import HomePage from "../pages/homePage";
-import MyWordNavigation from "./navigation/myWordsNavigation";
 import FavoriteWordsList from "../features/favoriteWords/favoriteWordsList";
 import MyWordList from "../features/myWords/words/myWordList";
 import MyCategoryList from "../features/myWords/categories/myCategoryList";
@@ -41,6 +40,7 @@ import UpdateQuestionForm from "../features/admin/question/updateQuestionForm";
 import ProtectedRoute from "../components/protectedRoute";
 import UserProfileForm from "../features/user/userProfileForm";
 import ResetPasswordForm from "../features/user/resetPasswordForm";
+import MyWordLayout from "./layouts/myWordlayout";
 
 const AppRoutes = () => {
   return (
@@ -82,8 +82,8 @@ const AppRoutes = () => {
           </Route>
         </Route>
 
-        <Route path='my-words'>
-          <Route index element={<MyWordNavigation />} />
+        <Route path='my-words' element={<MyWordLayout />} >
+          <Route index element={<Navigate to='favorites' />}/>
           <Route path='favorites' element={<FavoriteWordsList />} />
           <Route path='list' element={<MyWords />}>
             <Route index element={<Navigate to='words' />} />
