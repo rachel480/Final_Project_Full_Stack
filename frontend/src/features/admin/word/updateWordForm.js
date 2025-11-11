@@ -1,37 +1,41 @@
-import { useEffect } from "react"
-import { useParams, useNavigate, useLocation } from "react-router-dom"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "react-toastify"
-import {useGetWordByIdQuery,useUpdateWordMutation,} from "../../word/wordApi"
-import { useGetAllCategoriesQuery } from "../../category/categoryApi"
-import NavigateButton from "../../../components/navigateButton"
+import { useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
+import {useGetWordByIdQuery,useUpdateWordMutation} from "../../word/wordApi";
+import { useGetAllCategoriesQuery } from "../../category/categoryApi";
+import FormContainer from "../../../components/formContainer";
+import SectionTitle from "../../../components/sectionTitle";
+import FormInput from "../../../components/formInput";
+import SubmitButton from "../../../components/submitButton";
+import BackButton from "../../../components/backButton";
 
 const updateWordSchema = z.object({
   word: z.string().min(1, "Word is required"),
   translation: z.string().min(1, "Translation is required"),
   categoryName: z.string().min(1, "Category is required"),
-})
+});
 
 const UpdateWordForm = () => {
-  const { wordId, categoryId, courseId } = useParams()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { wordId, categoryId, courseId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const { data: word, isLoading, error } = useGetWordByIdQuery(wordId)
-  const { data: categories } = useGetAllCategoriesQuery()
-  const [updateWord] = useUpdateWordMutation()
+  const { data: word, isLoading, error } = useGetWordByIdQuery(wordId);
+  const { data: categories } = useGetAllCategoriesQuery();
+  const [updateWord] = useUpdateWordMutation();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(updateWordSchema),
     defaultValues: { word: "", translation: "", categoryName: "" },
-  })
+  });
 
   useEffect(() => {
     if (word) {
@@ -39,95 +43,83 @@ const UpdateWordForm = () => {
         word: word.word,
         translation: word.translation,
         categoryName: word.categoryName,
-      })
+      });
     }
-  }, [word, reset])
+  }, [word, reset]);
 
-  if (isLoading) return <p>Loading word...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
-  if (!word) return <p>No word found</p>
+  if (isLoading)
+    return <p className="text-gray-500 text-center mt-8">Loading word...</p>;
+  if (error)
+    return (
+      <p className="text-red-500 text-center mt-8">
+        {error?.data?.message || "Something went wrong"}
+      </p>
+    );
+  if (!word)
+    return <p className="text-gray-500 text-center mt-8">No word found</p>;
 
   const onSubmit = async (data) => {
     try {
-      await updateWord({ id: wordId, ...data }).unwrap()
+      await updateWord({ id: wordId, ...data }).unwrap();
       toast.success(`Word "${data.word}" updated successfully!`, {
         position: "top-right",
         autoClose: 3000,
-      })
-
+      });
       setTimeout(() => {
-        const from =
+        navigate(
           location.state?.from ||
-          `/user/admin/data/courses/${courseId}/category/${categoryId}`
-        navigate(from)
-      }, 3000)
+            `/user/admin/data/courses/${courseId}/category/${categoryId}`
+        );
+      }, 3000);
     } catch (err) {
-      console.error(err)
+      console.error(err);
       toast.error(err?.data?.message || "Update failed", {
         position: "top-right",
         autoClose: 3000,
-      })
+      });
     }
-  }
+  };
 
   return (
-    <div
-      style={{
-        maxWidth: 600,
-        margin: "40px auto",
-        padding: 20,
-        border: "1px solid #ddd",
-        borderRadius: 10,
-        boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-        backgroundColor: "#fff",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <NavigateButton
-        buttonText="🔙"
+    <FormContainer onSubmit={handleSubmit(onSubmit)}>
+      <BackButton
         navigation={
           location.state?.from ||
           `/user/admin/data/courses/${courseId}/category/${categoryId}`
         }
       />
 
-      <h2>
-        <strong>Update Word:</strong> {word.word}
-      </h2>
+      <div className="mt-8">
+        <SectionTitle text={`Update word: ${word.word}`} />
+      </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-          marginTop: 15,
-        }}
-      >
-        {/* Word */}
-        <label style={{ fontWeight: "bold" }}>Word</label>
-        <input
-          type="text"
-          {...register("word")}
-          style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
-        />
-        {errors.word && <p style={{ color: "red" }}>{errors.word.message}</p>}
+      <FormInput
+        label="Word"
+        type="text"
+        register={register("word")}
+        error={errors.word?.message}
+        placeholder="Enter word..."
+        htmlFor="word"
+      />
 
-        {/* Translation */}
-        <label style={{ fontWeight: "bold" }}>Translation</label>
-        <input
-          type="text"
-          {...register("translation")}
-          style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
-        />
-        {errors.translation && (
-          <p style={{ color: "red" }}>{errors.translation.message}</p>
-        )}
+      <FormInput
+        label="Translation"
+        type="text"
+        register={register("translation")}
+        error={errors.translation?.message}
+        placeholder="Enter translation..."
+        htmlFor="translation"
+      />
 
-        <label style={{ fontWeight: "bold" }}>Category</label>
+      {/* Category select stays as is */}
+      <div className="flex flex-col gap-1 mt-4">
+        <label htmlFor="categoryName" className="font-semibold">
+          Category
+        </label>
         <select
+          id="categoryName"
           {...register("categoryName")}
-          style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
+          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
         >
           <option value="">-- Select Category --</option>
           {(categories || []).map((category) => (
@@ -137,28 +129,13 @@ const UpdateWordForm = () => {
           ))}
         </select>
         {errors.categoryName && (
-          <p style={{ color: "red" }}>{errors.category.message}</p>
+          <p className="text-red-500">{errors.categoryName.message}</p>
         )}
+      </div>
 
-        {/* Save button */}
-        <button
-          type="submit"
-          style={{
-            marginTop: 10,
-            backgroundColor: "#4caf50",
-            color: "#fff",
-            border: "none",
-            padding: "8px 12px",
-            borderRadius: 4,
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Save
-        </button>
-      </form>
-    </div>
-  )
-}
+      <SubmitButton text="Save" isLoading={isSubmitting} className="mt-6" />
+    </FormContainer>
+  );
+};
 
 export default UpdateWordForm

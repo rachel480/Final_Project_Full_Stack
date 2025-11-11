@@ -1,11 +1,17 @@
 import { useEffect } from "react"
-import { useParams, useLocation, Link } from "react-router-dom"
+import { useParams, useLocation } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "react-toastify"
 import { useGetFullChallengeByIdQuery, useUpdateChallengeMutation } from "../../challenge/challengeApi"
-import NavigateButton from "../../../components/navigateButton"
+
+import FormContainer from "../../../components/formContainer"
+import SectionTitle from "../../../components/sectionTitle"
+import SubmitButton from "../../../components/submitButton"
+import BackButton from "../../../components/backButton"
+import DashedBox from "../../../components/dashedBox"
+import CustomLink from "../../../components/customLink"
 
 const updateChallengeSchema = z.object({})
 
@@ -27,97 +33,76 @@ const UpdateChallengeForm = () => {
     }
   }, [challenge, reset])
 
-  if (isLoading) return <p>Loading challenge...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
-  if (!challenge) return <p>No challenge found</p>
+  if (isLoading) return <p className="text-gray-500 text-center mt-8">Loading challenge...</p>
+  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "Something went wrong"}</p>
+  if (!challenge) return <p className="text-gray-500 text-center mt-8">No challenge found</p>
 
   const onSubmit = async (data) => {
-  try {
-    const hasChanges = Object.keys(data).some(
-      (key) => data[key] !== challenge[key]
-    );
+    try {
+      const hasChanges = Object.keys(data).some(
+        (key) => data[key] !== challenge[key]
+      )
 
-    if (!hasChanges) {
-      toast.info('No changes were made', {
+      if (!hasChanges) {
+        toast.info("No changes were made", {
+          position: "top-right",
+          autoClose: 3000,
+        })
+        return
+      }
+
+      await updateChallenge({ id: challengeId, ...data }).unwrap()
+      toast.success(`Challenge updated successfully!`, {
         position: "top-right",
         autoClose: 3000,
       })
-      return;
+    } catch (err) {
+      console.error(err)
+      toast.error(err?.data?.message || "Update failed", {
+        position: "top-right",
+        autoClose: 3000,
+      })
     }
-
-    await updateChallenge({ id: challengeId, ...data }).unwrap();
-     toast.success(`Category "${data.name}" updated successfully!`, {
-        position: "top-right",
-        autoClose: 3000,
-      })
-
-  } catch (err) {
-    console.error(err);
-    toast.error(err?.data?.message || "Update failed", {
-        position: "top-right",
-        autoClose: 3000,
-      })
   }
-};
 
   return (
-    <div
-      style={{
-        maxWidth: 600,
-        margin: "40px auto",
-        padding: 20,
-        border: "1px solid #ddd",
-        borderRadius: 10,
-        boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-        backgroundColor: "#fff",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <NavigateButton buttonText={'🔙'} navigation={location.state?.from || `/user/admin/data/courses/${courseId}/category/${categoryId}`} />
+    <FormContainer onSubmit={handleSubmit(onSubmit)}>
+      <BackButton
+        navigation={
+          location.state?.from ||
+          `/user/admin/data/courses/${courseId}/category/${categoryId}`
+        }
+      />
 
-      <h2>
-        <strong>Update Challenge:</strong> {challenge._id}
-      </h2>
+      <div className="mt-8">
+        <SectionTitle text={`Update challenge`} />
+      </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 15 }}>
+      <DashedBox className="flex-col items-start mt-6">
+        <p className="!text-[rgba(229,145,42,0.9)] font-semibold mb-2 text-lg">
+          Questions:
+        </p>
 
-        {/* Questions list */}
-        <label style={{ fontWeight: "bold" }}>Questions</label>
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 w-full">
           {(challenge.questions || []).length > 0 ? (
             challenge.questions.map((q) => (
-              <Link
+              <CustomLink
                 key={q._id}
                 to={`/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${challenge._id}/question/${q._id}/update`}
                 state={{ from: location.pathname }}
-                style={{ color: "#007bff", textDecoration: "none" }}
+                className="block text-left py-2 px-3 border border-gray-300 rounded-lg bg-white hover:bg-[rgba(229,145,42,0.1)] hover:border-[rgba(229,145,42,0.6)] transition-colors duration-200 truncate"
               >
-                {q.question?.word || q._id} 
-              </Link>
+                {q.question?.word || q._id}
+              </CustomLink>
             ))
           ) : (
-            <p style={{ color: "gray" }}>No questions in this challenge</p>
+            <p className="text-gray-500">No questions in this challenge</p>
           )}
         </div>
+      </DashedBox>
 
-        {/* Save button */}
-        <button
-          type="submit"
-          style={{
-            marginTop: 10,
-            backgroundColor: "#4caf50",
-            color: "#fff",
-            border: "none",
-            padding: "8px 12px",
-            borderRadius: 4,
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Save
-        </button>
-      </form>
-    </div>
+      <SubmitButton text="Save" />
+    </FormContainer>
   )
 }
 

@@ -1,14 +1,25 @@
 import { useParams } from "react-router-dom"
 import { useGetWordByIdQuery } from "../../word/wordApi"
-import NavigateButton from "../../../components/navigateButton"
+import CardContainer from "../../../components/cardContainer"
+import BackButton from "../../../components/backButton"
+import SectionTitle from "../../../components/sectionTitle"
+import SpellcheckIcon from "@mui/icons-material/Spellcheck"
+import { Card, CardContent, Typography, Box } from "@mui/material"
 
 const SingleWordCard = () => {
   const { wordId, courseId, categoryId } = useParams()
   const { data: word, isLoading, error } = useGetWordByIdQuery(wordId)
 
-  if (isLoading) return <p>Loading word...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
-  if (!word) return <p>Word not found</p>
+  if (isLoading)
+    return <p className="text-gray-500 text-center mt-8">Loading word...</p>
+  if (error)
+    return (
+      <p className="text-red-500 text-center mt-8">
+        {error?.data?.message || "Something went wrong"}
+      </p>
+    )
+  if (!word)
+    return <p className="text-gray-500 text-center mt-8">Word not found</p>
 
   const wordImg = word.img
   let imageSrc = ""
@@ -17,59 +28,48 @@ const SingleWordCard = () => {
   }
 
   return (
-    <div style={{
-      maxWidth: "600px",
-      margin: "30px auto",
-      padding: "25px",
-      border: "1px solid #ddd",
-      borderRadius: "10px",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-      backgroundColor: "#ffffff",
-      fontFamily: "Arial, sans-serif",
-      textAlign: "center"
-    }}>
-      <div style={{ marginBottom: "20px" }}>
-        <NavigateButton
-          navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}`}
-          buttonText="🔙 Back"
-        />
-      </div>
+    <CardContainer>
 
-      <h2 style={{
-        marginBottom: "15px",
-        fontSize: "24px",
-        color: "#333"
-      }}>
-        {word.word}
-      </h2>
+      <BackButton navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}`}/>
+      <SectionTitle text="Word" Icon={SpellcheckIcon} />
 
-      <p style={{ margin: "6px 0", fontSize: "16px" }}>
-        <strong>Translation:</strong> {word.translation}
-      </p>
+      <Card className="mt-4 w-full max-w-md mx-auto shadow-md rounded-2xl border border-gray-200 bg-gray-50 hover:shadow-lg transition-shadow duration-300">
+        
+        <CardContent>
 
-      <p style={{ margin: "6px 0", fontSize: "16px" }}>
-        <strong>Category:</strong> {word.categoryName}
-      </p>
+          <Box className="space-y-3">
+            <Typography className="text-gray-700">
+              <strong className="!text-[rgba(229,145,42,0.9)]">Word:</strong> {word.word}
+            </Typography>
 
-      {imageSrc ? (
-        <img
-          src={imageSrc}
-          alt={word.word}
-          style={{
-            width: "180px",
-            height: "180px",
-            objectFit: "contain",
-            marginTop: "20px",
-            borderRadius: "8px",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
-          }}
-        />
-      ) : (
-        <p style={{ marginTop: "20px", color: "#999", fontStyle: "italic" }}>
-          No image found
-        </p>
-      )}
-    </div>
+            <Typography className="text-gray-700">
+              <strong className="!text-[rgba(229,145,42,0.9)]">Translation:</strong> {word.translation}
+            </Typography>
+
+            <Typography className="text-gray-700">
+              <strong className="!text-[rgba(229,145,42,0.9)]">Category:</strong> {word.categoryName}
+            </Typography>
+
+            {imageSrc ? (
+              <Box className="flex justify-center mt-5">
+                <img
+                  src={imageSrc}
+                  alt={word.word}
+                  className="w-48 h-48 object-contain rounded-xl border border-gray-200 shadow-sm"
+                />
+              </Box>
+            ) : (
+              <Typography
+                className="text-gray-400 italic text-center mt-5"
+                variant="body2"
+              >
+                No image found
+              </Typography>
+            )}
+          </Box>
+        </CardContent>
+      </Card>
+    </CardContainer>
   )
 }
 

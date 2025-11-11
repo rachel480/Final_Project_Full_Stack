@@ -5,6 +5,8 @@ import { PiStudentFill } from "react-icons/pi"
 import AddButton from "../../../components/addButton"
 import { Box } from "@mui/material"
 import SectionTitle from "../../../components/sectionTitle"
+import CardContainer from "../../../components/cardContainer"
+import DashedBox from "../../../components/dashedBox"
 
 const CourseList = () => {
   const navigate = useNavigate()
@@ -15,15 +17,13 @@ const CourseList = () => {
 
   return (
 
-    <Box className="flex justify-center">
-    <Box className="mt-[32px] p-4 ml-0 mr-60 mt-20 w-[calc(100%-240px)] min-h-[calc(100vh-64px)] bg-white/90 p-6 transition-all duration-300 w-[55%]">
+    <CardContainer>
 
-      <Box className="flex justify-between items-center mb-6 px-2">
+      <SectionTitle text={'קורסים'} Icon={PiStudentFill} />
 
-        <SectionTitle text={'קורסים'} Icon={PiStudentFill} />
-
-        <AddButton text="הוסף קורס חדש" onClick={() => navigate("add")} />
-      </Box>
+      <DashedBox className="flex justify-center">
+        <AddButton text="הוסף קורס חדש" onClick={() => navigate("add")}/>
+      </DashedBox>
 
       <Box>
         {courses.length ? (
@@ -33,8 +33,7 @@ const CourseList = () => {
         )}
       </Box>
 
-    </Box>
-    </Box>
+    </CardContainer>
   )
 }
 

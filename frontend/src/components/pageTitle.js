@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 
-const PageTitle = ({ text, size = "h4", align = "center" }) => {
+const PageTitle = ({ text, size = "h5", align = "center" }) => {
   return (
     <Typography
       variant={size}

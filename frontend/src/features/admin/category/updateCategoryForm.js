@@ -1,109 +1,104 @@
-import { useEffect } from "react"
-import { useParams, useNavigate, useLocation, Link } from "react-router-dom"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "react-toastify"
+import { useEffect } from "react";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
 import {
   useGetFullCategoryByIdQuery,
   useUpdateCategoryMutation,
-} from "../../category/categoryApi"
-import { useGetAllCoursesQuery } from "../../course/courseApi"
-import NavigateButton from "../../../components/navigateButton"
+} from "../../category/categoryApi";
+import { useGetAllCoursesQuery } from "../../course/courseApi";
+import FormContainer from "../../../components/formContainer";
+import SectionTitle from "../../../components/sectionTitle";
+import FormInput from "../../../components/formInput";
+import SubmitButton from "../../../components/submitButton";
+import BackButton from "../../../components/backButton";
+import CustomLink from "../../../components/customLink";
+import DashedBox from "../../../components/dashedBox";
 
 const updateCategorySchema = z.object({
   name: z.string().min(1, "Category name is required"),
   course: z.string().min(1, "Course is required"),
-})
+});
 
 const UpdateCategoryForm = () => {
-  const { categoryId, courseId } = useParams()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { categoryId, courseId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const { data: category, isLoading, error } = useGetFullCategoryByIdQuery(categoryId)
-  const { data: courses } = useGetAllCoursesQuery()
-  const [updateCategory] = useUpdateCategoryMutation()
+  const { data: category, isLoading, error } = useGetFullCategoryByIdQuery(categoryId);
+  const { data: courses } = useGetAllCoursesQuery();
+  const [updateCategory] = useUpdateCategoryMutation();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(updateCategorySchema),
     defaultValues: { name: "", course: "" },
-  })
+  });
 
   useEffect(() => {
     if (category) {
       reset({
         name: category.name,
         course: category.course?._id || "",
-      })
+      });
     }
-  }, [category, reset])
+  }, [category, reset]);
 
-  if (isLoading) return <p>Loading category...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
-  if (!category) return <p>No category found</p>
+  if (isLoading) return <p className="text-gray-500 text-center mt-8">Loading category...</p>;
+  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "Something went wrong"}</p>;
+  if (!category) return <p className="text-gray-500 text-center mt-8">No category found</p>;
 
   const onSubmit = async (data) => {
     try {
-      await updateCategory({ id: categoryId, ...data }).unwrap()
+      await updateCategory({ id: categoryId, ...data }).unwrap();
       toast.success(`Category "${data.name}" updated successfully!`, {
         position: "top-right",
         autoClose: 3000,
-      })
+      });
       setTimeout(() => {
-        const from = location.state?.from || `/user/admin/data/courses/${courseId}`
-        navigate(from)
-      }, 3000)
+        navigate(location.state?.from || `/user/admin/data/courses/${courseId}`);
+      }, 3000);
     } catch (err) {
-      console.error(err)
+      console.error(err);
       toast.error(err?.data?.message || "Update failed", {
         position: "top-right",
         autoClose: 3000,
-      })
+      });
     }
-  }
+  };
 
   return (
-    <div
-      style={{
-        maxWidth: 600,
-        margin: "40px auto",
-        padding: 20,
-        border: "1px solid #ddd",
-        borderRadius: 10,
-        boxShadow: "0 3px 10px rgba(0,0,0,0.1)",
-        backgroundColor: "#fff",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-        <NavigateButton buttonText={'🔙'} navigation={location.state?.from || `/user/admin/data/courses/${courseId}`}/>
-      <h2>
-        <strong>Update category:</strong> {category.name}
-      </h2>
+    <FormContainer onSubmit={handleSubmit(onSubmit)}>
+      <BackButton navigation={location.state?.from || `/user/admin/data/courses/${courseId}`} />
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 15 }}
-      >
-        {/* Category Name */}
-        <label style={{ fontWeight: "bold" }}>Category Name</label>
-        <input
-          type="text"
-          {...register("name")}
-          style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
-        />
-        {errors.name && <p style={{ color: "red" }}>{errors.name.message}</p>}
+      <div className="mt-8">
+        <SectionTitle text={`Update category: ${category.name}`} />
+      </div>
 
-        {/* Course */}
-        <label style={{ fontWeight: "bold" }}>Course</label>
+      <FormInput
+        label="Category Name"
+        type="text"
+        register={register("name")}
+        error={errors.name?.message}
+        placeholder="Enter category name..."
+        htmlFor="name"
+      />
+
+      {/* Course select stays as is */}
+      <div className="flex flex-col gap-1 mt-4">
+        <label htmlFor="course" className="font-semibold">
+          Course
+        </label>
         <select
+          id="course"
           {...register("course")}
-          style={{ padding: 6, borderRadius: 4, border: "1px solid #ccc" }}
+          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
         >
           <option value="">-- Select Course --</option>
           {(courses || []).map((course) => (
@@ -112,60 +107,49 @@ const UpdateCategoryForm = () => {
             </option>
           ))}
         </select>
-        {errors.course && <p style={{ color: "red" }}>{errors.course.message}</p>}
+        {errors.course && <p className="text-red-500">{errors.course.message}</p>}
+      </div>
 
-        {/* Challenge link */}
-        <label style={{ fontWeight: "bold" }}>Challenge</label>
+      {/* Challenge */}
+      <DashedBox className="flex-col items-start mt-4">
+        <p className="!text-[rgba(229,145,42,0.9)] font-semibold mb-2 text-lg">Challenge:</p>
         {category.challenge ? (
-          <Link
-   to={`/user/admin/data/courses/${category.course._id}/category/${category._id}/challenge/${category.challenge._id}/update`}
+          <CustomLink
+            to={`/user/admin/data/courses/${category.course._id}/category/${category._id}/challenge/${category.challenge._id}/update`}
             state={{ from: location.pathname }}
-            style={{ color: "#007bff", textDecoration: "none" }}
+            className="block text-left py-2 px-3 border border-gray-300 rounded-lg bg-white hover:bg-[rgba(229,145,42,0.1)] hover:border-[rgba(229,145,42,0.6)] transition-colors duration-200 truncate"
           >
             Challenge
-          </Link>
+          </CustomLink>
         ) : (
-          <p style={{ color: "gray" }}>No challenge linked</p>
+          <p className="text-gray-500">No challenge linked</p>
         )}
+      </DashedBox>
 
-        {/* Words list */}
-        <label style={{ fontWeight: "bold" }}>Words</label>
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      {/* Words list */}
+      <DashedBox className="flex-col items-start mt-4">
+        <p className="!text-[rgba(229,145,42,0.9)] font-semibold mb-2 text-lg">Words:</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
           {(category.words || []).length > 0 ? (
             category.words.map((word) => (
-              <Link
+              <CustomLink
                 key={word._id}
                 to={`/user/admin/data/courses/${category.course._id}/category/${category._id}/words/${word._id}/update`}
                 state={{ from: location.pathname }}
-                style={{ color: "#007bff", textDecoration: "none" }}
+                className="block text-left py-2 px-3 border border-gray-300 rounded-lg bg-white hover:bg-[rgba(229,145,42,0.1)] hover:border-[rgba(229,145,42,0.6)] transition-colors duration-200 truncate"
               >
                 {word.word}
-              </Link>
+              </CustomLink>
             ))
           ) : (
-            <p style={{ color: "gray" }}>No words in this category</p>
+            <p className="text-gray-500">No words in this category</p>
           )}
         </div>
+      </DashedBox>
 
-        {/* Save button */}
-        <button
-          type="submit"
-          style={{
-            marginTop: 10,
-            backgroundColor: "#4caf50",
-            color: "#fff",
-            border: "none",
-            padding: "8px 12px",
-            borderRadius: 4,
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Save
-        </button>
-      </form>
-    </div>
-  )
-}
+      <SubmitButton text="Save" isLoading={isSubmitting} className="mt-6" />
+    </FormContainer>
+  );
+};
 
 export default UpdateCategoryForm

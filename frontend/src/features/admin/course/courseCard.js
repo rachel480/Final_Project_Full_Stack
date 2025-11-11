@@ -6,6 +6,8 @@ import ConfirmDeleteModal from "../../../components/confirmDeleteModal";
 import UpdateButton from "../../../components/updateButton";
 import DeleteButton from "../../../components/deleteButton";
 import ShowDetailsButton from "../../../components/showDetailesButton";
+import TagLabel from "../../../components/tagLable";
+import CardRow from "../../../components/cardRow";
 
 const CourseCard = ({ course }) => {
   const navigate = useNavigate()
@@ -28,19 +30,15 @@ const CourseCard = ({ course }) => {
   }
 
   return (
-    <div className="mb-4 p-4 rounded-lg shadow-md bg-[rgba(250,255,221,0.62)] border border-[rgba(229,145,42,0.62)]">
-      <div className="flex justify-between items-center">
+    <CardRow>
 
-        <p className="bg-cyan-200 text-cyan-900 font-semibold px-4 py-2 rounded-lg bg-[rgba(32,255,87,0.62)]">
-          {course.name}
-        </p>
+        <TagLabel text={course.name}></TagLabel>
 
         <div className="flex gap-2">
           <ShowDetailsButton onClick={() => navigate(`${course._id}`)} />
           <DeleteButton onClick={() => setShowConfirm(true)} />
           <UpdateButton onClick={() => navigate(`${course._id}/update`)} />
         </div>
-      </div>
 
       {showConfirm && (
         <ConfirmDeleteModal
@@ -49,7 +47,8 @@ const CourseCard = ({ course }) => {
           setShowConfirm={setShowConfirm}
         />
       )}
-    </div>
+      
+    </CardRow>
   )
 }
 

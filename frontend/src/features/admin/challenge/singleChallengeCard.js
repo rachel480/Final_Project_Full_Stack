@@ -1,11 +1,21 @@
-import { NavLink, useParams ,useNavigate, useLocation} from "react-router-dom"
-import NavigateButton from "../../../components/navigateButton"
+import {  useParams ,useNavigate, useLocation} from "react-router-dom"
 import { useGetFullChallengeByIdQuery } from "../../challenge/challengeApi"
 import { useState } from "react"
 import { useDeleteQuestionMutation } from "../../question/questionApi"
 import ConfirmDeleteModal from "../../../components/confirmDeleteModal"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import CardContainer from "../../../components/cardContainer"
+import BackButton from "../../../components/backButton"
+import SectionTitle from "../../../components/sectionTitle"
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import DashedBox from "../../../components/dashedBox"
+import AddButton from "../../../components/addButton"
+import CardRow from "../../../components/cardRow"
+import TagLabel from "../../../components/tagLable"
+import ShowDetailsButton from "../../../components/showDetailesButton"
+import DeleteButton from "../../../components/deleteButton"
+import UpdateButton from "../../../components/updateButton"
 
 const SingleChallengeCard = () => {
   const navigate = useNavigate()
@@ -44,132 +54,32 @@ const SingleChallengeCard = () => {
   if (!challenge) return <p>Challenge not found</p>
 
   return (
-    <div
-      style={{
-        maxWidth: "650px",
-        margin: "30px auto",
-        padding: "25px",
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        backgroundColor: "#fff",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <div style={{ marginBottom: "20px" }}>
-        <NavigateButton
-          navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}`}
-          buttonText="🔙 Back"
-        />
-      </div>
+    <CardContainer>
+      <BackButton navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}`}/>
 
-      <h2
-        style={{
-          marginBottom: "15px",
-          fontSize: "24px",
-          color: "#333",
-        }}
-      >
-        Challenge
-      </h2>
+      <SectionTitle text={'Challenge'} Icon={EmojiEventsIcon}/>
 
-      <div>
-        <strong>Questions:</strong>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "10px",
-            marginTop: "12px",
-            border: "1px dashed #aaa",
-            borderRadius: "6px",
-            backgroundColor: "#fafafa",
-          }}
+      
+        <DashedBox
         >
-          <span style={{ fontWeight: "bold", color: "#555" }}>Add Question</span>
-          <button
-            style={{
-              backgroundColor: "#2196f3",
-              color: "#fff",
-              border: "none",
-              padding: "6px 10px",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-            onClick={() => navigate(`question/add`)}
-          >
-            ➕
-          </button>
-        </div>
+          <p className="!text-[rgba(229,145,42,0.9)] text-lg">Questions:</p>
+          <AddButton text="הוסף שאלה חדשה" onClick={() => navigate(`question/add`)}/>
+        </DashedBox>
 
-        <div style={{ marginTop: "12px" }}>
           {challenge.questions.map((question) => (
-            <div
+            <CardRow
               key={question._id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "10px",
-                marginBottom: "8px",
-                border: "1px solid #ddd",
-                borderRadius: "6px",
-                backgroundColor: "#f9f9f9",
-              }}
             >
-              <NavLink
-                to={`question/${question._id}`}
-                style={{
-                  backgroundColor: "#4caf50",
-                  color: "#fff",
-                  border: "none",
-                  padding: "6px 12px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  textDecoration: "underline",
-                }}
-              >
-                {question.question.word}?
-              </NavLink>
+             <TagLabel text={`${question.question.word}?`} />
+                
+              <div className="flex gap-2">
+                <ShowDetailsButton onClick={() => navigate(`question/${question._id}`)} />
+                  <DeleteButton  onClick={() => {setSelectedQuestion(question);setShowConfirm(true)}}/>
+                <UpdateButton onClick={() => navigate(`question/${question._id}/update`, { state: { from: location.pathname } })} />
 
-              <div style={{ display: "flex", gap: "6px" }}>
-                <button
-                  onClick={() => {
-                    setSelectedQuestion(question)
-                    setShowConfirm(true)
-                  }}
-                  style={{
-                    backgroundColor: "#e53935",
-                    color: "#fff",
-                    border: "none",
-                    padding: "5px 8px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
-                >
-                  🗑️
-                </button>
-
-                <button
-                  onClick={() => navigate(`question/${question._id}/update`,{state:{form:location.pathname}})}
-                  style={{
-                    backgroundColor: "#fbc02d",
-                    color: "#333",
-                    border: "none",
-                    padding: "5px 8px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
-                >
-                  ✏️
-                </button>
               </div>
-            </div>
+            </CardRow>
           ))}
-        </div>
-      </div>
 
       {/* ✅ Confirm modal for delete question */}
       {showConfirm && selectedQuestion && (
@@ -179,7 +89,7 @@ const SingleChallengeCard = () => {
           setShowConfirm={setShowConfirm}
         />
       )}
-    </div>
+    </CardContainer>
   )
 }
 

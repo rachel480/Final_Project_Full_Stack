@@ -1,100 +1,55 @@
-
-import { useNavigate } from "react-router-dom"
-import { useDeleteUserByAdminMutation } from "../../user/userApi"
-import { useState } from "react"
-import { toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
-import ConfirmDeleteModal from "../../../components/confirmDeleteModal"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDeleteUserByAdminMutation } from "../../user/userApi";
+import { toast } from "react-toastify";
+import ConfirmDeleteModal from "../../../components/confirmDeleteModal";
+import ShowDetailsButton from "../../../components/showDetailesButton";
+import DeleteButton from "../../../components/deleteButton";
+import UpdateButton from "../../../components/updateButton";
+import TagLabel from "../../../components/tagLable";
+import CardRow from "../../../components/cardRow";
 
 const UserCard = ({ user }) => {
-  const navigate = useNavigate()
-  const [deleteUserByAdmin] = useDeleteUserByAdminMutation()
-  const [showConfirm, setShowConfirm] = useState(false)
+  const navigate = useNavigate();
+  const [deleteUserByAdmin] = useDeleteUserByAdminMutation();
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleDelete = async () => {
-    setShowConfirm(false)
+    setShowConfirm(false);
     try {
-      await deleteUserByAdmin(user._id).unwrap()
+      await deleteUserByAdmin(user._id).unwrap();
       toast.success(`User "${user.userName}" was deleted successfully!`, {
         position: "top-right",
         autoClose: 3000,
-      })
+      });
     } catch (err) {
-      console.error("Delete error:", err)
-      const errorMsg = err?.data?.message || "Server error occurred while deleting the user."
-      toast.error(errorMsg, {
-        position: "top-right",
-        autoClose: 4000,
-      })
+      const errorMsg =
+        err?.data?.message || "Server error occurred while deleting the user.";
+      toast.error(errorMsg, { position: "top-right", autoClose: 4000 });
     }
-  }
+  };
 
   return (
-    <div
-      style={{
-        marginBottom: "15px",
-        padding: "15px",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-        backgroundColor: "#f9f9f9",
-        position: "relative",
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <button
-          onClick={() => navigate(`${user._id}`)}
-          style={{
-            backgroundColor: "#4caf50",
-            color: "#fff",
-            border: "none",
-            padding: "8px 14px",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          {user.userName}
-        </button>
+    <CardRow>
 
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button
-            onClick={() => setShowConfirm(true)}
-            style={{
-              backgroundColor: "#e53935",
-              color: "#fff",
-              border: "none",
-              padding: "6px 10px",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            🗑️
-          </button>
+      <TagLabel text={user.userName} />
 
-          <button
-            onClick={() => navigate(`${user._id}/update`)}
-            style={{
-              backgroundColor: "#fbc02d",
-              color: "#333",
-              border: "none",
-              padding: "6px 10px",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            ✏️
-          </button>
-        </div>
+      <div className="flex gap-2">
+        <ShowDetailsButton onClick={() => navigate(`${user._id}`)} />
+        <DeleteButton onClick={() => setShowConfirm(true)} />
+        <UpdateButton onClick={() => navigate(`${user._id}/update`)} />
       </div>
 
-      {/* ✅ Confirmation modal */}
       {showConfirm && (
-        <ConfirmDeleteModal handleDelete={handleDelete} setShowConfirm={setShowConfirm} itemName={`${user.userName}`}/>
+        <ConfirmDeleteModal
+          itemName={user.userName}
+          handleDelete={handleDelete}
+          setShowConfirm={setShowConfirm}
+        />
       )}
-      
-    </div>
-  )
-}
 
-export default UserCard
+    </CardRow>
+  );
+};
+
+export default UserCard;
