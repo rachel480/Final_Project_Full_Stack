@@ -80,6 +80,8 @@ const UserProfileForm = () => {
     }
 
     return (
+        <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
+      <div className="w-full max-w-3xl">
         <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
             <FormTitle text={`פרופיל משתמש`} />
@@ -124,6 +126,7 @@ const UserProfileForm = () => {
             </p>
 
         </FormContainer>
+        </div></div>
     )
 }
 

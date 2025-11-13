@@ -1,39 +1,42 @@
-import { useEffect } from "react"
-import { useParams, useNavigate, useLocation } from "react-router-dom"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "react-toastify"
-import { useGetFullQuestionByIdQuery, useUpdateQuestionMutation } from "../../question/questionApi"
-import { useGetCategoryWordsQuery } from "../../category/categoryApi"
-import FormContainer from "../../../components/formContainer"
-import SectionTitle from "../../../components/sectionTitle"
-import BackButton from "../../../components/backButton"
-import SubmitButton from "../../../components/submitButton"
-import DashedBox from "../../../components/dashedBox"
+import { useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
+import { useGetFullQuestionByIdQuery, useUpdateQuestionMutation, } from "../../question/questionApi";
+import { useGetCategoryWordsQuery } from "../../category/categoryApi";
+import FormContainer from "../../../components/formContainer";
+import SectionTitle from "../../../components/sectionTitle";
+import BackButton from "../../../components/backButton";
+import SubmitButton from "../../../components/submitButton";
+import DashedBox from "../../../components/dashedBox";
+import FormSelect from "../../../components/formSelect";
+import { shuffleArray } from "../challenge/services/challengeServices";
+import { Box } from "@mui/material";
 
-import { shuffleArray } from "../challenge/services/challengeServices"
-
-// סכמת ולידציה
 const updateQuestionSchema = z
   .object({
-    option1: z.string().min(1, "Option 1 is required"),
-    option2: z.string().min(1, "Option 2 is required"),
-    option3: z.string().min(1, "Option 3 is required"),
+    option1: z.string().min(1, "חובה לבחור אפשרות 1"),
+    option2: z.string().min(1, "חובה לבחור אפשרות 2"),
+    option3: z.string().min(1, "חובה לבחור אפשרות 3"),
   })
   .superRefine((data, ctx) => {
     const { option1, option2, option3 } = data
+
     if (option1 === option2) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Option 1 and Option 2 must be different", path: ["option1"] })
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Option 1 and Option 2 must be different", path: ["option2"] })
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "אפשרות 1 ואפשרות 2 חייבות להיות שונות", path: ["option1"] })
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "אפשרות 1 ואפשרות 2 חייבות להיות שונות", path: ["option2"] })
     }
+
     if (option1 === option3) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Option 1 and Option 3 must be different", path: ["option1"] })
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Option 1 and Option 3 must be different", path: ["option3"] })
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "אפשרות 1 ואפשרות 3 חייבות להיות שונות", path: ["option1"] })
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "אפשרות 1 ואפשרות 3 חייבות להיות שונות", path: ["option3"] })
     }
+
     if (option2 === option3) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Option 2 and Option 3 must be different", path: ["option2"] })
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Option 2 and Option 3 must be different", path: ["option3"] })
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "אפשרות 2 ואפשרות 3 חייבות להיות שונות", path: ["option2"] })
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "אפשרות 2 ואפשרות 3 חייבות להיות שונות", path: ["option3"] })
     }
   })
 
@@ -46,14 +49,19 @@ const UpdateQuestionForm = () => {
   const { data: words, isLoading: loadingWords } = useGetCategoryWordsQuery(categoryId)
   const [updateQuestion] = useUpdateQuestionMutation()
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
     resolver: zodResolver(updateQuestionSchema),
     defaultValues: { option1: "", option2: "", option3: "" },
   })
 
   useEffect(() => {
     if (question && words) {
-      const filteredOptions = question.options?.filter(opt => opt._id !== question.correctAnswer._id)
+      const filteredOptions = question.options?.filter((opt) => opt._id !== question.correctAnswer._id);
       reset({
         option1: filteredOptions[0]?._id || "",
         option2: filteredOptions[1]?._id || "",
@@ -72,65 +80,69 @@ const UpdateQuestionForm = () => {
       const shuffledOptions = shuffleArray(options)
       await updateQuestion({ id: questionId, options: shuffledOptions }).unwrap()
 
-      toast.success("Question options updated successfully!", { position: "top-right", autoClose: 3000 })
+      toast.success("Question options updated successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        onClose: () => {
+          const from = location.state?.from || `/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${challengeId}`
+          navigate(from)
+        }
+      })
 
-      setTimeout(() => {
-        const from = location.state?.from || `/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${challengeId}`
-        navigate(from)
-      }, 3000)
     } catch (err) {
-      toast.error(err?.data?.message || "Update failed", { position: "top-right", autoClose: 3000 })
+      toast.error(err?.data?.message || "Update failed", {
+        position: "top-right",
+        autoClose: 3000,
+      })
     }
   }
 
-  const validWords = (words || []).filter(w => w._id !== question.correctAnswer?._id)
+  const validWords = (words || []).filter((w) => w._id !== question.correctAnswer?._id)
+  const wordOptions = validWords.map((w) => ({ value: w._id, label: w.word }))
 
   return (
-    <FormContainer onSubmit={handleSubmit(onSubmit)}>
-      <BackButton navigation={location.state?.from || `/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${challengeId}`} />
+    <Box className="p-6 max-w-3xl mx-auto relative bg-[rgba(255,265,25,0.2)]">
+      <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
-      <div className="mt-8">
-        <SectionTitle text={`Update Question: ${question.question?.word || question._id}`} />
-      </div>
+        <BackButton navigation={location.state?.from || `/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${challengeId}`} />
 
-      <DashedBox className="flex-col items-start">
-        <p className="!text-[rgba(229,145,42,0.9)] font-semibold mb-2 text-lg">Options:</p>
-
-        <div className="flex flex-col gap-3 w-full">
-          {/* Option 1 */}
-          <div className="w-full">
-            <label className="block font-semibold text-gray-700 mb-1">Option 1</label>
-            <select {...register("option1")} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-400">
-              <option value="">-- Select option 1 --</option>
-              {validWords.map(word => <option key={word._id} value={word._id}>{word.word}</option>)}
-            </select>
-            {errors.option1 && <p className="text-red-500 text-sm mt-1">{errors.option1.message}</p>}
-          </div>
-
-          {/* Option 2 */}
-          <div className="w-full">
-            <label className="block font-semibold text-gray-700 mb-1">Option 2</label>
-            <select {...register("option2")} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-400">
-              <option value="">-- Select option 2 --</option>
-              {validWords.map(word => <option key={word._id} value={word._id}>{word.word}</option>)}
-            </select>
-            {errors.option2 && <p className="text-red-500 text-sm mt-1">{errors.option2.message}</p>}
-          </div>
-
-          {/* Option 3 */}
-          <div className="w-full">
-            <label className="block font-semibold text-gray-700 mb-1">Option 3</label>
-            <select {...register("option3")} className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-orange-400">
-              <option value="">-- Select option 3 --</option>
-              {validWords.map(word => <option key={word._id} value={word._id}>{word.word}</option>)}
-            </select>
-            {errors.option3 && <p className="text-red-500 text-sm mt-1">{errors.option3.message}</p>}
-          </div>
+        <div className="mt-8">
+          <SectionTitle text={`Update Question: ${question.question?.word || question._id}`} />
         </div>
-      </DashedBox>
 
-      <SubmitButton text="Save" isLoading={isSubmitting} />
-    </FormContainer>
+        <DashedBox className="flex-col items-start">
+          <p className="!text-[rgba(229,145,42,0.9)] font-semibold mb-2 text-lg">Options:</p>
+
+          <div className="flex flex-col gap-3 w-full">
+            <FormSelect
+              label="Option 1"
+              id="option1"
+              register={register("option1")}
+              error={errors.option1?.message}
+              options={[{ value: "", label: "-- Select option 1 --" }, ...wordOptions]}
+            />
+
+            <FormSelect
+              label="Option 2"
+              id="option2"
+              register={register("option2")}
+              error={errors.option2?.message}
+              options={[{ value: "", label: "-- Select option 2 --" }, ...wordOptions]}
+            />
+
+            <FormSelect
+              label="Option 3"
+              id="option3"
+              register={register("option3")}
+              error={errors.option3?.message}
+              options={[{ value: "", label: "-- Select option 3 --" }, ...wordOptions]}
+            />
+          </div>
+        </DashedBox>
+
+        <SubmitButton text="Save" isLoading={isSubmitting} />
+      </FormContainer>
+    </Box>
   )
 }
 

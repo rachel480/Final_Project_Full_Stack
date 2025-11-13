@@ -1,4 +1,4 @@
-import {  useParams ,useNavigate, useLocation} from "react-router-dom"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { useGetFullChallengeByIdQuery } from "../../challenge/challengeApi"
 import { useState } from "react"
 import { useDeleteQuestionMutation } from "../../question/questionApi"
@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css"
 import CardContainer from "../../../components/cardContainer"
 import BackButton from "../../../components/backButton"
 import SectionTitle from "../../../components/sectionTitle"
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import DashedBox from "../../../components/dashedBox"
 import AddButton from "../../../components/addButton"
 import CardRow from "../../../components/cardRow"
@@ -19,7 +19,8 @@ import UpdateButton from "../../../components/updateButton"
 
 const SingleChallengeCard = () => {
   const navigate = useNavigate()
-  const location=useLocation()
+  const location = useLocation()
+
   const { challengeId, courseId, categoryId } = useParams()
   const { data: challenge, isLoading, error } = useGetFullChallengeByIdQuery(challengeId)
 
@@ -55,33 +56,29 @@ const SingleChallengeCard = () => {
 
   return (
     <CardContainer>
-      <BackButton navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}`}/>
 
-      <SectionTitle text={'Challenge'} Icon={EmojiEventsIcon}/>
+      <BackButton navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}`} />
+      <SectionTitle text={'Challenge'} Icon={EmojiEventsIcon} />
 
-      
-        <DashedBox
-        >
-          <p className="!text-[rgba(229,145,42,0.9)] text-lg">Questions:</p>
-          <AddButton text="הוסף שאלה חדשה" onClick={() => navigate(`question/add`)}/>
-        </DashedBox>
+      <DashedBox>
+        <p className="!text-[rgba(229,145,42,0.9)] text-lg">Questions:</p>
+        <AddButton onClick={() => navigate(`question/add`)} text="הוסף שאלה חדשה" />
+      </DashedBox>
 
-          {challenge.questions.map((question) => (
-            <CardRow
-              key={question._id}
-            >
-             <TagLabel text={`${question.question.word}?`} />
-                
-              <div className="flex gap-2">
-                <ShowDetailsButton onClick={() => navigate(`question/${question._id}`)} />
-                  <DeleteButton  onClick={() => {setSelectedQuestion(question);setShowConfirm(true)}}/>
-                <UpdateButton onClick={() => navigate(`question/${question._id}/update`, { state: { from: location.pathname } })} />
+      {challenge.questions.map((question) => (
+        <CardRow key={question._id}>
 
-              </div>
-            </CardRow>
-          ))}
+          <TagLabel text={`${question.question.word}?`} />
 
-      {/* ✅ Confirm modal for delete question */}
+          <div className="flex gap-2">
+            <ShowDetailsButton onClick={() => navigate(`question/${question._id}`)} />
+            <DeleteButton onClick={() => { setSelectedQuestion(question); setShowConfirm(true) }} />
+            <UpdateButton onClick={() => navigate(`question/${question._id}/update`, { state: { from: location.pathname } })} />
+          </div>
+
+        </CardRow>
+      ))}
+
       {showConfirm && selectedQuestion && (
         <ConfirmDeleteModal
           itemName={selectedQuestion.question.word}
@@ -89,6 +86,7 @@ const SingleChallengeCard = () => {
           setShowConfirm={setShowConfirm}
         />
       )}
+
     </CardContainer>
   )
 }

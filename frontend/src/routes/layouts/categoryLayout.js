@@ -1,6 +1,7 @@
 import { Outlet, useParams } from "react-router-dom"
 import { useGetCategoryByIdQuery } from "../../features/category/categoryApi"
 import CategoryNavigation from "../navigation/categoryNavigation"
+import FormTitle from "../../components/formTitle"
 
 const CategoryLayout = () => {
    const { categoryId } = useParams()
@@ -14,7 +15,7 @@ const CategoryLayout = () => {
 
    return (
       <div>
-         <h1>{category.name} category</h1>
+         <FormTitle text={`${category.name} category`}/> 
          <CategoryNavigation/>
          <main className="mt-[32px] p-4"><Outlet /></main>
       </div>

@@ -1,24 +1,32 @@
-
 import { useParams, useNavigate } from "react-router-dom"
 import { useGetCourseCategoriesQuery } from "./courseApi"
 import { useGetUserProgressByUserQuery } from "../userProgress/userProgressApi"
 import { useState } from "react"
+import { Card, CardActionArea, CardContent, Typography, LinearProgress, Tooltip } from "@mui/material"
+
+const rainbowColors = [
+  "from-pink-400 to-red-500",
+  "from-purple-400 to-indigo-500",
+  "from-green-400 to-lime-500",
+  "from-yellow-300 to-orange-400",
+  "from-teal-400 to-cyan-500",
+]
 
 const CategoriesSection = () => {
-  const { courseId } = useParams() 
+  const { courseId } = useParams()
   const navigate = useNavigate()
- 
   const { data: categories, isLoading, error } = useGetCourseCategoriesQuery(courseId)
   const { data: userProgress } = useGetUserProgressByUserQuery()
-
   const [hoveredCategory, setHoveredCategory] = useState(null)
 
-  if (isLoading) return <p>loading categories...</p>
-  if (error) return <p>error loading categories...</p>
+  if (isLoading)
+    return <p className="text-gray-500 text-center mt-8">Loading categories...</p>
+  if (error)
+    return <p className="text-red-500 text-center mt-8">Error loading categories</p>
 
   return (
-    <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-      {categories.map((category) => {
+    <div className="flex flex-wrap justify-center gap-6 mt-8 px-4 mr-[3rem] " >
+      {categories.map((category, index) => {
         const isCompleted = userProgress?.completedCategories?.some(
           (completed) => completed._id === category._id
         )
@@ -26,48 +34,67 @@ const CategoriesSection = () => {
           (r) => r.challenge?._id.toString() === category.challenge
         )
 
-        return (
-          <div
-            key={category._id}
-            style={{ position: "relative" }}
-            onMouseEnter={() => setHoveredCategory(category._id)}
-            onMouseLeave={() => setHoveredCategory(null)}
-          >
-            <button
-              onClick={() => navigate(`${category._id}`)}
-              style={{
-                padding: "10px 20px",
-                borderRadius: "8px",
-                border: "1px solid gray",
-                background: isCompleted ? "#d4edda" : "#f8f9fa",
-                cursor: "pointer",
-              }}
-            >
-              {category.name}
-            </button>
+        const gradient = rainbowColors[index % rainbowColors.length]
 
-            {isCompleted && hoveredCategory === category._id && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "110%", 
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  background: "#fff",
-                  border: "1px solid #ccc",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-                  whiteSpace: "nowrap",
-                  zIndex: 1000,
-                }}
-              >
-                קטגוריה זו הסתיימה בהצלחה.
-                <br />
-                ציונך באתגר הוא: {result?.totalScore ?? 0}
+        return (
+          <Tooltip
+            key={category._id}
+            title={
+              isCompleted
+                ? `הקטגוריה הושלמה! הציון שלך: ${result?.totalScore ?? 0}`
+                : "לחצו כדי להתחיל ללמוד!"
+            }
+            arrow
+            placement="top"
+          >
+            <Card
+              onMouseEnter={() => setHoveredCategory(category._id)}
+              onMouseLeave={() => setHoveredCategory(null)}
+              className={`w-80 transform transition-all duration-300 cursor-pointer hover:scale-105 shadow-lg rounded-2xl border-0 overflow-hidden`}
+            >
+              <div className={`h-32 bg-gradient-to-r ${gradient} flex items-center justify-center`}>
+                <span className="text-3xl animate-bounce text-white">
+                  {isCompleted ? "✅" : "🟢"}
+                </span>
               </div>
-            )}
-          </div>
+
+              <CardActionArea onClick={() => navigate(`${category._id}`)}>
+                <CardContent className="flex flex-col items-center justify-center py-4 px-4 bg-white">
+                  <Typography
+                    variant="h6"
+                    className="text-gray-800 font-bold text-center truncate"
+                  >
+                    {category.name}
+                  </Typography>
+
+                  {isCompleted && hoveredCategory === category._id && (
+                    <Typography
+                      variant="body2"
+                      className="text-green-700 mt-2 text-center"
+                    >
+                      סיימת! נקודות: {result?.totalScore ?? 0}
+                    </Typography>
+                  )}
+
+                  <div className="w-full mt-3">
+                    <LinearProgress
+                      variant="determinate"
+                      value={isCompleted ? 100 : 0}
+                      sx={{
+                        height: 10,
+                        borderRadius: 5,
+                        backgroundColor: "#eee",
+                        "& .MuiLinearProgress-bar": {
+                          borderRadius: 5,
+                          backgroundColor: isCompleted ? "#34d399" : "#3b82f6",
+                        },
+                      }}
+                    />
+                  </div>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Tooltip>
         )
       })}
     </div>

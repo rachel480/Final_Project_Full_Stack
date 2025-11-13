@@ -6,9 +6,14 @@ import { useState } from "react"
 import { useGetFullCategoryByIdQuery } from "../../category/categoryApi"
 import { createQuestionFromWord } from "../challenge/services/challengeServices"
 import { setQuestionInfo, goToStep, selectWizardStep } from "./questionWizardSlice"
+import FormContainer from "../../../components/formContainer"
+import FormTitle from "../../../components/formTitle"
+import FormSelect from "../../../components/formSelect"
+import SubmitButton from "../../../components/submitButton"
+import { Typography, Paper } from "@mui/material"
 
 const questionSchema = z.object({
-  wordId: z.string().nonempty("Please select a word"),
+  wordId: z.string({required_error:"חובה לבחור מילה"}).nonempty("בחר מילה"),
 })
 
 const AddQuestionInfo = ({ categoryId }) => {
@@ -32,15 +37,13 @@ const AddQuestionInfo = ({ categoryId }) => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(questionSchema),
-    defaultValues: {
-      wordId: "",
-    },
+    defaultValues: { wordId: "" },
   })
 
   const onSubmit = (data) => {
     const word = allWords.find((w) => w._id === data.wordId)
     if (!word) {
-      alert("Word not found.")
+      alert("לא נמצאה מילה.")
       return
     }
 
@@ -55,110 +58,57 @@ const AddQuestionInfo = ({ categoryId }) => {
     dispatch(goToStep(step + 1))
   }
 
-  if (isLoading) return <p>Loading...</p>
-  if (error) return <p>Error loading category</p>
+  if (isLoading) return <p className="text-gray-500 text-center mt-4">טוען...</p>
+  if (error) return <p className="text-red-500 text-center mt-4">שגיאה בטעינת קטגוריה</p>
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-        width: "100%",
-        maxWidth: 480,
-        margin: "0 auto",
-        padding: 14,
-        border: "1px solid #eee",
-        borderRadius: 8,
-        background: "#fff",
-        boxShadow: "0 1px 4px rgba(16,24,40,0.04)",
-        fontFamily:
-          "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",
-      }}
-    >
-      <h1>Create Question</h1>
+    <FormContainer onSubmit={handleSubmit(onSubmit)}>
+      <FormTitle text="הוספת שאלה" />
 
-      <label htmlFor="wordId" style={{ fontWeight: "bold" }}>
-        Select Word
-      </label>
-
-      {availableWords.length ? (
-        <select
-          id="wordId"
-          {...register("wordId")}
-          onChange={(e) => {
-            const w = availableWords.find((word) => word._id === e.target.value)
-            setSelectedWord(w || null)
-          }}
-          style={{
-            padding: 8,
-            border: "1px solid #ddd",
-            borderRadius: 6,
-            fontSize: 15,
-          }}
-        >
-          <option value="">-- Choose a word --</option>
-          {availableWords.map((word) => (
-            <option key={word._id} value={word._id}>
-              {word.word} ({word.translation})
-            </option>
-          ))}
-        </select>
-      ) : (
-        <p style={{ fontSize: 14, color: "#666" }}>No words available yet</p>
-      )}
-
-      {errors.wordId && (
-        <p style={{ color: "red", fontSize: 14 }}>{errors.wordId.message}</p>
-      )}
+      <FormSelect
+        id="wordId"
+        label="בחר מילה"
+        options={
+          availableWords.length > 0
+            ? availableWords.map((word) => ({
+              value: word._id,
+              label: `${word.word} (${word.translation})`,
+            }))
+            : [{ value: "", label: "אין מילים זמינות עדיין" }]
+        }
+        register={register("wordId")}
+        error={errors.wordId?.message}
+        onChange={(e) => {
+          const w = availableWords.find((word) => word._id === e.target.value)
+          setSelectedWord(w || null)
+        }}
+        disabled={availableWords.length === 0}
+      />
 
       {selectedWord && (
-        <div
-          style={{
-            background: "#f9fafb",
-            borderRadius: 6,
-            padding: 10,
-            border: "1px solid #e5e7eb",
-            textAlign: "left",
-          }}
-        >
-          <p>
-            <strong>Word:</strong> {selectedWord.word}
-          </p>
-          <p>
-            <strong>Translation:</strong> {selectedWord.translation}
-          </p>
+        <Paper elevation={1} className="mt-4 p-4 bg-gray-50 rounded-lg">
+
+          <Typography className="font-semibold text-gray-700">
+            Word: <span className="font-normal">{selectedWord.word}</span>
+          </Typography>
+
+          <Typography className="font-semibold text-gray-700 mt-1">
+            Translation: <span className="font-normal">{selectedWord.translation}</span>
+          </Typography>
+
           {selectedWord.img && (
             <img
               src={selectedWord.img}
               alt={selectedWord.word}
-              style={{
-                maxWidth: "100%",
-                borderRadius: 6,
-                marginTop: 8,
-              }}
+              className="mt-2 rounded-md max-w-full"
             />
           )}
-        </div>
+          
+        </Paper>
       )}
 
-      <button
-        type="submit"
-        style={{
-          marginTop: 10,
-          padding: "8px 12px",
-          borderRadius: 6,
-          border: "none",
-          background: "#66eba2ff",
-          color: "#fff",
-          fontWeight: "bold",
-          cursor: "pointer",
-        }}
-      >
-        Create Question
-      </button>
-    </form>
+      <SubmitButton text="שמירה" className="mt-4" />
+    </FormContainer>
   )
 }
 

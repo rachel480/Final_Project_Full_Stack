@@ -1,9 +1,9 @@
 import Paper from "@mui/material/Paper"
 import Box from "@mui/material/Box"
 
-const FormContainer = ({ children, title, onSubmit }) => {
+const FormContainer = ({ children,  onSubmit }) => {
   return (
-    <Box className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <Box className="flex justify-center items-center min-h-screen bg-gradient-to-br ">
       <Paper
         elevation={8}
         className="

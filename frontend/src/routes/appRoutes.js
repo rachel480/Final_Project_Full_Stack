@@ -18,7 +18,7 @@ import MyWords from "../features/myWords/myWords";
 import ChallengeResults from "../features/category/challengeSection/results/challengeResults";
 import AdminLayout from "./layouts/adminLayout";
 import AdminCourseList from "../features/admin/course/courseList";
-import CourseWizard from "../features/admin/course/courseWizard";
+import CourseWizard from "../features/admin/course/CourseWizard";
 import SingleCourseCard from "../features/admin/course/singleCourseCard";
 import SingleCategoryCard from "../features/admin/category/singleCategoryCard";
 import SingleWordCard from "../features/admin/word/singleWordCard";
@@ -27,10 +27,8 @@ import SingleChallengeCard from "../features/admin/challenge/singleChallengeCard
 import SingleQuestionCard from "../features/admin/question/singleQuestionCard";
 import ChallengeWizard from "../features/admin/challenge/challengeWizard";
 import QuestionWizard from "../features/admin/question/questionWizard";
-import AddWordInfo from "../features/admin/word/addWordInfo";
 import UserList from "../features/admin/user/userList";
 import SingleUserCard from "../features/admin/user/singleUserCard";
-import AddUserForm from "../features/admin/user/addUserForm";
 import UpdateUserForm from "../features/admin/user/updateUserForm";
 import UpdateCourseForm from "../features/admin/course/updateCourseForm";
 import UpdateCategoryForm from "../features/admin/category/updateCategoryForm";
@@ -41,6 +39,8 @@ import ProtectedRoute from "../components/protectedRoute";
 import UserProfileForm from "../features/user/userProfileForm";
 import ResetPasswordForm from "../features/user/resetPasswordForm";
 import MyWordLayout from "./layouts/myWordlayout";
+import UserWizard from "../features/admin/user/userWizard";
+import WordWizard from "../features/admin/word/wordWizard";
 
 const AppRoutes = () => {
   return (
@@ -126,7 +126,7 @@ const AppRoutes = () => {
                   </Route>
 
                   <Route path='challenge/add' element={<ChallengeWizard/>}/>
-                  <Route path='words/add' element={<AddWordInfo/>}/>
+                  <Route path='words/add' element={<WordWizard/>}/>
                 </Route>
 
                 <Route path='category/add' element={<CategoryWizard />} />
@@ -147,7 +147,7 @@ const AppRoutes = () => {
               <Route index element={<SingleUserCard/>} /> 
               <Route path="update" element={<UpdateUserForm/>}/>
             </Route>
-            <Route path="add" element={<AddUserForm/>}/>
+            <Route path="add" element={<UserWizard/>}/>
           </Route>
 
         </Route>

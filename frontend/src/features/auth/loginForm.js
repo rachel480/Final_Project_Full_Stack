@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { useLoginMutation } from './authApi'
 import { useDispatch } from 'react-redux'
 import { setUser } from './authSlice'
-import { useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import FormInput from '../../components/formInput'
 import FormContainer from '../../components/formContainer'
@@ -51,36 +51,40 @@ const LoginForm = () => {
   }
 
   return (
-    <FormContainer onSubmit={handleSubmit(onSubmit)}>
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
+      <div className="w-full max-w-3xl">
+        <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
-      <FormTitle text={'כניסה'} />
+          <FormTitle text={'כניסה'} />
 
-      <FormInput
-        label="שם משתמש"
-        type="text"
-        register={register("userName")}
-        error={errors.userName?.message}
-        placeholder="הכנס שם משתמש..."
-        htmlFor="userName"
-      />
+          <FormInput
+            label="שם משתמש"
+            type="text"
+            register={register("userName")}
+            error={errors.userName?.message}
+            placeholder="הכנס שם משתמש..."
+            htmlFor="userName"
+          />
 
-      <FormInput
-        label="סיסמא"
-        type="password"
-        register={register("password")}
-        error={errors.password?.message}
-        placeholder="הכנס סיסמא..."
-        htmlFor="password"
-      />
+          <FormInput
+            label="סיסמא"
+            type="password"
+            register={register("password")}
+            error={errors.password?.message}
+            placeholder="הכנס סיסמא..."
+            htmlFor="password"
+          />
 
-      <SubmitButton text="כניסה" isLoading={isLoading} />
+          <SubmitButton text="כניסה" isLoading={isLoading} />
 
-      <p className="mt-4 text-center text-sm">
-        עדיין אין לך חשבון?{' '}
-        <CustomLink to="/register">הרשמה</CustomLink>
-      </p>
+          <p className="mt-4 text-center text-sm">
+            עדיין אין לך חשבון?{' '}
+            <CustomLink to="/register">הרשמה</CustomLink>
+          </p>
 
-    </FormContainer>
+        </FormContainer>
+        </div>
+        </div>
   )
 }
 

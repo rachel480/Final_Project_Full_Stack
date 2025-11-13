@@ -1,5 +1,8 @@
 import { useDispatch, useSelector } from "react-redux"
-import {createChallengeForCategory} from "./services/challengeServices"
+import { createChallengeForCategory } from "./services/challengeServices"
+import { Box, Paper } from "@mui/material"
+import FormTitle from "../../../components/formTitle"
+import SubmitButton from "../../../components/submitButton"
 
 const AddChallengesInfo = ({ setChallengeInfo, goToStep, selectWizardCategory, setQuestionInfo, setCallengeInfoInCategory, selectWizardStep }) => {
 
@@ -28,20 +31,21 @@ const AddChallengesInfo = ({ setChallengeInfo, goToStep, selectWizardCategory, s
     })
     //update category slice
     dispatch(setCallengeInfoInCategory(categoriesWithChallenge))
-    alert(`challenge was created successfully for categories: ${categoriesWasAdded.join(' ,')} \n you are up to next step"`)
+    alert(`האתגר נוצר בהצלחה עבור הקטגוריות: ${categoriesWasAdded.join(' ,')} \nאת מוכנה/מוכן לשלב הבא!`)
 
-    dispatch(goToStep(step+1))
+    dispatch(goToStep(step + 1))
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", maxWidth: 480, margin: "0 auto", padding: 14, border: "1px solid #eee", borderRadius: 8, background: "#fff", boxShadow: "0 1px 4px rgba(16,24,40,0.04)", fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial", }}>
-      <h1>Create Challenges</h1>
+    <Box className="flex flex-col gap-3 w-full max-w-md mx-auto p-4">
 
-      <button type="button" style={{ marginTop: 10 }} onClick={() => handleChallengeData()} disabled={!categoryData.find(c => !c.challenge && c.words.length >= 10)}>
-        Create challenge
-      </button>
+      <Paper elevation={3} className="flex flex-col gap-4 p-6 rounded-xl bg-white shadow-md">
 
-    </div>
+        <FormTitle text="הוספת אתגרים" />
+        <SubmitButton text={'הוספה'} onClick={() => handleChallengeData()} disabled={!categoryData.find(c => !c.challenge && c.words.length >= 10)} />
+
+      </Paper>
+    </Box>
   )
 }
 

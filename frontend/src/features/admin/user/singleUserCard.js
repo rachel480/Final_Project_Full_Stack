@@ -73,4 +73,4 @@ const SingleUserCard = () => {
   );
 };
 
-export default SingleUserCard
+export default SingleUserCard;

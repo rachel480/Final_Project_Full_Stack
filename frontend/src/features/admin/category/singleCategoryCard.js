@@ -1,4 +1,4 @@
-import {  useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { useGetFullCategoryByIdQuery } from "../../category/categoryApi"
 import { useState } from "react"
 import { toast } from "react-toastify"
@@ -9,7 +9,7 @@ import { useDeletewordMutation } from "../../word/wordApi"
 import CardContainer from "../../../components/cardContainer"
 import BackButton from "../../../components/backButton"
 import SectionTitle from "../../../components/sectionTitle"
-import LabelIcon from '@mui/icons-material/Label'
+import LabelIcon from '@mui/icons-material/Label';
 import CardRow from "../../../components/cardRow"
 import DashedBox from "../../../components/dashedBox"
 import AddButton from "../../../components/addButton"
@@ -76,39 +76,38 @@ const SingleCategoryCard = () => {
 
   return (
     <CardContainer>
-      <BackButton navigation={`/user/admin/data/courses/${courseId}`} />
 
+      <BackButton navigation={`/user/admin/data/courses/${courseId}`} />
       <SectionTitle text={category.name} Icon={LabelIcon} />
 
       {category.challenge ? (
-        <CardRow >
+        <CardRow>
           <TagLabel text={'Challenge'} />
           <div className="flex gap-2">
-            <ShowDetailsButton onClick={() => navigate(`challenge/${category.challenge._id}/`)} />
+            <ShowDetailsButton onClick={() => navigate(`challenge/${category.challenge._id}`)} />
             <DeleteButton onClick={() => { setSelectedChallenge(category.challenge); setShowConfirm(true) }} />
             <UpdateButton onClick={() => navigate(`challenge/${category.challenge._id}/update`)} />
           </div>
         </CardRow>
       ) : (
-        <DashedBox >
+        <DashedBox>
           <p className="!text-[rgba(229,145,42,0.9)] text-lg">Challenge:</p>
-          <AddButton onClick={() => navigate(`challenge/add`)} text='הוסף אתגר חדש' />
+          <AddButton onClick={() => navigate(`challenge/add`)} text="הוסף אתגר חדש" />
         </DashedBox>
       )}
 
       <DashedBox>
-        <p className="!text-[rgba(229,145,42,0.9)] text-lg">Word:</p>
-        <AddButton onClick={() => navigate(`words/add`)} text='הוסף מילה חדשה' />
+        <p className="!text-[rgba(229,145,42,0.9)] text-lg">Words:</p>
+        <AddButton onClick={() => navigate(`words/add`)} text="הוסף מילה חדשה" />
       </DashedBox>
 
       {category.words.map(word => (
         <CardRow key={word._id}>
-          <TagLabel text={word.word}/>
-  
+          <TagLabel text={word.word} />
           <div className="flex gap-2">
             <ShowDetailsButton onClick={() => navigate(`words/${word._id}`)} />
-            <DeleteButton onClick={() => {setSelectedWord(word);setShowConfirm(true)}}/>
-            <UpdateButton  onClick={() => navigate(`words/${word._id}/update`)} />
+            <DeleteButton onClick={() => { setSelectedWord(word); setShowConfirm(true) }} />
+            <UpdateButton onClick={() => navigate(`words/${word._id}/update`)} />
           </div>
         </CardRow>
       ))}
@@ -120,6 +119,7 @@ const SingleCategoryCard = () => {
           setShowConfirm={setShowConfirm}
         />
       )}
+
     </CardContainer>
   )
 }

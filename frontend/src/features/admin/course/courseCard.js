@@ -32,13 +32,13 @@ const CourseCard = ({ course }) => {
   return (
     <CardRow>
 
-        <TagLabel text={course.name}></TagLabel>
+      <TagLabel text={`${course.name}`} />
 
-        <div className="flex gap-2">
-          <ShowDetailsButton onClick={() => navigate(`${course._id}`)} />
-          <DeleteButton onClick={() => setShowConfirm(true)} />
-          <UpdateButton onClick={() => navigate(`${course._id}/update`)} />
-        </div>
+      <div className="flex gap-2">
+        <ShowDetailsButton onClick={() => navigate(`${course._id}`)} />
+        <DeleteButton onClick={() => setShowConfirm(true)} />
+        <UpdateButton onClick={() => navigate(`${course._id}/update`)} />
+      </div>
 
       {showConfirm && (
         <ConfirmDeleteModal
