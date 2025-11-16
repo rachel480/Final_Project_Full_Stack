@@ -8,4 +8,12 @@ const checkUsernameUniqueness=async(userName)=>{
     return false
 }
 
-module.exports=checkUsernameUniqueness
+//checks if there is a email in the database
+const checkEmailUniqueness=async(email)=>{
+    const existEmail= await User.findOne({email}).lean()
+    if(existEmail)
+        return true
+    return false
+}
+
+module.exports={checkUsernameUniqueness,checkEmailUniqueness}

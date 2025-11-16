@@ -43,6 +43,8 @@ import UserWizard from "../features/admin/user/userWizard";
 import WordWizard from "../features/admin/word/wordWizard";
 import ContactForm from "../features/contact/contactForm";
 import ContactMessage from "../features/contact/contactMessages";
+import ForgotPassword from "../features/auth/forgotPassword";
+import ResetPassword from "../features/auth/resetPassword";
 
 const AppRoutes = () => {
   return (
@@ -55,6 +57,10 @@ const AppRoutes = () => {
         <Route path='contact' element={<ContactForm/>} />
         <Route path='login' element={<LoginForm />} />
         <Route path='register' element={<RegisterForm />} />
+        <Route path='forgot-password' element={<ForgotPassword/>} />
+      <Route path='reset-password/:token' element={<ResetPassword/>} />
+      
+      
       </Route>
 
       {/* Layout פרטי - רק לאחר התחברות */}

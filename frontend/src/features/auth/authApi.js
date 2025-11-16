@@ -2,6 +2,7 @@ import baseApi from '../../app/baseApi'
 
 const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
+
         register: builder.mutation({
             query: (userData) => ({
                 url: '/auth/register',
@@ -9,6 +10,7 @@ const authApi = baseApi.injectEndpoints({
                 body: userData
             })
         }),
+
         login: builder.mutation({
             query: (userData) => ({
                 url: '/auth/login',
@@ -16,6 +18,23 @@ const authApi = baseApi.injectEndpoints({
                 body: userData
             })
         }),
+
+        forgotPassword: builder.mutation({
+            query: (data) => ({
+                url: "/auth/forgot",
+                method: "POST",
+                body:  data,
+            }),
+        }),
+
+        resetPassword: builder.mutation({
+            query: ({ token, password }) => ({
+                url: `/auth/reset/${token}`,
+                method: "POST",
+                body: { password },
+            }),
+        }),
+        
         checkUserNameUniqueness: builder.query({
             query: (userName) => ({
                 url: `/user/checkUniquness/${userName}`,
@@ -25,4 +44,4 @@ const authApi = baseApi.injectEndpoints({
     })
 })
 
-export const { useRegisterMutation, useLoginMutation,useCheckUserNameUniquenessQuery,useLazyCheckUserNameUniquenessQuery} = authApi
+export const { useRegisterMutation, useLoginMutation,useForgotPasswordMutation,useResetPasswordMutation, useCheckUserNameUniquenessQuery, useLazyCheckUserNameUniquenessQuery } = authApi

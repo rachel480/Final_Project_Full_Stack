@@ -1,9 +1,10 @@
 const User = require('../models/User')
-const UserProgress= require('../models/UserProgress.js')
+const UserProgress = require('../models/UserProgress.js')
+
 const bcrypt = require('bcrypt')
 
 //a service that checks if userName is availble
-const checkUsernameUniqueness = require('../services/userService.js')
+const { checkUsernameUniqueness, checkEmailUniqueness } = require('../services/userService.js')
 
 //get all users only for admin
 const getAllUsers = async (req, res) => {
@@ -58,6 +59,10 @@ const createNewUserByAdmin = async (req, res) => {
         if (existUser)
             return res.status(409).json({ message: 'userName must be unique' })
 
+        const existEmail = await checkEmailUniqueness(email)
+        if (existEmail)
+            return res.status(409).json({ message: 'email adress must be unique' })
+
         // encrypt password:
         const hashPwd = await bcrypt.hash(password, 10)
 
@@ -76,11 +81,11 @@ const createNewUserByAdmin = async (req, res) => {
 //put only for user and admin
 const updateUserByUser = async (req, res) => {
     try {
-        const { id, fullName, email, phone} = req.body
+        const { id, fullName, email, phone } = req.body
 
         //validation
         //required fields
-        if (!id || !fullName || !email )
+        if (!id || !fullName || !email)
             return res.status(400).send('id fullName and email are required')
 
         const user = req.user
@@ -89,12 +94,18 @@ const updateUserByUser = async (req, res) => {
         if (!foundUser)
             return res.status(400).json({ message: "no user found" })
 
-        const prevUserName = foundUser.userName
+        const prevUserEmail = foundUser.email
 
         //update fields
         foundUser.phone = phone
         foundUser.email = email
         foundUser.fullName = fullName
+
+        if (prevUserEmail !== email) {
+            const existEmail = await checkEmailUniqueness(email)
+            if (existEmail)
+                return res.status(409).json({ message: 'email adress must be unique' })
+        }
 
         const updatedUser = await foundUser.save()
 
@@ -108,26 +119,26 @@ const updateUserByUser = async (req, res) => {
 }
 
 const updatePassword = async (req, res) => {
-  try {
-    const { id, oldPassword, newPassword } = req.body;
-    if (!id || !oldPassword || !newPassword)
-      return res.status(400).json({ message: "id, oldPassword, and newPassword are required" });
+    try {
+        const { id, oldPassword, newPassword } = req.body;
+        if (!id || !oldPassword || !newPassword)
+            return res.status(400).json({ message: "id, oldPassword, and newPassword are required" });
 
-    const foundUser = await User.findById(id).exec();
-    if (!foundUser) return res.status(404).json({ message: "User not found" });
+        const foundUser = await User.findById(id).exec();
+        if (!foundUser) return res.status(404).json({ message: "User not found" });
 
-    const match = await bcrypt.compare(oldPassword, foundUser.password);
-    if (!match) return res.status(401).json({ message: "Incorrect old password" });
+        const match = await bcrypt.compare(oldPassword, foundUser.password);
+        if (!match) return res.status(401).json({ message: "Incorrect old password" });
 
-    const hashed = await bcrypt.hash(newPassword, 10);
-    foundUser.password = hashed;
-    await foundUser.save();
+        const hashed = await bcrypt.hash(newPassword, 10);
+        foundUser.password = hashed;
+        await foundUser.save();
 
-    res.status(200).json({ message: "Password updated successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
+        res.status(200).json({ message: "Password updated successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
 };
 
 const updateUserByAdmin = async (req, res) => {
@@ -144,7 +155,7 @@ const updateUserByAdmin = async (req, res) => {
 
         //update fileds
         foundUser.roles = roles ? roles : foundUser.roles
-        foundUser.active = active ===null ? foundUser.active: active 
+        foundUser.active = active === null ? foundUser.active : active
 
         const updatedUser = await foundUser.save()
         if (!updatedUser)
@@ -169,15 +180,14 @@ const deleteUser = async (req, res) => {
             return res.status(400).json({ message: "no user found" })
 
         //delete user progress
-        const foundUserProgress= await UserProgress.findOne({user:foundUser._id}).exec()
-        if(foundUserProgress)
+        const foundUserProgress = await UserProgress.findOne({ user: foundUser._id }).exec()
+        if (foundUserProgress)
             await foundUserProgress.deleteOne()
 
         const deletedUser = await foundUser.deleteOne()
-
         if (!deletedUser)
-            return res.status(400).json({ message: `error occurred while updating user ${userName}` })
-        return res.status(201).json({ message: `user with id ${id} was deleted successfully` })
+            return res.status(400).json({ message: `error occurred while updating user ${foundUser.userName}` })
+        return res.status(200).json({ message: `user with id ${id} was deleted successfully` })
     } catch (err) {
         res.status(500).json({ message: "server error" })
     }
@@ -197,4 +207,4 @@ const checkUserNameAvailability = async (req, res) => {
     }
 }
 
-module.exports = { getAllUsers, getSingleUser, createNewUserByAdmin, updateUserByUser, updateUserByAdmin, deleteUser, checkUserNameAvailability ,updatePassword}
+module.exports = { getAllUsers, getSingleUser, createNewUserByAdmin, updateUserByUser, updatePassword, updateUserByAdmin, deleteUser, checkUserNameAvailability }
