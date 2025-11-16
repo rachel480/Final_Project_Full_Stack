@@ -1,12 +1,17 @@
-import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
 import { useGetSingleUserQuery, useUpdateUserByAdminMutation } from "../../user/userApi"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import NavigateButton from "../../../components/navigateButton"
-import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
+import FormContainer from "../../../components/formContainer"
+import SectionTitle from "../../../components/sectionTitle"
+import SubmitButton from "../../../components/submitButton"
+import BackButton from "../../../components/backButton"
+import DashedBox from "../../../components/dashedBox"
+import FormSelect from "../../../components/formSelect"
+import { Box } from "@mui/material";
 
 const updateUserSchema = z.object({
   roles: z.array(z.enum(["User", "Admin"])),
@@ -17,7 +22,7 @@ const UpdateUserForm = () => {
   const { userId } = useParams()
   const { data: user, isLoading, error } = useGetSingleUserQuery(userId)
   const [updateUserByAdmin] = useUpdateUserByAdminMutation()
-  const [message, setMessage] = useState(null)
+
   const navigate = useNavigate()
 
   const { register, handleSubmit, reset } = useForm({
@@ -37,57 +42,65 @@ const UpdateUserForm = () => {
     }
   }, [user, reset])
 
-  if (isLoading) return <p>Loading user...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
-  if (!user) return <p>No user found</p>
+  if (isLoading) return <p className="text-gray-500 text-center mt-8">טוען משתמש</p>
+  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "משהו השתבש"}</p>
+  if (!user) return <p className="text-gray-500 text-center mt-8">לא נמצא משתמש</p>
 
   const onSubmit = async (data) => {
     try {
       await updateUserByAdmin({ id: userId, ...data }).unwrap()
 
-       toast.success(`User "${user.userName}" updated successfully!`, {
-      position: "top-right",
-      autoClose: 3000,
-    })
+      toast.success(`User "${user.userName}" updated successfully!`, {
+        position: "top-right",
+        autoClose: 3000,
+        onClose:()=>navigate("/user/admin/users")
+      })
 
-    setTimeout(() => {
-      navigate('/user/admin/users')
-    }, 4000)
     } catch (err) {
       console.error(err)
-      setMessage({ type: "error", text: err?.data?.message || "Update failed" })
+      toast.error(err?.data?.message || "Update failed" , {
+        position: "top-right",
+        autoClose: 3000,
+      })
     }
   }
 
   return (
-    <div style={{ maxWidth: 450, margin: "40px auto", padding: 20, border: "1px solid #ddd", borderRadius: 10, boxShadow: "0 3px 10px rgba(0,0,0,0.1)", backgroundColor: "#fff", fontFamily: "Arial, sans-serif" }}>
-      <NavigateButton navigation={"/user/admin/users"} buttonText={"🔙"} />
-      <h2><strong>Update user:</strong> {user.userName}</h2>
+    <Box className="p-6 max-w-3xl mx-auto relative bg-[rgba(255,265,25,0.2)]">
+    <FormContainer onSubmit={handleSubmit(onSubmit)}>
+      <BackButton navigation="/user/admin/users" />
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 15 }}>
-        <label style={{ fontWeight: "bold" }}>Roles</label>
-        <div>
-          <label>
-            <input type="checkbox" value="User" {...register("roles")} /> User
+      <div className="mt-8">
+        <SectionTitle text={`Update user: ${user.userName}`} />
+      </div>
+
+      <DashedBox className="flex-col items-start mt-4">
+        <p className="!text-[rgba(229,145,42,0.9)] font-semibold mb-2 text-lg">Roles:</p>
+        <div className="flex gap-4">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" value="User" {...register("roles")} className="accent-orange-400" /> User
           </label>
-          <label style={{ marginLeft: 10 }}>
-            <input type="checkbox" value="Admin" {...register("roles")} /> Admin
+          <label className="flex items-center gap-2">
+            <input type="checkbox" value="Admin" {...register("roles")} className="accent-orange-400" /> Admin
           </label>
         </div>
+      </DashedBox>
 
-        <label htmlFor="active" style={{ fontWeight: "bold" }}>Active</label>
-        <select id="active" {...register("active" ,  {setValueAs: value => value === "true"})} style={{ padding: "6px 8px", borderRadius: 4, border: "1px solid #ccc" }}>
-          <option value={true}>true</option>
-          <option value={false}>false</option>
-        </select>
+      <FormSelect
+        label="Active"
+        id="active"
+        register={register("active", { setValueAs: value => value === "true" })}
+        options={[
+          { value: "true", label: "true" },
+          { value: "false", label: "false" },
+        ]}
+        defaultOption="-- Select Active Status --"
+      />
 
-        <button type="submit" style={{ marginTop: 10, backgroundColor: "#4caf50", color: "#fff", border: "none", padding: "8px 12px", borderRadius: 4, cursor: "pointer", fontWeight: "bold" }}>
-          Save
-        </button>
+      <SubmitButton text="Save" isLoading={false} className="mt-6" />
 
-        {message && <p style={{ color: message.type === "error" ? "red" : "green" }}>{message.text}</p>}
-      </form>
-    </div>
+    </FormContainer>
+    </Box>
   )
 }
 

@@ -1,17 +1,22 @@
-import NavigateButton from "../../../../components/navigateButton"
 
-const EndModal=({challengeResults,courseId,})=>{
-  const challengeId= challengeResults.challenge._id||challengeResults.challenge
-  return <div style={{ position: "fixed",top: 0, left: 0,width: "100%", height: "100%",backgroundColor: "rgba(0, 0, 0, 0.30)",display: "flex", justifyContent: "center", alignItems: "center"}}>
-    <div style={{background: "white",padding: "20px",borderRadius: "8px",minWidth: "300px"}}>
-        <p>you answered all the questions!!!!!!!!</p>
-        <p>your grade is: {challengeResults.totalScore}</p>
-        <div>
-            <NavigateButton navigation={`/user/course/${courseId}/category`} buttonText={'back to course'}/>
-            <NavigateButton navigation={`${challengeId}/results`} buttonText={'show resultes'}/>
+import NavigateButton from "../../../../components/navigateButton"
+import { Box, Paper, Typography } from "@mui/material"
+
+const EndModal = ({ challengeResults, courseId }) => {
+  const challengeId = challengeResults.challenge._id || challengeResults.challenge
+
+  return (
+    <Box className="fixed inset-0 bg-blue-200 bg-opacity-50 flex justify-center items-center p-4">
+      <Paper className="p-6 rounded-3xl max-w-sm w-full bg-gradient-to-br from-pink-200 via-yellow-100 to-purple-200 shadow-2xl flex flex-col gap-4 items-center animate-fade-in border-4 border-yellow-400">
+        <Typography variant="h4" className="text-purple-700 font-extrabold text-center">🎉 כל השאלות נענו! 🎉</Typography>
+        <Typography variant="h5" className="text-indigo-700 font-bold">Your grade: {challengeResults.totalScore}</Typography>
+        <div className="flex gap-4 mt-4 w-full justify-center">
+          <NavigateButton navigation={`/user/course/${courseId}/category`} buttonText="Back to Course" />
+          <NavigateButton navigation={`${challengeId}/results`} buttonText="Show Results" />
         </div>
-    </div>
-  </div>
+      </Paper>
+    </Box>
+  )
 }
 
 export default EndModal

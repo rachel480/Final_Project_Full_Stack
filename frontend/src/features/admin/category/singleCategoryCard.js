@@ -1,12 +1,22 @@
-import { NavLink, useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { useGetFullCategoryByIdQuery } from "../../category/categoryApi"
-import NavigateButton from "../../../components/navigateButton"
 import { useState } from "react"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import ConfirmDeleteModal from "../../../components/confirmDeleteModal"
 import { useDeleteChallengeMutation } from "../../challenge/challengeApi"
 import { useDeletewordMutation } from "../../word/wordApi"
+import CardContainer from "../../../components/cardContainer"
+import BackButton from "../../../components/backButton"
+import SectionTitle from "../../../components/sectionTitle"
+import LabelIcon from '@mui/icons-material/Label';
+import CardRow from "../../../components/cardRow"
+import DashedBox from "../../../components/dashedBox"
+import AddButton from "../../../components/addButton"
+import TagLabel from "../../../components/tagLable"
+import DeleteButton from "../../../components/deleteButton"
+import UpdateButton from "../../../components/updateButton"
+import ShowDetailsButton from "../../../components/showDetailesButton"
 
 const SingleCategoryCard = () => {
   const { categoryId, courseId } = useParams()
@@ -18,7 +28,7 @@ const SingleCategoryCard = () => {
 
   const [showConfirm, setShowConfirm] = useState(false)
   const [selectedChallenge, setSelectedChallenge] = useState(null)
-  const [selectedWord, setSelectedWord] = useState(null) 
+  const [selectedWord, setSelectedWord] = useState(null)
 
   const handleDeleteChallenge = async () => {
     if (!selectedChallenge) return
@@ -65,211 +75,43 @@ const SingleCategoryCard = () => {
   if (!category) return <p>Category not found</p>
 
   return (
-    <div style={{
-      maxWidth: "650px",
-      margin: "20px auto",
-      padding: "20px",
-      border: "1px solid #ddd",
-      borderRadius: "8px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      backgroundColor: "#fff",
-      fontFamily: "Arial, sans-serif"
-    }}>
-      <NavigateButton
-        navigation={`/user/admin/data/courses/${courseId}`}
-        buttonText={'🔙'}
-        style={{ marginBottom: "15px" }}
-      />
+    <CardContainer>
 
-      <h2 style={{ marginBottom: "10px" }}>{category.name}</h2>
+      <BackButton navigation={`/user/admin/data/courses/${courseId}`} />
+      <SectionTitle text={category.name} Icon={LabelIcon} />
 
-      {/* Challenge block */}
-      <div style={{ marginTop: "15px" }}>
-        <strong>Challenge:</strong>
-        <div style={{ marginTop: "5px" }}>
-          {category.challenge ? (
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "10px",
-              marginBottom: "8px",
-              border: "1px solid #ddd",
-              borderRadius: "6px",
-              backgroundColor: "#f5f5f5"
-            }}>
-              <NavLink
-                to={`challenge/${category.challenge._id}`}
-                style={{
-                  backgroundColor: "#4caf50",
-                  color: "#fff",
-                  border: "none",
-                  padding: "6px 10px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  textDecoration: "underLine"
-                }}
-              >
-                Challenge
-              </NavLink>
-
-              <div style={{ display: "flex", gap: "6px" }}>
-                <button
-                  onClick={() => {
-                    setSelectedChallenge(category.challenge)
-                    setShowConfirm(true)
-                  }}
-                  style={{
-                    backgroundColor: "#e53935",
-                    color: "#fff",
-                    border: "none",
-                    padding: "5px 8px",
-                    borderRadius: "4px",
-                    cursor: "pointer"
-                  }}
-                >
-                  🗑️
-                </button>
-                <button
-                  style={{
-                    backgroundColor: "#fbc02d",
-                    color: "#333",
-                    border: "none",
-                    padding: "5px 8px",
-                    borderRadius: "4px",
-                    cursor: "pointer"
-                  }}
-                  onClick={() => navigate(`challenge/${category.challenge._id}/update`)}
-                >
-                  ✏️
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "10px",
-              marginBottom: "8px",
-              border: "1px dashed #aaa",
-              borderRadius: "6px",
-              backgroundColor: "#fafafa"
-            }}>
-              <span style={{ fontWeight: "bold", color: "#555" }}>Add Challenge</span>
-              <button
-                style={{
-                  backgroundColor: "#2196f3",
-                  color: "#fff",
-                  border: "none",
-                  padding: "5px 10px",
-                  borderRadius: "4px",
-                  cursor: "pointer"
-                }}
-                onClick={() => navigate(`challenge/add`)}
-              >
-                ➕
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Words block */}
-      <div style={{ marginTop: "20px" }}>
-        <strong>Words:</strong>
-        <div style={{ marginTop: "5px" }}>
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "10px",
-            marginBottom: "8px",
-            border: "1px dashed #aaa",
-            borderRadius: "6px",
-            backgroundColor: "#fafafa"
-          }}>
-            <span style={{ fontWeight: "bold", color: "#555" }}>Add Word</span>
-            <button
-              style={{
-                backgroundColor: "#2196f3",
-                color: "#fff",
-                border: "none",
-                padding: "5px 10px",
-                borderRadius: "4px",
-                cursor: "pointer"
-              }}
-              onClick={() => navigate(`words/add`)}
-            >
-              ➕
-            </button>
+      {category.challenge ? (
+        <CardRow>
+          <TagLabel text={'Challenge'} />
+          <div className="flex gap-2">
+            <ShowDetailsButton onClick={() => navigate(`challenge/${category.challenge._id}`)} />
+            <DeleteButton onClick={() => { setSelectedChallenge(category.challenge); setShowConfirm(true) }} />
+            <UpdateButton onClick={() => navigate(`challenge/${category.challenge._id}/update`)} />
           </div>
+        </CardRow>
+      ) : (
+        <DashedBox>
+          <p className="!text-[rgba(229,145,42,0.9)] text-lg">Challenge:</p>
+          <AddButton onClick={() => navigate(`challenge/add`)} text="הוסף אתגר חדש" />
+        </DashedBox>
+      )}
 
-          {category.words.map(word => (
-            <div key={word._id} style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "10px",
-              marginBottom: "8px",
-              border: "1px solid #ddd",
-              borderRadius: "6px",
-              backgroundColor: "#f5f5f5"
-            }}>
-              <NavLink
-                to={`words/${word._id}`}
-                style={{
-                  backgroundColor: "#4caf50",
-                  color: "#fff",
-                  border: "none",
-                  padding: "6px 10px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  textDecoration: "underLine"
-                }}
-              >
-                {word.word}
-              </NavLink>
+      <DashedBox>
+        <p className="!text-[rgba(229,145,42,0.9)] text-lg">Words:</p>
+        <AddButton onClick={() => navigate(`words/add`)} text="הוסף מילה חדשה" />
+      </DashedBox>
 
-              <div style={{ display: "flex", gap: "6px" }}>
-                <button
-                  onClick={() => {
-                    setSelectedWord(word)
-                    setShowConfirm(true)
-                  }}
-                  style={{
-                    backgroundColor: "#e53935",
-                    color: "#fff",
-                    border: "none",
-                    padding: "5px 8px",
-                    borderRadius: "4px",
-                    cursor: "pointer"
-                  }}
-                >
-                  🗑️
-                </button>
-                <button
-                  style={{
-                    backgroundColor: "#fbc02d",
-                    color: "#333",
-                    border: "none",
-                    padding: "5px 8px",
-                    borderRadius: "4px",
-                    cursor: "pointer"
-                  }}
-                  onClick={() => navigate(`words/${word._id}/update`)}
-                >
-                  ✏️
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {category.words.map(word => (
+        <CardRow key={word._id}>
+          <TagLabel text={word.word} />
+          <div className="flex gap-2">
+            <ShowDetailsButton onClick={() => navigate(`words/${word._id}`)} />
+            <DeleteButton onClick={() => { setSelectedWord(word); setShowConfirm(true) }} />
+            <UpdateButton onClick={() => navigate(`words/${word._id}/update`)} />
+          </div>
+        </CardRow>
+      ))}
 
-      {/* ✅ Confirm modal */}
       {showConfirm && (selectedChallenge || selectedWord) && (
         <ConfirmDeleteModal
           itemName={selectedChallenge ? "Challenge" : selectedWord.word}
@@ -277,7 +119,8 @@ const SingleCategoryCard = () => {
           setShowConfirm={setShowConfirm}
         />
       )}
-    </div>
+
+    </CardContainer>
   )
 }
 

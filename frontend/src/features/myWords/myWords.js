@@ -1,6 +1,6 @@
 
 import NavigateButton from "../../components/navigateButton"
-import MyWordListLayout from "../../routes/layouts/myWordListLayout"
+import MyWordListLayout from "../../routes/layouts/myWordsListLayout"
 
 
 const MyWords=()=>{

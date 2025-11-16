@@ -7,7 +7,7 @@ const UserProgress = require('../models/UserProgress')
 const createInitialAdmin = async () => {
 
     //create admin user
-    const adminUser = await User.findOne({ roles: "Admin" }).lean()
+    const adminUser = await User.findOne({ userName: process.env.ADMIN_USERNAME }).lean()
     if (!adminUser) {
         const hashPwd = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10)
         const newAdmin = await User.create({

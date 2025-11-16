@@ -1,15 +1,18 @@
-const SearchInput=({searchText,setSearchText,placeholder})=>{
+const SearchInput = ({ searchText, setSearchText, placeholder }) => {
+
     const handleSearch = (e) => {
         setSearchText(e.target.value)
     }
-     return (
+
+    return (
         <input
             type="text"
             placeholder={placeholder}
             value={searchText}
             onChange={(e) => handleSearch(e)}
             style={{
-                width: "10%",
+                width: "10vw",
+                marginLeft:'45vw',
                 padding: "8px",
                 marginBottom: "16px",
                 fontSize: "16px",
@@ -19,4 +22,5 @@ const SearchInput=({searchText,setSearchText,placeholder})=>{
         />
     )
 }
+
 export default SearchInput

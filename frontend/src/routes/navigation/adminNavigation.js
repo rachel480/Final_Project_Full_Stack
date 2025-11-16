@@ -1,11 +1,13 @@
-import { NavLink } from "react-router-dom";
+import SideMenu from "../../components/sideMenu";
+import CustomNavLink from "../../components/customNavlink";
 
 const AdminNavigation = () => {
   return (
-    <header style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-      <NavLink to="data">Manage Data</NavLink>
-      <NavLink to="users">Manage Users</NavLink>
-    </header>
+    <SideMenu>
+      <CustomNavLink to="data">ניהול נתונים</CustomNavLink>
+      <CustomNavLink to="users">ניהול משתמשים</CustomNavLink>
+      <CustomNavLink to="contact-messages">ניהול יצירות קשר</CustomNavLink>
+    </SideMenu>
   )
 }
 

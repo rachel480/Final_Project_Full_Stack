@@ -2,19 +2,24 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useLoginMutation } from './authApi'
-import { useState } from 'react'
-import FormInput from '../../components/formInput'
 import { useDispatch } from 'react-redux'
 import { setUser } from './authSlice'
-import { useNavigate,Link} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import FormInput from '../../components/formInput'
+import FormContainer from '../../components/formContainer'
+import FormTitle from '../../components/formTitle'
+import SubmitButton from '../../components/submitButton'
+import CustomLink from '../../components/customLink'
 
 const loginSchema = z.object({
-  userName: z.string({ required_error: "user name is required" }).min(4, "user name must contain at least 4 characters"),
-  password: z.string({ required_error: "password is required" }).min(8, "password must contain at least 8 characters"),
+  userName: z.string({ required_error: "חובה להכניס שם משתמש" }).min(4, "שם משתמש חייב להכיל לפחות 4 תווים"),
+  password: z.string({ required_error: "חובה להכניס סיסמא" }).min(8, "סיסמא חייבת להכיל לפחות 8 תווים"),
 })
 
 const LoginForm = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const {
     register,
@@ -22,57 +27,64 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(loginSchema) })
 
-  const [message, setMessage] = useState("")
-  const [errorMsg, setErrorMsg] = useState("")
-
-  const navigate = useNavigate()
-
   const [loginUser, { isLoading }] = useLoginMutation()
 
   const onSubmit = async (data) => {
     try {
-      setErrorMsg('')
       const res = await loginUser(data).unwrap()
-      setMessage(res.message)
+
       localStorage.setItem('userAccessToken', res.accessToken)
       dispatch(setUser(res.user))
-      setTimeout(() => { setMessage(''); navigate('/user') }, 2000)
+
+      toast.success(res.message || "נכנסת בהצלחה!", {
+        position: "top-right",
+        autoClose: 3000,
+        onClose: () => navigate('/user')
+      })
+
     } catch (err) {
-      setErrorMsg(err?.data?.message || "Something went wrong. Please try again!!")
+      toast.error(err?.data?.message || "משהו השתבש...נסה שוב!!", {
+        position: "top-right",
+        autoClose: 3000,
+      })
     }
   }
 
   return (
-    <div>
-      <h1>כניסה</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <FormInput
-          label="user name"
-          type="text"
-          register={register("userName")}
-          error={errors.userName?.message}
-          placeholder={"enter user name..."}
-          htmlFor="userName"
-        />
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
+      <div className="w-full max-w-3xl">
+        <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
-        <FormInput
-          label="password"
-          type="password"
-          register={register("password")}
-          error={errors.password?.message}
-          placeholder={"enter password..."}
-          htmlFor="password"
-        />
+          <FormTitle text={'כניסה'} />
 
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "logining..." : "log in"}
-        </button>
+          <FormInput
+            label="שם משתמש"
+            type="text"
+            register={register("userName")}
+            error={errors.userName?.message}
+            placeholder="הכנס שם משתמש..."
+            htmlFor="userName"
+          />
 
-        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-        {message && <p style={{ color: "rgb(64, 255, 102)" }}>{message}</p>}
-      </form>
-      <Link to='/register'>הרשמה</Link>
-    </div>
+          <FormInput
+            label="סיסמא"
+            type="password"
+            register={register("password")}
+            error={errors.password?.message}
+            placeholder="הכנס סיסמא..."
+            htmlFor="password"
+          />
+
+          <SubmitButton text="כניסה" isLoading={isLoading} />
+
+          <p className="mt-4 text-center text-sm">
+            עדיין אין לך חשבון?{' '}
+            <CustomLink to="/register">הרשמה</CustomLink>
+          </p>
+
+        </FormContainer>
+        </div>
+        </div>
   )
 }
 

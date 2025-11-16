@@ -4,30 +4,36 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useDispatch, useSelector } from "react-redux"
 import FormInput from "../../../components/formInput"
 import { useState } from "react"
+import FormContainer from "../../../components/formContainer"
+import FormTitle from "../../../components/formTitle"
+import SubmitButton from "../../../components/submitButton"
+import WordCheckboxList from "./wordCheckboxList"
+import { Box, Typography, Button, Paper, Stack } from "@mui/material";
+import SectionTitle from "../../../components/sectionTitle"
 
-const AddCategoriesInfo = ({setCategoryInfo, goToStep, selectWizardCategory,selectWizardData, selectWizardWords,selectWizardStep}) => {
+const AddCategoriesInfo = ({ setCategoryInfo, goToStep, selectWizardCategory, selectWizardData, selectWizardWords, selectWizardStep }) => {
   const dispatch = useDispatch()
   const categoryData = useSelector(selectWizardCategory) || []
   const step = useSelector(selectWizardStep)
   const wizardData = useSelector(selectWizardData)
 
   const wordData = useSelector(selectWizardWords) || []
-  const notUsedWords = wordData.filter((word)=>!word.categoryName)
+  const notUsedWords = wordData.filter((word) => !word.categoryName)
   const [showList, setShowList] = useState(false)
 
   const lastCategory = categoryData.length > 0 ? categoryData[categoryData.length - 1]?.words.length < 10 ? categoryData[categoryData.length - 1] : null : null
   const [sumSelected, setSumSelected] = useState(lastCategory?.words?.length || 0)
 
   const categorySchema = z.object({
-    name: z.string({ required_error: "Category name is required" })
-      .nonempty("Category name must contain at least 1 character")
+    name: z.string({ required_error: "חובה להכניס שם קטגוריה" })
+      .nonempty("שם קטגוריה חייב להכיל לפחות תו 1")
       .refine(
         (val) => {
-          if (val === lastCategory?.name) 
+          if (val === lastCategory?.name)
             return true
           return !categoryData.some((cat) => cat.name === val)
         },
-        { message: "Category name already exists" }
+        { message: "כבר קיימת קטגוריה בשם זה" }
       ),
     words: z.array(z.string()).optional(),
   })
@@ -45,101 +51,72 @@ const AddCategoriesInfo = ({setCategoryInfo, goToStep, selectWizardCategory,sele
   const onSubmit = (data) => {
     dispatch(setCategoryInfo({ name: data.name, words: data.words }))
     if (data.words.length < 10) {
-      const addWord = window.confirm("you can step to the next steps if you have at least 10 words in the category\n whould u like to move to add words")
+      const addWord = window.confirm("ניתן לעבור לשלב הבא אם יש לפחות 10 מילים בקטגוריה.\nהאם ברצונך לעבור להוספת המילים?")
       if (addWord)
         dispatch(goToStep(1))
       return
     }
-    let addAnother =false
-    if(!wizardData.categoryInfo)
-    {
-       addAnother = window.confirm("whould you like to add another category???")
+    let addAnother = false
+    if (Array.isArray(wizardData.categories)) {
+      addAnother = window.confirm("תרצה להוסיף קטגוריה נוספת?");
     }
     reset({ words: [], name: "" })
     setSumSelected(0)
     if (!addAnother)
-      dispatch(goToStep(step+1))
+      dispatch(goToStep(step + 1))
   }
 
   return (
-    <div>
-      {!showList ?
+    !showList ?
+      <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
-        <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex",flexDirection: "column",gap: 12,width: "100%",maxWidth: 480,margin: "0 auto",padding: 14,border: "1px solid #eee",borderRadius: 8,background: "#fff",boxShadow: "0 1px 4px rgba(16,24,40,0.04)",fontFamily:"system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",}}>
-          
-          <h1>Add Category</h1>
+        <FormTitle text='הוספת קטגוריה' />
 
-          <FormInput
-            label="Category Name"
-            type="text"
-            register={register("name")}
-            error={errors.name?.message}
-            placeholder="Enter category name..."
-            htmlFor="category"
-          />
+        <FormInput
+          label="Category Name"
+          type="text"
+          register={register("name")}
+          error={errors.name?.message}
+          placeholder="הכנס שם קטגוריה..."
+          htmlFor="category"
+        />
 
-          <div>
-            <label style={{ fontWeight: "bold" }}>Select Words <span>{sumSelected}</span></label>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 6 }}>
-              {notUsedWords.length > 0 ? (
-                wordData.map((word,i) => {
+        <label>
+          <span>{sumSelected} selected Words</span>
+        </label>
 
-                  if (word.categoryName && word.categoryName !== lastCategory?.name) {
-                    return null
-                  }
+        <WordCheckboxList
+          words={wordData}
+          notUsedWords={notUsedWords}
+          lastCategory={lastCategory}
+          register={register}
+          setSumSelected={setSumSelected}
+        />
 
-                  const isChecked = lastCategory?.words?.includes(word.word)
+        <SubmitButton text={'Save'} />
+        <Button variant="text" onClick={() => setShowList(true)} className="mt-4 !text-orange-500 !underline">קטגוריות שהוספתי</Button>
 
-                  return (
-                    <label key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <input
-                        type="checkbox"
-                        value={word.word}
-                        {...register("words")}
-                        defaultChecked={isChecked}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSumSelected((prev) => prev + 1)
-                          } else {
-                            setSumSelected((prev) => prev - 1)
-                          }
-                        }}
-                      />
-                      {word.word}
-                    </label>
-                  )
-                })
-              ) : (
-                <p style={{ fontSize: 14, color: "#666" }}>No words available yet.</p>
-              )}
+      </FormContainer>
+      :
+      <Paper elevation={1} className="max-w-md w-full mx-auto p-6 flex flex-col gap-3 rounded-xl bg-white shadow-sm">
 
-            </div>
-          </div>
+        <SectionTitle text='רשימת קטגוריות' />
 
-          <button type="submit" style={{ marginTop: 10 }}>
-            save
-          </button>
+        <Stack spacing={2}>
+          {categoryData.map((category, idx) => (
+            <Box key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <Typography variant="subtitle1" className="font-semibold text-orange-500">
+                {category.name}
+              </Typography>
+              <Typography variant="body2" className="text-gray-500">
+                Words: {category.words.join(", ")}
+              </Typography>
+            </Box>
+          ))}
+        </Stack>
 
-          <button type='button' onClick={() => setShowList(true)}>⬅️categories i added</button>
-
-        </form>
-        :
-        <div style={{display: "flex",flexDirection: "column",gap: 12,width: "100%",maxWidth: 480,margin: "0 auto",padding: 14,border: "1px solid #eee",borderRadius: 8,background: "#fff",boxShadow: "0 1px 4px rgba(16,24,40,0.04)",fontFamily:"system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial",}}>
-          
-          <h1>categories list</h1>
-          {
-            categoryData.map((category) => {
-              return <div>
-                <p>{category.name}</p>
-                <p> words:{category.words.join(', ')}</p>
-
-              </div>
-            })
-          }
-          <button type='button' onClick={() => setShowList(false)}>⬅️add category</button>
-        </div>
-      }
-    </div>
+        <Button variant="text" onClick={() => setShowList(false)} className="mt-4 !text-orange-500 !underline"> הוספת קטגוריה</Button>
+      </Paper>
   )
 }
 

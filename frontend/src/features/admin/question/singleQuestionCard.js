@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom"
-import NavigateButton from "../../../components/navigateButton"
 import { useGetFullQuestionByIdQuery } from "../../question/questionApi"
+import CardContainer from "../../../components/cardContainer"
+import BackButton from "../../../components/backButton"
+import SectionTitle from "../../../components/sectionTitle"
+import QuizIcon from "@mui/icons-material/Quiz"
 
 const SingleQuestionCard = () => {
   const { questionId, challengeId, courseId, categoryId } = useParams()
@@ -11,78 +14,29 @@ const SingleQuestionCard = () => {
   if (!question) return <p>Question not found</p>
 
   return (
-    <div
-      style={{
-        maxWidth: "650px",
-        margin: "30px auto",
-        padding: "25px",
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        backgroundColor: "#fff",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <div style={{ marginBottom: "20px" }}>
-        <NavigateButton
-          navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${challengeId}`}
-          buttonText="🔙 Back"
-        />
+    <CardContainer>
+      <BackButton navigation={`/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${challengeId}`} />
+      <SectionTitle text={"Question"} Icon={QuizIcon} />
+
+      <div className="mb-4 p-3 border border-gray-300 rounded-md bg-gray-50">
+        <strong className="!text-[rgba(229,145,42,0.9)] font-semibold text-gray-700">Question:</strong>{" "}
+        <span className="text-gray-800">{question.question.word}</span>
       </div>
 
-      <h2
-        style={{
-          marginBottom: "15px",
-          fontSize: "24px",
-          color: "#333",
-        }}
-      >
-        Question
-      </h2>
-
-      <div
-        style={{
-          marginBottom: "15px",
-          padding: "10px",
-          border: "1px solid #ddd",
-          borderRadius: "6px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
-        <strong>Question:</strong> {question.question.word}
-      </div>
-
-      <div
-        style={{
-          marginBottom: "15px",
-          padding: "10px",
-          border: "1px solid #ddd",
-          borderRadius: "6px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
-        <strong>Options:</strong>
-        <ul style={{ marginTop: "8px", paddingLeft: "20px" }}>
+      <div className="mb-4 p-3 border border-gray-300 rounded-md bg-gray-50">
+        <strong className="font-semibold text-gray-700 !text-[rgba(229,145,42,0.9)]">Options:</strong>
+        <ul className="mt-2 list-disc list-inside text-gray-800">
           {question.options.map((opt) => (
             <li key={opt._id}>{opt.word}</li>
           ))}
         </ul>
       </div>
 
-      <div
-        style={{
-          padding: "10px",
-          border: "1px solid #ddd",
-          borderRadius: "6px",
-          backgroundColor: "#e8f5e9",
-          color: "#2e7d32",
-          fontWeight: "bold",
-        }}
-      >
+      <div className="p-3 border border-green-300 rounded-md bg-green-50 text-green-800 font-semibold">
         ✅ Correct Answer: {question.correctAnswer.word}
       </div>
-
-    </div>
+      
+    </CardContainer>
   )
 }
 

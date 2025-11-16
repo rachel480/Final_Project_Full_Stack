@@ -44,7 +44,7 @@ const login = async (req, res) => {
 
         // exist user or active
         const existUser = await User.findOne({ userName }).lean()
-        if (!existUser || !existUser.active)
+        if (!existUser )
             return res.status(401).json({ message: "Unauthorized" })
 
         // correct password
@@ -63,7 +63,7 @@ const login = async (req, res) => {
         const accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET)
 
         return res.status(201).json({
-            message: "loged in successfully",
+            message: "logged in successfully",
             accessToken: accessToken,
             user: { 
                 id: existUser._id, 

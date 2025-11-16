@@ -1,12 +1,13 @@
-import { NavLink } from "react-router-dom"
+import Header from "../../components/header"
+import CustomNavLink from "../../components/customNavlink"
 
 const PublicNavigation = () => {
     return (
-        <header style={{display:'flex'}}>
-            <NavLink to='about' style={{marginRight:'20px'}}>אודותינו</NavLink>
-            <NavLink to='contact' style={{marginRight:'20px'}}>צור קשר</NavLink>
-            <NavLink to='login' style={{marginRight:'20px'}}>כניסה והרשמה</NavLink>
-        </header>
+        <Header>
+            <CustomNavLink to='about' style={{marginRight:'20px'}}>אודותינו</CustomNavLink>
+            <CustomNavLink to='contact' style={{marginRight:'20px'}}>יצירת קשר</CustomNavLink>
+            <CustomNavLink to='login' style={{marginRight:'20px'}}>כניסה והרשמה</CustomNavLink>
+        </Header>
     )
 }
 

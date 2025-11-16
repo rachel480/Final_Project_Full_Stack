@@ -1,4 +1,3 @@
-// features/question/questionWizardSlice.ts
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {

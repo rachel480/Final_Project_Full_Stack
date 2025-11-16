@@ -1,30 +1,16 @@
-const FinalSaveButton = ({onClick ,disabled}) => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-        width: "100%",
-        maxWidth: 480,
-        margin: "0 auto",
-        padding: 14,
-        border: "1px solid #eee",
-        borderRadius: 8,
-        background: "#fff",
-        boxShadow: "0 1px 4px rgba(16,24,40,0.04)",
-        fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial"
-      }}
-    >
-      <h1 style={{ margin: 0 }}>Final Save</h1>
+import { Box, Paper } from "@mui/material"
+import FormTitle from "../../../components/formTitle"
+import SubmitButton from "../../../components/submitButton"
 
-      <button
-        onClick={onClick}
-        disabled={disabled}
-      >
-        Final Save
-      </button>
-    </div>
+const FinalSaveButton = ({ onClick, disabled }) => {
+  return (
+    <Box className="flex flex-col gap-3 w-full max-w-md mx-auto p-4">
+
+      <Paper elevation={3} className="flex flex-col gap-4 p-6 rounded-xl bg-white shadow-md">
+        <FormTitle text='שמירה סופית' />
+        <SubmitButton onClick={onClick} disabled={disabled} text={'שמירה'}/>
+      </Paper>
+    </Box>
   )
 }
 

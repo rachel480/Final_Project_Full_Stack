@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const UserProgress= require('../models/UserProgress.js')
 const bcrypt = require('bcrypt')
 
 //a service that checks if userName is availble
@@ -166,7 +167,14 @@ const deleteUser = async (req, res) => {
         const foundUser = await User.findOne({ _id: id }).exec()
         if (!foundUser)
             return res.status(400).json({ message: "no user found" })
+
+        //delete user progress
+        const foundUserProgress= await UserProgress.findOne({user:foundUser._id}).exec()
+        if(foundUserProgress)
+            await foundUserProgress.deleteOne()
+
         const deletedUser = await foundUser.deleteOne()
+
         if (!deletedUser)
             return res.status(400).json({ message: `error occurred while updating user ${userName}` })
         return res.status(201).json({ message: `user with id ${id} was deleted successfully` })
