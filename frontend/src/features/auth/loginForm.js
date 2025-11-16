@@ -82,9 +82,14 @@ const LoginForm = () => {
             <CustomLink to="/register">הרשמה</CustomLink>
           </p>
 
+          <p className="mt-4 text-right text-sm">
+            <CustomLink to="/forgot-password">שכחתי סיסמא?</CustomLink>
+          </p>
+
         </FormContainer>
-        </div>
-        </div>
+
+      </div>
+    </div >
   )
 }
 

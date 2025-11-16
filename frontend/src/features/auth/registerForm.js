@@ -9,23 +9,10 @@ import FormContainer from '../../components/formContainer'
 import FormTitle from '../../components/formTitle'
 import SubmitButton from '../../components/submitButton'
 import CustomLink from '../../components/customLink'
-
-const validPassword = (password) => {
-  let capitalLetter = false
-  let smallLetter = false
-  let special = false
-
-  for (let i = 0; i < password.length; i++) {
-    if (password[i] >= 'A' && password[i] <= 'Z') capitalLetter = true
-    if (password[i] >= 'a' && password[i] <= 'z') smallLetter = true
-    if ("!@#$%^&*(),.?:{}|<>".includes(password[i])) special = true
-  }
-
-  return capitalLetter && smallLetter && special
-}
+import validPassword from './service/validPassword'
 
 const registerSchema = z.object({
-  userName: z.string({ required_error: "חובה להכניס שם משתמש"  }).min(4, "שם משתמש חייב להכיל לפחות 4 תווים"),
+  userName: z.string({ required_error: "חובה להכניס שם משתמש" }).min(4, "שם משתמש חייב להכיל לפחות 4 תווים"),
   password: z.string({ required_error: "חובה להכניס סיסמא" }).min(8, "סיסמא חייבת להכיל לפחות 8 תווים").refine(val => validPassword(val), { message: "סיסמא חייבת להכיל אות  גדולה , קטנה ותו מיוחד" }),
   confirmPassword: z.string({ required_error: "חובה לאמת סיסמא" }),
   fullName: z.string({ required_error: "חובה להכניס שם מלא" }).min(1, "שם מלא חייב להכיל לפחות תו 1"),
@@ -67,73 +54,73 @@ const RegisterForm = () => {
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
       <div className="w-full max-w-3xl">
-    <FormContainer onSubmit={handleSubmit(onSubmit)}>
+        <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
-      <FormTitle text="הרשמה" />
+          <FormTitle text="הרשמה" />
 
-      <FormInput
-        label="שם משתמש"
-        type="text"
-        register={register("userName")}
-        error={errors.userName?.message}
-        placeholder="הכנס שם משתמש..."
-        htmlFor="userName"
-      />
+          <FormInput
+            label="שם משתמש"
+            type="text"
+            register={register("userName")}
+            error={errors.userName?.message}
+            placeholder="הכנס שם משתמש..."
+            htmlFor="userName"
+          />
 
-      <FormInput
-        label="שם מלא"
-        type="text"
-        register={register("fullName")}
-        error={errors.fullName?.message}
-        placeholder="הכנס שם מלא..."
-        htmlFor="fullName"
-      />
+          <FormInput
+            label="שם מלא"
+            type="text"
+            register={register("fullName")}
+            error={errors.fullName?.message}
+            placeholder="הכנס שם מלא..."
+            htmlFor="fullName"
+          />
 
-      <FormInput
-        label="סיסמא"
-        type="password"
-        register={register("password")}
-        error={errors.password?.message}
-        placeholder="הכנס סיסמא..."
-        htmlFor="password"
-      />
+          <FormInput
+            label="סיסמא"
+            type="password"
+            register={register("password")}
+            error={errors.password?.message}
+            placeholder="הכנס סיסמא..."
+            htmlFor="password"
+          />
 
-      <FormInput
-        label="אימות סיסמא"
-        type="password"
-        register={register("confirmPassword")}
-        error={errors.confirmPassword?.message}
-        placeholder="אמת סיסמא..."
-        htmlFor="confirmPassword"
-      />
+          <FormInput
+            label="אימות סיסמא"
+            type="password"
+            register={register("confirmPassword")}
+            error={errors.confirmPassword?.message}
+            placeholder="אמת סיסמא..."
+            htmlFor="confirmPassword"
+          />
 
-      <FormInput
-        label="אימייל"
-        type="email"
-        register={register("email")}
-        error={errors.email?.message}
-        placeholder="הכנס אימייל..."
-        htmlFor="email"
-      />
+          <FormInput
+            label="אימייל"
+            type="email"
+            register={register("email")}
+            error={errors.email?.message}
+            placeholder="הכנס אימייל..."
+            htmlFor="email"
+          />
 
-      <FormInput
-        label="טלפון (אופציונלי)"
-        type="text"
-        register={register("phone")}
-        error={errors.phone?.message}
-        placeholder="הכנס מספר טלפון..."
-        htmlFor="phone"
-      />
+          <FormInput
+            label="טלפון (אופציונלי)"
+            type="text"
+            register={register("phone")}
+            error={errors.phone?.message}
+            placeholder="הכנס מספר טלפון..."
+            htmlFor="phone"
+          />
 
-      <SubmitButton text="הרשמה" isLoading={isLoading} />
+          <SubmitButton text="הרשמה" isLoading={isLoading} />
 
-      <p className="mt-4 text-center text-sm">
-        כבר יש לך חשבון?{' '}
-        <CustomLink to='/login'>התחברות</CustomLink>
-      </p>
+          <p className="mt-4 text-center text-sm">
+            כבר יש לך חשבון?{' '}
+            <CustomLink to='/login'>התחברות</CustomLink>
+          </p>
 
-    </FormContainer>
-    </div>
+        </FormContainer>
+      </div>
     </div>
   )
 }
