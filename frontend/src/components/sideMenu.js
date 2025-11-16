@@ -5,7 +5,7 @@ const SideMenu = ({ children }) => {
     <Box
       className={`fixed right-0 bg-[rgba(5,168,183,0.58)] text-white shadow-md transition-all duration-300`}
       style={{
-        top: 80, 
+        top: 85, 
         height: 'calc(100% - 80px)',
       }}
     >
