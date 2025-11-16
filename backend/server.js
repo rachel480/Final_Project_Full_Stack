@@ -26,6 +26,7 @@ app.use('/api/userProgress',require('./routes/userProgressRoutes'))
 app.use('/api/favoriteWord',require('./routes/favoriteWordRoute'))
 app.use('/api/myWord',require('./routes/myWordRoutes'))
 app.use('/api/myCategory',require('./routes/myCategoryRoutes'))
+app.use("/api/contact", require('./routes/contactMessageRoute'))
 connectDB()
 
 mongoose.connection.once('open',async()=>{

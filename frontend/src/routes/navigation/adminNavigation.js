@@ -6,6 +6,7 @@ const AdminNavigation = () => {
     <SideMenu>
       <CustomNavLink to="data">ניהול נתונים</CustomNavLink>
       <CustomNavLink to="users">ניהול משתמשים</CustomNavLink>
+      <CustomNavLink to="contact-messages">ניהול יצירות קשר</CustomNavLink>
     </SideMenu>
   )
 }
