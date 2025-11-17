@@ -4,7 +4,6 @@ import LoginForm from "../features/auth/loginForm";
 import CourseList from "../features/course/courseList";
 import CategoryWordSection from "../features/category/words/wordsSection";
 import CategoriesSection from "../features/course/categoriesSection";
-import ChallengeSection from "../features/category/challengeSection/challengeSection";
 import PublicLayout from "./layouts/publicLayout";
 import CourseLayout from "./layouts/courseLayout";
 import UserLayout from "./layouts/userLayout";
@@ -45,6 +44,8 @@ import ContactForm from "../features/contact/contactForm";
 import ContactMessage from "../features/contact/contactMessages";
 import ForgotPassword from "../features/auth/forgotPassword";
 import ResetPassword from "../features/auth/resetPassword";
+import ChallengeRoot from "../features/category/challengeSection/challengeRoot";
+import FinalExamRoot from "../features/course/finalExam/finalExamRoot";
 
 const AppRoutes = () => {
   return (
@@ -76,14 +77,14 @@ const AppRoutes = () => {
           <Route index element={<Navigate to='category' />} />
           <Route path='category' element={<CategoriesSection />} />
           <Route path='words' element={<WordSection />} />
-          <Route path='final-test' element={<h1>מבחן סופי על כל מילות הקורס</h1>} />
+          <Route path='final-test' element={<FinalExamRoot/>} />
 
           <Route path='category/:categoryId' element={<CategoryLayout />}>
             <Route index element={<Navigate to='words' />} />
             <Route path='words' element={<CategoryWordSection />} />
 
             <Route path='challenge'>
-              <Route index element={<ChallengeSection />} />
+              <Route index element={<ChallengeRoot/>} />
               <Route path=':challengeId/results' element={<ChallengeResults />} />
             </Route>
 
