@@ -1,4 +1,4 @@
-import bufferToBase64 from "../../../utils/imageUtils"
+import bufferToBase64 from "../../../../utils/imageUtils"
 import OptionList from "./optionList"
 import QuestionMenu from "./questionMenu"
 import { Typography, Paper } from "@mui/material"
