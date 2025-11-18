@@ -18,7 +18,7 @@ const CourseCard = ({ course }) => {
     setShowConfirm(false)
     try {
       await deleteCourse({ id: course._id }).unwrap();
-      toast.success(`Course "${course.name}" was deleted successfully!`, {
+      toast.success(`קורס "${course.name}" נמחק בהצלחה!`, {
         position: "top-right",
         autoClose: 3000,
       })

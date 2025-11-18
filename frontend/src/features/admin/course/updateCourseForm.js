@@ -14,6 +14,9 @@ import DashedBox from "../../../components/dashedBox";
 import SectionTitle from "../../../components/sectionTitle";
 import FormSelect from "../../../components/formSelect";
 import { Box } from "@mui/material";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const updateCourseSchema = z.object({
   name: z.string({ required_error: "חובה להכניס שם קורס" }).min(1, "חובה להכניס שם קורס"),
@@ -53,9 +56,9 @@ const UpdateCourseForm = () => {
     }
   }, [course, reset])
 
-  if (isLoading) return <p className="text-gray-500 text-center mt-8">טוען קורס...</p>
-  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "משהו השתבש"}</p>
-  if (!course) return <p className="text-gray-500 text-center mt-8">לא נמצא קורס</p>
+ if (isLoading) return <LoadingSpinner text="טוען קורס..."/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (!course) return <InfoMessage message="לא נמצא קורס"/>
 
   const onSubmit = async (data) => {
     try {

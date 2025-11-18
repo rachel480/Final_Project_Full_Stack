@@ -50,6 +50,10 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
       if (!addAnother)
         dispatch(goToStep(step + 1))
     }
+    dispatch(setWordInfo({ word: data.word, translation: data.translation, categoryName: "" }))
+    const addAnother = window.confirm("תרצה להוסיף מילה נוספת???")
+    if (!addAnother)
+      dispatch(goToStep(step + 1))
   }
 
   const wordSchema = z.object({

@@ -15,6 +15,9 @@ import CardContainer from "../../../components/cardContainer";
 import DashedBox from "../../../components/dashedBox";
 import TagLabel from "../../../components/tagLable";
 import CardRow from "../../../components/cardRow";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+
 
 const SingleCourseCard = () => {
   const { courseId } = useParams()
@@ -32,20 +35,20 @@ const SingleCourseCard = () => {
 
     try {
       await deleteCategory({ id: selectedCategory._id }).unwrap()
-      toast.success(`Category "${selectedCategory.name}" was deleted successfully ✅`, {
+      toast.success(`קטגוריה "${selectedCategory.name}" נמחקה בהצלחה ✅`, {
         position: "top-right",
         autoClose: 3000,
       })
     } catch (err) {
-      const errorMsg = err?.data?.message || "Failed to delete category ❌"
+      const errorMsg = err?.data?.message || "ארעה שגיעה במחיקה ❌"
       toast.error(errorMsg, { position: "top-right", autoClose: 4000 })
     } finally {
       setSelectedCategory(null);
     }
   }
 
-  if (isLoading) return <p>Loading course...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
+  if (isLoading) return <LoadingSpinner text="טוען קורס"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
 
   return (
     <CardContainer>

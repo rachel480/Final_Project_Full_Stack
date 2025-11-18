@@ -1,4 +1,4 @@
-import bufferToBase64 from "../../../utils/imageUtils"
+import bufferToBase64 from "../../../../utils/imageUtils"
 
 const OptionList = ({ options, status, handleUsersAnswer, answer }) => {
   return (

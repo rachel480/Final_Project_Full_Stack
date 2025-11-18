@@ -17,6 +17,9 @@ import TagLabel from "../../../components/tagLable"
 import DeleteButton from "../../../components/deleteButton"
 import UpdateButton from "../../../components/updateButton"
 import ShowDetailsButton from "../../../components/showDetailesButton"
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const SingleCategoryCard = () => {
   const { categoryId, courseId } = useParams()
@@ -36,14 +39,15 @@ const SingleCategoryCard = () => {
 
     try {
       await deleteChallenge({ id: selectedChallenge._id }).unwrap()
-      toast.success(`Challenge was deleted successfully ✅`, {
+      toast.success(`קטגוריה נמחקה בהצלחה✅`, {
         position: "top-right",
         autoClose: 3000,
+        onClose:()=>navigate(`/user/admin/data/courses/${courseId}/category/${categoryId}`)
       })
-      navigate(`/user/admin/data/courses/${courseId}/category/${categoryId}`)
+      
     } catch (err) {
       console.error("Delete challenge error:", err)
-      const errorMsg = err?.data?.message || "Failed to delete challenge ❌"
+      const errorMsg = err?.data?.message || "ארעה שגיאה במחיקה ❌"
       toast.error(errorMsg, { position: "top-right", autoClose: 4000 })
     } finally {
       setSelectedChallenge(null)
@@ -56,23 +60,23 @@ const SingleCategoryCard = () => {
 
     try {
       await deleteWord({ id: selectedWord._id }).unwrap()
-      toast.success(`Word "${selectedWord.word}" was deleted successfully ✅`, {
+      toast.success(`המילה "${selectedWord.word}" נמחקה בהצלחה ✅`, {
         position: "top-right",
         autoClose: 3000,
+        onClose:()=>navigate(`/user/admin/data/courses/${courseId}/category/${categoryId}`)
       })
-      navigate(`/user/admin/data/courses/${courseId}/category/${categoryId}`)
     } catch (err) {
       console.error("Delete word error:", err)
-      const errorMsg = err?.data?.message || "Failed to delete word ❌"
+      const errorMsg = err?.data?.message || "ארעה שגיעה במחיקה❌"
       toast.error(errorMsg, { position: "top-right", autoClose: 4000 })
     } finally {
       setSelectedWord(null)
     }
   }
 
-  if (isLoading) return <p>loading category...</p>
-  if (error) return <p>{error?.data?.message || "something went wrong"}</p>
-  if (!category) return <p>Category not found</p>
+  if (isLoading) return <LoadingSpinner text="טוען קטגוריה"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (!category) return <InfoMessage message={"לא נמצאה קטגוריה"}/>
 
   return (
     <CardContainer>

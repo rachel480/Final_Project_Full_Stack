@@ -5,21 +5,16 @@ import BackButton from "../../../components/backButton"
 import SectionTitle from "../../../components/sectionTitle"
 import SpellcheckIcon from "@mui/icons-material/Spellcheck"
 import { Card, CardContent, Typography, Box } from "@mui/material"
-
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 const SingleWordCard = () => {
   const { wordId, courseId, categoryId } = useParams()
   const { data: word, isLoading, error } = useGetWordByIdQuery(wordId)
 
-  if (isLoading)
-    return <p className="text-gray-500 text-center mt-8">Loading word...</p>
-  if (error)
-    return (
-      <p className="text-red-500 text-center mt-8">
-        {error?.data?.message || "Something went wrong"}
-      </p>
-    )
-  if (!word)
-    return <p className="text-gray-500 text-center mt-8">Word not found</p>
+  if (isLoading) return <LoadingSpinner text="טוען מילה"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (!word) return <InfoMessage message="לא נמצאה מילה"/>
 
   const wordImg = word.img
   let imageSrc = ""

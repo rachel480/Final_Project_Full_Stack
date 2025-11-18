@@ -82,7 +82,7 @@ const AddCategoriesInfo = ({ setCategoryInfo, goToStep, selectWizardCategory, se
         />
 
         <label>
-          <span>{sumSelected} selected Words</span>
+          <span>{sumSelected} מילים נבחרו</span>
         </label>
 
         <WordCheckboxList
@@ -93,7 +93,7 @@ const AddCategoriesInfo = ({ setCategoryInfo, goToStep, selectWizardCategory, se
           setSumSelected={setSumSelected}
         />
 
-        <SubmitButton text={'Save'} />
+        <SubmitButton text={'שמור'} />
         <Button variant="text" onClick={() => setShowList(true)} className="mt-4 !text-orange-500 !underline">קטגוריות שהוספתי</Button>
 
       </FormContainer>

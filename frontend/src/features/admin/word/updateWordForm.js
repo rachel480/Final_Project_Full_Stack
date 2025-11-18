@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -118,6 +117,10 @@ useEffect(() => {
     setPreviewSrc(null)
     setShowFileInput(true) 
   }
+
+  if (isLoading) return <LoadingSpinner text="טוען מילה"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (!word) return <InfoMessage message="לא נמצאה מילה"/>
 
   const onSubmit = async (data) => {
     try {

@@ -16,7 +16,9 @@ import TagLabel from "../../../components/tagLable"
 import ShowDetailsButton from "../../../components/showDetailesButton"
 import DeleteButton from "../../../components/deleteButton"
 import UpdateButton from "../../../components/updateButton"
-
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 const SingleChallengeCard = () => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -34,13 +36,13 @@ const SingleChallengeCard = () => {
 
     try {
       await deleteQuestion({ id: selectedQuestion._id }).unwrap()
-      toast.success(`Question "${selectedQuestion.question.word}" deleted successfully ✅`, {
+      toast.success(`השאלה "${selectedQuestion.question.word}" נמחקה בהצלחה ✅`, {
         position: "top-right",
         autoClose: 3000,
       })
     } catch (err) {
       console.error("Delete question error:", err)
-      const errorMsg = err?.data?.message || "Failed to delete question ❌"
+      const errorMsg = err?.data?.message || "ארעה שגיעה במחיקה ❌"
       toast.error(errorMsg, {
         position: "top-right",
         autoClose: 4000,
@@ -50,9 +52,9 @@ const SingleChallengeCard = () => {
     }
   }
 
-  if (isLoading) return <p>Loading challenge...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
-  if (!challenge) return <p>Challenge not found</p>
+  if (isLoading) return <LoadingSpinner text="טוען אתגר"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהוא השתבש!!"}/>
+  if (!challenge) return <InfoMessage message="לא נמצא אתגר!!"/>
 
   return (
     <CardContainer>

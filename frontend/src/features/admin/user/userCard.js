@@ -18,7 +18,7 @@ const UserCard = ({ user }) => {
     setShowConfirm(false);
     try {
       await deleteUserByAdmin(user._id).unwrap();
-      toast.success(`User "${user.userName}" was deleted successfully!`, {
+      toast.success(`משתמש "${user.userName}" נמחק בהצלחה!`, {
         position: "top-right",
         autoClose: 3000,
       });
