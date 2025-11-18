@@ -4,14 +4,18 @@ import CardContainer from "../../../components/cardContainer"
 import BackButton from "../../../components/backButton"
 import SectionTitle from "../../../components/sectionTitle"
 import QuizIcon from "@mui/icons-material/Quiz"
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const SingleQuestionCard = () => {
   const { questionId, challengeId, courseId, categoryId } = useParams()
   const { data: question, isLoading, error } = useGetFullQuestionByIdQuery(questionId)
 
-  if (isLoading) return <p>Loading question...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
-  if (!question) return <p>Question not found</p>
+  
+if (isLoading) return <LoadingSpinner text="טוען שאלה..."/>
+  if (error) return <ErrorMessage message={error?.data?.message || "Something went wrong"}/>
+  if (!question) return <InfoMessage message="לא נמצאה שאלה"/>
 
   return (
     <CardContainer>

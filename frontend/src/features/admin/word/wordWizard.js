@@ -8,6 +8,9 @@ import WizardLayout from "../common/wizardLayout";
 import wizardSteps from "../common/wizardSteps";
 import { useGetCategoryByIdQuery } from "../../category/categoryApi";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const WordWizard = () => {
   const step = useSelector(selectWizardStep)
@@ -19,9 +22,9 @@ const WordWizard = () => {
 
   const [createNewWord] = useCreateNewWordMutation()
 
-  if (isLoading) return <p>טוען...</p>;
-  if (error) return <p>{error?.data || "משהו השתבש"}</p>;
-  if (!category) return <p>לא נמצאה קטגוריה</p>;
+  if (isLoading) return <LoadingSpinner/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש!!"}/>
+  if (!category) return <InfoMessage/>
 
   const handleStepChange = (number) => {
     dispatch(goToStep(number));

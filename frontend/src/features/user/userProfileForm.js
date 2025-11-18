@@ -12,6 +12,9 @@ import CustomLink from "../../components/customLink";
 import FormTitle from "../../components/formTitle";
 import InfoIcon from '@mui/icons-material/Info';
 import Tooltip from '@mui/material/Tooltip';
+import LoadingSpinner from "../../components/loadingSpinner"
+import ErrorMessage from "../../components/errorMessage"
+import InfoMessage from "../../components/infoMessage"
 
 const userSchema = z.object({
     fullName: z.string({ required_error: "חובה להכניס שם מלא" }).min(1, "שם מלא חייב להכיל לפחות תו 1"),
@@ -51,12 +54,9 @@ const UserProfileForm = () => {
         }
     }, [user, reset])
 
-    if (isLoading) return <p>טוען פרטי משתמש...</p>
-
-    if (error)
-        return <p>{error?.data?.message || "משהו השתבש!!"}</p>
-
-    if (!user) return <p>משתמש לא נמצא</p>
+    if (isLoading) return <LoadingSpinner text="טוען פרטי משתמש"/>
+    if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+    if (!user) return <InfoMessage message="לא נמצאה משתמש"/>
 
     const onSubmit = async (data) => {
         const hasChanges = Object.keys(data).some((key) => {

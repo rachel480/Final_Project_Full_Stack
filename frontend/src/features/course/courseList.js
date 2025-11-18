@@ -1,8 +1,11 @@
 
 import { useGetUserProgressByUserQuery } from "../userProgress/userProgressApi"
-import { Card, CardContent, CardActionArea, Typography, CircularProgress, Grid } from "@mui/material"
+import { Card, CardContent, CardActionArea, Typography,  Grid } from "@mui/material"
 import { Link } from "react-router-dom"
 import PageTitle from "../../components/pageTitle"
+import LoadingSpinner from "../../components/loadingSpinner"
+import ErrorMessage from "../../components/errorMessage"
+import InfoMessage from "../../components/infoMessage"
 
 const rainbowGradients = [
   "from-pink-400 to-red-500",
@@ -16,26 +19,9 @@ const CourseList = () => {
   const { data: userProgress, isLoading, error } = useGetUserProgressByUserQuery()
   const courses = userProgress?.courses ?? []
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <CircularProgress color="primary" />
-      </div>
-    )
-
-  if (error)
-    return (
-      <p className="text-red-500 text-center mt-10">
-        {error?.data?.message || "משהו השתבש"}
-      </p>
-    )
-
-  if (courses.length === 0)
-    return (
-      <h1 className="text-center text-gray-500 mt-10 text-xl font-medium">
-        לא נמצאו קורסים
-      </h1>
-    )
+  if (isLoading) return  <LoadingSpinner text="טוען פרטי משתמש"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (courses.length === 0) return <InfoMessage message="לא נמצאו קורסים"/>
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-[80px] px-6">

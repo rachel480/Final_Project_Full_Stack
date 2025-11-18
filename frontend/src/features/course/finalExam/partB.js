@@ -3,7 +3,6 @@ import { Typography, Button } from "@mui/material";
 import { shuffleArray } from "../../admin/challenge/services/challengeServices";
 
 const TOTAL_PAIRS = 32   
-const TOTAL_CARDS = TOTAL_PAIRS * 2
 const TIME_LIMIT =90
 
 const PartB = ({ allWords, onEnd }) => {

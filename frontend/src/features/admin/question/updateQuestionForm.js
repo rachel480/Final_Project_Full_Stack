@@ -14,6 +14,9 @@ import DashedBox from "../../../components/dashedBox";
 import FormSelect from "../../../components/formSelect";
 import { shuffleArray } from "../challenge/services/challengeServices";
 import { Box } from "@mui/material";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const updateQuestionSchema = z
   .object({
@@ -70,9 +73,9 @@ const UpdateQuestionForm = () => {
     }
   }, [question, words, reset])
 
-  if (isLoading || loadingWords) return <p className="text-gray-500 text-center mt-8">Loading question details...</p>
-  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "Something went wrong"}</p>
-  if (!question) return <p className="text-gray-500 text-center mt-8">No question found</p>
+  if (isLoading || loadingWords) return <LoadingSpinner/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (!question) return <InfoMessage message="לא נמצאה שאלה"/>
 
   const onSubmit = async (data) => {
     try {
@@ -80,7 +83,7 @@ const UpdateQuestionForm = () => {
       const shuffledOptions = shuffleArray(options)
       await updateQuestion({ id: questionId, options: shuffledOptions }).unwrap()
 
-      toast.success("Question options updated successfully!", {
+      toast.success("אפשרויות השאלה עודכנו בהצלחה!", {
         position: "top-right",
         autoClose: 3000,
         onClose: () => {

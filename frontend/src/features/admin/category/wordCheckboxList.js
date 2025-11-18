@@ -32,7 +32,7 @@ const WordCheckboxList = ({ words, notUsedWords, lastCategory, register, setSumS
           )
         })
       ) : (
-        <Typography className="text-sm text-gray-500">No words available yet.</Typography>
+        <Typography className="text-sm text-gray-500">אין מילים זמינות</Typography>
       )}
     </Paper>
   )

@@ -7,13 +7,16 @@ import SectionTitle from "../../../components/sectionTitle"
 import CardContainer from "../../../components/cardContainer"
 import DashedBox from "../../../components/dashedBox"
 import { Box } from "@mui/material"
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const UserList = () => {
   const navigate = useNavigate()
   const { data: users, isLoading, error } = useGetAllUsersQuery()
 
-  if (isLoading) return <p>Loading users...</p>
-  if (error) return <p>{error?.data?.message || "Something went wrong"}</p>
+  if (isLoading) return <LoadingSpinner text="טוען משתמשים..."/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש!!"}/>
 
   return (
     <CardContainer>
@@ -28,7 +31,7 @@ const UserList = () => {
         {users?.length ? (
           users.map((user) => <UserCard key={user._id} user={user} />)
         ) : (
-          <p>No users found!</p>
+          <InfoMessage message="לא נמצאו משתמשים"/>
         )}
       </Box>
 

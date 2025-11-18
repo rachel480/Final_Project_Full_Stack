@@ -12,7 +12,9 @@ import SubmitButton from "../../../components/submitButton"
 import BackButton from "../../../components/backButton"
 import DashedBox from "../../../components/dashedBox"
 import CustomLink from "../../../components/customLink"
-
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 const updateChallengeSchema = z.object({})
 
 const UpdateChallengeForm = () => {
@@ -33,9 +35,9 @@ const UpdateChallengeForm = () => {
     }
   }, [challenge, reset])
 
-  if (isLoading) return <p className="text-gray-500 text-center mt-8">Loading challenge...</p>
-  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "Something went wrong"}</p>
-  if (!challenge) return <p className="text-gray-500 text-center mt-8">No challenge found</p>
+  if (isLoading) return <LoadingSpinner text="טוען אתגר"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (!challenge) return <InfoMessage message="לא נמצא אתגר"/>
 
   const onSubmit = async (data) => {
     try {
@@ -52,13 +54,13 @@ const UpdateChallengeForm = () => {
       }
 
       await updateChallenge({ id: challengeId, ...data }).unwrap()
-      toast.success(`Challenge updated successfully!`, {
+      toast.success(`אתגר עודכן בהצלחה!`, {
         position: "top-right",
         autoClose: 3000,
       })
     } catch (err) {
       console.error(err)
-      toast.error(err?.data?.message || "Update failed", {
+      toast.error(err?.data?.message || "העדכון נכשל", {
         position: "top-right",
         autoClose: 3000,
       })
@@ -97,7 +99,7 @@ const UpdateChallengeForm = () => {
                 </CustomLink>
               ))
             ) : (
-              <p className="text-gray-500">No questions in this challenge</p>
+              <p className="text-gray-500">אין שאלות זמינות באתר זה </p>
             )}
           </div>
         </DashedBox>

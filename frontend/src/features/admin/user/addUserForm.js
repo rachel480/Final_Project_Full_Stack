@@ -112,7 +112,7 @@ const AddUserForm = () => {
         error={errors.active?.message}
       />
 
-      <SubmitButton text="המשך" isLoading={isSubmitting} className="mt-4" />
+      <SubmitButton text="שמור" isLoading={isSubmitting} className="mt-4" />
     </FormContainer>
   )
 }

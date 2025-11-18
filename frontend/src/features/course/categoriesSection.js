@@ -3,6 +3,8 @@ import { useGetCourseCategoriesQuery } from "./courseApi"
 import { useGetUserProgressByUserQuery } from "../userProgress/userProgressApi"
 import { useState } from "react"
 import { Card, CardActionArea, CardContent, Typography, LinearProgress, Tooltip } from "@mui/material"
+import LoadingSpinner from "../../components/loadingSpinner"
+import ErrorMessage from "../../components/errorMessage"
 
 const rainbowColors = [
   "from-pink-400 to-red-500",
@@ -19,10 +21,8 @@ const CategoriesSection = () => {
   const { data: userProgress } = useGetUserProgressByUserQuery()
   const [hoveredCategory, setHoveredCategory] = useState(null)
 
-  if (isLoading)
-    return <p className="text-gray-500 text-center mt-8">Loading categories...</p>
-  if (error)
-    return <p className="text-red-500 text-center mt-8">Error loading categories</p>
+  if (isLoading ||userProgress) return <LoadingSpinner/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
 
   return (
     <div className="flex flex-wrap justify-center gap-6 mt-8 px-4 mr-[3rem] " >

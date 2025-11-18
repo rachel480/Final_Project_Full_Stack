@@ -12,6 +12,9 @@ import BackButton from "../../../components/backButton"
 import DashedBox from "../../../components/dashedBox"
 import FormSelect from "../../../components/formSelect"
 import { Box } from "@mui/material";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const updateUserSchema = z.object({
   roles: z.array(z.enum(["User", "Admin"])),
@@ -42,15 +45,15 @@ const UpdateUserForm = () => {
     }
   }, [user, reset])
 
-  if (isLoading) return <p className="text-gray-500 text-center mt-8">טוען משתמש</p>
-  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "משהו השתבש"}</p>
-  if (!user) return <p className="text-gray-500 text-center mt-8">לא נמצא משתמש</p>
+  if (isLoading) return <LoadingSpinner text="טוען פרטי משתמש..."/>
+  if (error) return <ErrorMessage message={error?.data?.message || "Something went wrong"}/>
+  if (!user) return <InfoMessage message="לא נמצא משתמש"/>
 
   const onSubmit = async (data) => {
     try {
       await updateUserByAdmin({ id: userId, ...data }).unwrap()
 
-      toast.success(`User "${user.userName}" updated successfully!`, {
+      toast.success(`משתמש "${user.userName}" נמחק בהצלחה!`, {
         position: "top-right",
         autoClose: 3000,
         onClose:()=>navigate("/user/admin/users")

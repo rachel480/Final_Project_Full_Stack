@@ -21,13 +21,14 @@ const AddWordForm = ({ categoryWords = [], categoryId }) => {
     translation: z
       .string({ required_error: "חובה להכניס תרגום" })
       .nonempty("חובה להכניס תרגום"),
+      
   })
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors,isSubmitting },
   } = useForm({
     resolver: zodResolver(wordSchema),
   })
@@ -60,7 +61,7 @@ const AddWordForm = ({ categoryWords = [], categoryId }) => {
         htmlFor="translation"
       />
 
-      <SubmitButton text="שמירה" className="mt-4" />
+      <SubmitButton text="שמירה" isLoading={isSubmitting} className="mt-4" />
     </FormContainer>
   )
 }

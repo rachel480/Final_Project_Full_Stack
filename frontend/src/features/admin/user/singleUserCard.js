@@ -5,21 +5,17 @@ import BackButton from "../../../components/backButton";
 import SectionTitle from "../../../components/sectionTitle";
 import PersonIcon from "@mui/icons-material/Person";
 import { Card, CardContent, Typography, Box } from "@mui/material";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const SingleUserCard = () => {
   const { userId } = useParams();
   const { data: user, isLoading, error } = useGetSingleUserQuery(userId);
 
-  if (isLoading)
-    return <p className="text-gray-500 text-center mt-8">Loading user...</p>;
-  if (error)
-    return (
-      <p className="text-red-500 text-center mt-8">
-        {error?.data?.message || "Something went wrong"}
-      </p>
-    );
-  if (!user)
-    return <p className="text-gray-500 text-center mt-8">User not found</p>;
+  if (isLoading) return <LoadingSpinner text="טוען פרטי משתמש..."/>
+  if (error) return <ErrorMessage message={error?.data?.message || "Something went wrong"}/>
+  if (!user) return <InfoMessage message="לא נמצא משתמש"/>
 
   const initial = user.userName?.charAt(0)?.toUpperCase() || "?";
 
@@ -32,17 +28,16 @@ const SingleUserCard = () => {
         <CardContent>
           <Box className="flex flex-col items-center text-center space-y-4">
             
-            {/* Initial avatar */}
             <div className="w-16 h-16 rounded-full bg-green-500 text-white flex items-center justify-center text-2xl font-bold">
               {initial}
             </div>
 
-            {/* Username */}
+         
             <Typography className="!text-[rgba(229,145,42,0.9)] font-semibold text-xl">
               {user.userName}
             </Typography>
 
-            {/* User details */}
+           
             <Box className="w-full text-left space-y-1 text-gray-700">
               <Typography>
                 <strong className="!text-[rgba(229,145,42,0.9)]">ID:</strong> {user._id}

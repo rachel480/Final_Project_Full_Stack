@@ -13,11 +13,14 @@ import FormSelect from "../../../components/formSelect";
 import SubmitButton from "../../../components/submitButton";
 import BackButton from "../../../components/backButton";
 import { Box } from "@mui/material";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const updateWordSchema = z.object({
-  word: z.string().min(1, "Word is required"),
-  translation: z.string().min(1, "Translation is required"),
-  categoryName: z.string().min(1, "Category is required"),
+  word: z.string({ required_error: "חובה להכניס מילה" }).min(1, "חובה להכניס מילה"),
+  translation: z.string({ required_error: "חובה להכניס תרגום" }).min(1, "חובה להכניס תרגום"),
+  categoryName: z.string({ required_error: "חובה לבחור שם קטגוריה" }).min(1, "חובה לבחור קטגוריה"),
 })
 
 const UpdateWordForm = () => {
@@ -49,11 +52,9 @@ const UpdateWordForm = () => {
     }
   }, [word, reset])
 
-  if (isLoading)
-    return <p className="text-gray-500 text-center mt-8">טוען מילה...</p>
-  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "משהו השתבש"}</p>
-  if (!word) return <p className="text-gray-500 text-center mt-8">לא נמצאה מילה</p>
-
+  if (isLoading) return <LoadingSpinner text="טוען מילה"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (!word) return <InfoMessage message="לא נמצאה מילה"/>
   const onSubmit = async (data) => {
     try {
 
@@ -93,7 +94,7 @@ const UpdateWordForm = () => {
           type="text"
           register={register("word")}
           error={errors.word?.message}
-          placeholder="Enter word..."
+          placeholder="הכנס מילה..."
           htmlFor="word"
         />
 
@@ -102,7 +103,7 @@ const UpdateWordForm = () => {
           type="text"
           register={register("translation")}
           error={errors.translation?.message}
-          placeholder="Enter translation..."
+          placeholder="הכנס תרגום..."
           htmlFor="translation"
         />
 
@@ -115,7 +116,7 @@ const UpdateWordForm = () => {
             value: category.name,
             label: category.name,
           }))}
-          defaultOption="-- Select Category --"
+          defaultOption="-- בחר קטוגריה--"
         />
 
         <SubmitButton text="Save" isLoading={isSubmitting} className="mt-6" />

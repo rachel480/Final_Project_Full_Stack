@@ -2,15 +2,17 @@ import { useParams } from "react-router-dom"
 import { useGetChallengeResultsQuery } from "../../../challenge/challengeApi"
 import QuestionPrompt from "./questionPrompt"
 import OptionsReview from "./optionsReview"
-import NavigateButton from "../../../../components/navigateButton"
 import { Box, Typography, Paper } from "@mui/material"
+import CustomLink from "../../../../components/customLink"
+import LoadingSpinner from "../../../../components/loadingSpinner"
+import ErrorMessage from "../../../../components/errorMessage"
 
 const ChallengeResults = () => {
   const { challengeId, courseId } = useParams()
   const { data, isLoading, error } = useGetChallengeResultsQuery(challengeId)
 
-  if (isLoading) return <Typography>Loading challenge...</Typography>
-  if (error) return <Typography color="error">Error loading challenge...</Typography>
+  if (isLoading) return <LoadingSpinner text="טוען אתגר"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
 
   const questions = data?.questions || []
   const totalScore = data?.totalScore || 0
@@ -25,7 +27,7 @@ const ChallengeResults = () => {
         <Paper key={question?._id || i} className="w-full max-w-3xl p-6 rounded-3xl bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50 shadow-2xl transform hover:scale-105 transition-all">
           <div className="flex justify-between items-center mb-4">
             <Typography variant="h6" className="font-bold text-indigo-700">שאלה {i + 1}</Typography>
-            <Typography variant="h6" className="font-bold text-green-600">Grade: {question?.userAnswer?.grade ?? 0}</Typography>
+            <Typography variant="h6" className="font-bold text-green-600">ציון: {question?.userAnswer?.grade ?? 0}</Typography>
           </div>
 
           <QuestionPrompt question={question} status={question?.status ?? 0} />
@@ -43,11 +45,11 @@ const ChallengeResults = () => {
       ))}
 
       <Paper className="w-full max-w-3xl p-6 flex justify-between items-center rounded-3xl bg-gradient-to-r from-green-200 to-emerald-300 shadow-xl text-purple-800 font-extrabold text-xl">
-        <span>Final Score 🎉</span>
+        <span>ציון סופי 🎉</span>
         <span>{totalScore}</span>
       </Paper>
 
-      <NavigateButton navigation={`/user/course/${courseId}/category`} buttonText="Back to Course" />
+      <CustomLink to={`/user/course/${courseId}/category`} children={'חזרה לקורס'}/>
     </Box>
   )
 }

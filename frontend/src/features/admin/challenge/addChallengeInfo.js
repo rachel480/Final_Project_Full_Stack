@@ -4,7 +4,9 @@ import { createChallengeForCategory } from "./services/challengeServices"
 import FormTitle from "../../../components/formTitle"
 import { Box, Paper } from "@mui/material"
 import SubmitButton from "../../../components/submitButton"
-
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 const AddChallengeInfo = ({ setChallengeInfo, goToStep, selectWizardStep, categoryId }) => {
 
     const dispatch = useDispatch()
@@ -12,9 +14,9 @@ const AddChallengeInfo = ({ setChallengeInfo, goToStep, selectWizardStep, catego
 
     const { data: category, isLoading, error } = useGetFullCategoryByIdQuery(categoryId)
 
-    if (isLoading) return <p>טוען...</p>
-    if (error) return <p>{error?.data || "משהו השתבש!!!"}</p>
-    if (!category) return <p>לא נמצאה קטגוריה</p>
+    if (isLoading) return <LoadingSpinner/>
+    if (error) return <ErrorMessage message={error?.data || "משהו השתבש!!!"}/>
+    if (!category) return <InfoMessage message="לא נמצאה קטגוריה"/>
 
     const handleChallengeData = () => {
         const challenge = createChallengeForCategory(category)

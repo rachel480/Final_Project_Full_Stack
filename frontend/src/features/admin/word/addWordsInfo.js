@@ -19,7 +19,7 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
 
   const handleData = (data) => {
     dispatch(setWordInfo({ word: data.word, translation: data.translation, categoryName: "" }))
-    const addAnother = window.confirm("whould you like to add another word???")
+    const addAnother = window.confirm("תרצה להוסיף מילה נוספת???")
     if (!addAnother)
       dispatch(goToStep(step + 1))
   }
