@@ -6,9 +6,12 @@ import { useState } from "react"
 import SearchInput from "../../components/searchInput"
 import downloadWordFile from "../../utils/exportToWord"
 import SortSelect from "../../components/sortSelect"
-import { Box, Button, Typography, Paper } from "@mui/material"
+import { Box, Button, Paper } from "@mui/material"
 import DownloadIcon from "@mui/icons-material/Download"
 import CustomLink from "../../components/customLink"
+import LoadingSpinner from "../../components/loadingSpinner"
+import ErrorMessage from "../../components/errorMessage"
+
 
 const WordSection = () => {
   const { courseId } = useParams()
@@ -38,19 +41,8 @@ const WordSection = () => {
       : () => 0
   )
 
-  if (isLoading)
-    return (
-      <Typography className="text-center text-gray-500 mt-8">
-        Loading words...
-      </Typography>
-    )
-
-  if (error)
-    return (
-      <Typography className="text-center text-red-500 mt-8">
-        Error loading words
-      </Typography>
-    )
+  if (isLoading) return  <LoadingSpinner text="טוען מילים...."/>
+  if (error) return  <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
 
   return (
     <Box className="flex flex-col items-center gap-4 p-6">

@@ -51,7 +51,7 @@ const HardOptionList = ({ options, status, answer, chooseAnswer }) => {
           >
             {status === 0 ? (
               optionImageSrc ? (
-                <img src={optionImageSrc} className="w-16 h-16 object-contain" />
+                <img src={optionImageSrc} alt={option.word} className="w-16 h-16 object-contain" />
               ) : (
                 <p className="text-gray-400">אין תמונה</p>
               )

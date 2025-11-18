@@ -15,6 +15,9 @@ import BackButton from "../../../components/backButton";
 import CustomLink from "../../../components/customLink";
 import DashedBox from "../../../components/dashedBox";
 import { Box } from "@mui/material";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const updateCategorySchema = z.object({
   name: z.string({ required_error: "חובה להכניס שם קטגוריה" }).min(1, "חובה להכניס שם קטגוריה"),
@@ -49,9 +52,9 @@ const UpdateCategoryForm = () => {
     }
   }, [category, reset])
 
-  if (isLoading || isLoadingCourses) return <p className="text-gray-500 text-center mt-8">טוען קטגוריה...</p>
-  if (error || coursesError) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "משהו השתבש!!"} </p>
-  if (!category) return <p className="text-gray-500 text-center mt-8">לא נמצאה קטגוריה</p>
+  if (isLoading || isLoadingCourses) return <LoadingSpinner/>
+  if (error || coursesError) return <ErrorMessage message={error?.data?.message || "משהו השתבש!!"}/>
+  if (!category) return <InfoMessage message="לא נמצאה קטגוריה"/>
 
   const onSubmit = async (data) => {
     try {

@@ -2,6 +2,7 @@ import { Alert, AlertTitle } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const ErrorMessage = ( {message = "משהו השתבש!" }) => {
+  
   return (
     <div className="flex justify-center mt-8 px-4">
       <Alert
