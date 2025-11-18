@@ -10,6 +10,21 @@ import WizardLayout from "../common/wizardLayout";
 import wizardSteps from "../common/wizardSteps";
 import { toast } from "react-toastify";
 
+const dataURLtoBlob = (dataurl, mimeType) => {
+  const parts = dataurl.split(',');
+  const b64 = parts.length > 1 ? parts[1] : parts[0];
+
+  const byteString = atob(b64);
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const uint8Array = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < byteString.length; i++) {
+    uint8Array[i] = byteString.charCodeAt(i);
+  }
+  
+  return new Blob([uint8Array], { type: mimeType });
+}
+
+
 const CategoryWizard = () => {
   const step = useSelector(selectWizardStep)
   const wizardData = useSelector(selectWizardData)
@@ -25,22 +40,40 @@ const CategoryWizard = () => {
 
   const onClick = async () => {
     try {
+      const formData = new FormData()
 
-      const addCategoryData = {
-        categoryInfo: wizardData.categoryInfo,
-        questions: wizardData.questions,
-        words: wizardData.words,
-        courseId,
-      }
+      const wordsData = wizardData.words.map((word) => {
+        const { imgData, mimeType, ...rest } = word
+        return rest
+      })
 
-      await createFullCategorySimple(addCategoryData).unwrap()
+      formData.append("categoryInfo", JSON.stringify(wizardData.categoryInfo))
+      formData.append("questions", JSON.stringify(wizardData.questions))
+      formData.append("words", JSON.stringify(wordsData))
+      formData.append("courseId", courseId)
 
-      dispatch(resetWizard());
+      wizardData.words.forEach((word, index) => {
+        if (word.imgData && word.mimeType) {
+          try {
+            const imageBlob = dataURLtoBlob(word.imgData, word.mimeType);
+
+            formData.append(`images`, imageBlob, word.word + "-" + index + ".jpg")
+          } catch (e) {
+            console.error("Error converting Base64 to Blob for word:", word.word, e);
+          }
+        }
+      })
+
+      await createFullCategorySimple(formData).unwrap()
+
+      dispatch(resetWizard())
+
       toast.success("הקטגוריה נוצרה בהצלחה!", {
         position: "top-right",
         autoClose: 3000,
         onClose: () => navigate(`/user/admin/data/courses/${courseId}`)
-      })
+      });
+
     } catch (err) {
       console.error(err)
       const msg = err?.data?.message || err.message || "שגיאה ביצירת קטגוריה"

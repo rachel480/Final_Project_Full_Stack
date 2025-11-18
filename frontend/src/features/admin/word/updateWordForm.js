@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,13 +13,37 @@ import FormInput from "../../../components/formInput";
 import FormSelect from "../../../components/formSelect";
 import SubmitButton from "../../../components/submitButton";
 import BackButton from "../../../components/backButton";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import LoadingSpinner from "../../../components/loadingSpinner"
+import ErrorMessage from "../../../components/errorMessage"
+import InfoMessage from "../../../components/infoMessage"
 
 const updateWordSchema = z.object({
-  word: z.string().min(1, "Word is required"),
-  translation: z.string().min(1, "Translation is required"),
-  categoryName: z.string().min(1, "Category is required"),
+  word: z.string({ required_error: "חובה להכניס מילה" }).min(1, "חובה להכניס מילה"),
+  translation: z.string({ required_error: "חובה להכניס תרגום"}).min(1, "חובה להכניס תרגום"),
+  categoryName: z.string({required_error:"חובה לבחור שם קטגוריה"}).min(1, "חובה לבחור קטגוריה"),
+  img: z.any({required_error: "התמונה חובה"})
 })
+
+const arrayBufferToBase64 = (buffer) => {
+  let binary = '';
+  let bytes;
+  if (buffer?.data && Array.isArray(buffer.data)) {
+    bytes = buffer.data;
+  } else if (buffer instanceof Uint8Array) {
+    bytes = Array.from(buffer);
+  } else if (buffer && buffer.type === 'Buffer' && buffer.data) {
+    bytes = buffer.data;
+  } else {
+    return null;
+  }
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.slice(i, i + chunkSize);
+    binary += String.fromCharCode.apply(null, chunk);
+  }
+  return btoa(binary);
+};
 
 const UpdateWordForm = () => {
   const { wordId, categoryId, courseId } = useParams()
@@ -33,31 +58,79 @@ const UpdateWordForm = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(updateWordSchema),
     defaultValues: { word: "", translation: "", categoryName: "" },
   })
 
-  useEffect(() => {
-    if (word) {
-      reset({
-        word: word.word,
-        translation: word.translation,
-        categoryName: word.categoryName,
-      })
-    }
-  }, [word, reset])
+  const [existingImageSrc, setExistingImageSrc] = useState(null) 
+  const [newImageFile, setNewImageFile] = useState(null) 
+  const [previewSrc, setPreviewSrc] = useState(null) 
+  const [showFileInput, setShowFileInput] = useState(false)
+  const fileInputRef = useRef(null)
 
-  if (isLoading)
-    return <p className="text-gray-500 text-center mt-8">טוען מילה...</p>
-  if (error) return <p className="text-red-500 text-center mt-8">{error?.data?.message || "משהו השתבש"}</p>
-  if (!word) return <p className="text-gray-500 text-center mt-8">לא נמצאה מילה</p>
+useEffect(() => {
+  if (!word) return;
+
+  reset({
+    word: word.word,
+    translation: word.translation,
+    categoryName: word.categoryName,
+  });
+
+  if (word.img?.data && word.img?.contentType) {
+    const src = `data:image/${word.img.contentType};base64,${word.img.data}`;
+    setExistingImageSrc(src);
+    setPreviewSrc(src);
+  } else {
+    setExistingImageSrc(null);
+    setPreviewSrc(null);
+  }
+}, [word, reset]);
+
+
+  if (isLoading) return <LoadingSpinner text="טוען מילה"/>
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (!word) return <InfoMessage message="לא נמצאה מילה"/>
+
+ 
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0] || null
+    if (file) {
+      setNewImageFile(file)
+     
+      const reader = new FileReader()
+      reader.onload = () => {
+        setPreviewSrc(reader.result)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      
+      setNewImageFile(null)
+      setPreviewSrc(existingImageSrc)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setNewImageFile(null)
+    setPreviewSrc(null)
+    setShowFileInput(true) 
+  }
 
   const onSubmit = async (data) => {
     try {
+      
+      const payload = {
+        id: wordId,
+        word: data.word,
+        translation: data.translation,
+        categoryName: data.categoryName,
+        img: newImageFile || null
+      }
 
-      await updateWord({ id: wordId, ...data }).unwrap()
+      await updateWord(payload).unwrap()
 
       toast.success(`המילה עודכנה בהצלחה`, {
         position: "top-right",
@@ -93,7 +166,7 @@ const UpdateWordForm = () => {
           type="text"
           register={register("word")}
           error={errors.word?.message}
-          placeholder="Enter word..."
+          placeholder="הכנס מילה..."
           htmlFor="word"
         />
 
@@ -102,7 +175,7 @@ const UpdateWordForm = () => {
           type="text"
           register={register("translation")}
           error={errors.translation?.message}
-          placeholder="Enter translation..."
+          placeholder="הכנס תרגום..."
           htmlFor="translation"
         />
 
@@ -115,8 +188,46 @@ const UpdateWordForm = () => {
             value: category.name,
             label: category.name,
           }))}
-          defaultOption="-- Select Category --"
+          defaultOption="-- בחר קטגוריה --"
         />
+
+        {/* Image preview + Change button */}
+        <div className="mt-4 flex items-start gap-4">
+          <div>
+            {previewSrc ? (
+              <div className="flex flex-col items-center gap-2">
+                <img src={previewSrc} alt="preview" style={{ width: 140, height: 140, objectFit: "cover", borderRadius: 8, border: "1px solid #ddd" }} />
+                <div className="text-sm text-gray-600">תצוגת תמונה</div>
+              </div>
+            ) : (
+              <div style={{ width: 140, height: 140, display: "flex", alignItems: "center", justifyContent: "center", background: "#f4f4f4", borderRadius: 8, border: "1px dashed #ddd" }}>
+                <span className="text-sm text-gray-500">אין תמונה</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Button variant="contained" onClick={() => { setShowFileInput(!showFileInput); if (fileInputRef.current) fileInputRef.current.value = null; setNewImageFile(null); setPreviewSrc(existingImageSrc); }}>
+              {showFileInput ? "בטל שינוי" : (previewSrc ? "שנה תמונה" : "העלה תמונה")}
+            </Button>
+
+            {previewSrc && (
+              <Button variant="text" onClick={handleRemoveImage}>הסרת תצוגה</Button>
+            )}
+
+            {showFileInput && (
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="border p-2 rounded w-full"
+              />
+            )}
+
+            <div className="text-xs text-gray-500 mt-2">ניתן לשנות את התמונה על ידי לחיצה על "שנה תמונה".</div>
+          </div>
+        </div>
 
         <SubmitButton text="Save" isLoading={isSubmitting} className="mt-6" />
 

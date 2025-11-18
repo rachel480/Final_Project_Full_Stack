@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { selectWizardStep, setWordInfo, setQuestionInfo, setChallengeInfo, goToStep, selectWizardWords, selectWizardCategory, setCategoryInfo, setCallengeInfoInCategory, selectWizardData, resetWizard,} from "./courseWizardSlice";
+import { selectWizardStep, setWordInfo, setQuestionInfo, setChallengeInfo, goToStep, selectWizardWords, selectWizardCategory, setCategoryInfo, setCallengeInfoInCategory, selectWizardData, resetWizard, } from "./courseWizardSlice";
 import AddCourseInfo from "./addCourseInfo";
 import AddChallengesInfo from "../challenge/addChallengesInfo";
 import AddWordsInfo from "../word/addWordsInfo";
@@ -23,26 +23,57 @@ const CourseWizard = () => {
     dispatch(goToStep(number))
   }
 
+  const dataURLtoBlob = (dataurl, mimeType) => {
+    const parts = dataurl.split(',');
+    const b64 = parts.length > 1 ? parts[1] : parts[0];
+
+    const byteString = atob(b64);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      uint8Array[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([uint8Array], { type: mimeType });
+  }
+
   const onClick = async () => {
     try {
 
-      if ( !wizardData.courseInfo?.name || !wizardData.categories?.length || !wizardData.challenges?.length || !wizardData.words?.length) {
+      if (!wizardData.courseInfo?.name || !wizardData.categories?.length || !wizardData.challenges?.length || !wizardData.words?.length) {
         toast.error("יש למלא את כל השלבים לפני שמירה!", {
-        position: "top-right",
-        autoClose: 3000,
-      })
+          position: "top-right",
+          autoClose: 3000,
+        })
         return
       }
 
-      const addCourseData = {
-        courseInfo: wizardData.courseInfo,
-        categories: wizardData.categories,
-        words: wizardData.words,
-        questions: wizardData.questions,
-        challenges: wizardData.challenges,
-      }
+      const formData = new FormData()
 
-      await createFullCourse(addCourseData).unwrap()
+      const wordsData = wizardData.words.map((word) => {
+        const { imgData, mimeType, ...rest } = word
+        return rest
+      })
+
+      formData.append("courseInfo", JSON.stringify(wizardData.courseInfo))
+      formData.append("categories", JSON.stringify(wizardData.categories))
+      formData.append("questions", JSON.stringify(wizardData.questions))
+      formData.append("challenges", JSON.stringify(wizardData.challenges))
+      formData.append("words", JSON.stringify(wordsData))
+
+      wizardData.words.forEach((word, index) => {
+        if (word.imgData && word.mimeType) {
+          try {
+            const imageBlob = dataURLtoBlob(word.imgData, word.mimeType);
+            const safeWord = (word.word || `word_${index}`).replace(/\s+/g, '_')
+            formData.append(`images`, imageBlob, `${safeWord}-${index}.jpg`)
+          } catch (e) {
+            console.error("Error converting Base64 to Blob for word:", word.word, e);
+          }
+        }
+      })
+
+      await createFullCourse(formData).unwrap()
 
       dispatch(resetWizard())
 
@@ -105,7 +136,7 @@ const CourseWizard = () => {
         return (
           <FinalSaveButton
             onClick={onClick}
-            disabled={ !wizardData.courseInfo?.name || !wizardData.categories?.length || !wizardData.challenges?.length || !wizardData.words?.length }
+            disabled={!wizardData.courseInfo?.name || !wizardData.categories?.length || !wizardData.challenges?.length || !wizardData.words?.length}
           />
         )
     }
