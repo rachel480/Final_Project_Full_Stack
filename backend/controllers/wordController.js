@@ -1,7 +1,11 @@
 const { Word } = require('../models/Word')
-const Category= require('../models/Category')
+const Category = require('../models/Category')
 const Challenge = require('../models/Challenge')
 const Question = require('../models/Question')
+const multer = require('multer')
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage })
 
 //get all words for admin and user
 const getAllWords = async (req, res) => {
@@ -34,13 +38,16 @@ const getSingleWord = async (req, res) => {
 //create word only for admin
 const createNewWord = async (req, res) => {
   try {
-    const { word, translation, categoryName ,categoryId} = req.body
+    const { word, translation, categoryName, categoryId } = req.body
 
     //validation:
     if (!word || !translation || !categoryName || !categoryId)
       return res.status(400).send('all fields are required')
 
-    const newWord = await Word.create({ word, translation, categoryName })
+    //handle word img
+    const img = req.file ? { data: req.file.buffer, contentType: req.file.mimetype } : undefined
+
+    const newWord = await Word.create({ word, translation, categoryName,img })
     if (!newWord)
       return res.status(400).json({ message: `error occurred while creating word ${word}` })
 
@@ -56,43 +63,46 @@ const createNewWord = async (req, res) => {
   }
 }
 
-//update word only for admin
+// Update word (admin only)
 const updateWord = async (req, res) => {
   try {
     const { id, word, translation, categoryName } = req.body
 
-    // Basic validation
     if (!id || !word || !translation || !categoryName)
       return res.status(400).json({ message: "All fields are required" })
 
-    // Find the existing word
+    // Find word
     const foundWord = await Word.findById(id).exec()
     if (!foundWord)
       return res.status(404).json({ message: "Word not found" })
 
-    // Check if category name changed
     const oldCategoryName = foundWord.categoryName
     const isCategoryChanged =
       oldCategoryName.toLowerCase() !== categoryName.toLowerCase()
 
-    // Update basic fields
+    // If new image uploaded:
+    if (req.file) {
+      foundWord.img = {
+        data: req.file.buffer,
+        contentType: req.file.mimetype
+      }
+    }
+
+    // Update text fields
     foundWord.word = word
     foundWord.translation = translation
     foundWord.categoryName = categoryName.toLowerCase()
 
-    // Save updated word
+    // Save word
     const updatedWord = await foundWord.save()
 
-    // If category changed – handle category arrays
     if (isCategoryChanged) {
-      // Find old and new categories
       const oldCategory = await Category.findOne({ name: oldCategoryName }).exec()
       const newCategory = await Category.findOne({ name: categoryName }).exec()
 
       if (!newCategory)
         return res.status(400).json({ message: `Category '${categoryName}' not found` })
 
-      // Remove from old category
       if (oldCategory) {
         oldCategory.words = oldCategory.words.filter(
           (wId) => wId.toString() !== foundWord._id.toString()
@@ -100,7 +110,6 @@ const updateWord = async (req, res) => {
         await oldCategory.save()
       }
 
-      // Add to new category (if not already there)
       if (!newCategory.words.includes(foundWord._id)) {
         newCategory.words.push(foundWord._id)
         await newCategory.save()
@@ -111,11 +120,13 @@ const updateWord = async (req, res) => {
       message: `Word '${word}' was updated successfully`,
       word: updatedWord,
     })
+
   } catch (error) {
     console.error("Error updating word:", error)
     res.status(500).json({ message: error.message })
   }
 }
+
 //delete word only for admin
 const deleteWord = async (req, res) => {
   try {
@@ -146,8 +157,8 @@ const deleteWord = async (req, res) => {
           _id: { $in: challenge.questions },
           $or: [
             { correctAnswer: word._id },
-            { options: word._id } ,
-            {question:word._id}
+            { options: word._id },
+            { question: word._id }
           ]
         }).exec()
 
@@ -189,4 +200,4 @@ const getWordsByCategory = async (req, res) => {
   }
 }
 
-module.exports = { getAllWords, getSingleWord, createNewWord, updateWord, deleteWord, getWordsByCategory }
+module.exports = { getAllWords, getSingleWord, createNewWord, upload ,updateWord, deleteWord, getWordsByCategory }

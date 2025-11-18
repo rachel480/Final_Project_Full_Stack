@@ -2,30 +2,36 @@ const mongoose = require('mongoose')
 
 const wordSchema = new mongoose.Schema(
     {
-        word:{
-            type:String,
-            required:true,
-            lowerCase:true,
-            trim:true
+        word: {
+            type: String,
+            required: true,
+            lowerCase: true,
+            trim: true
         },
-        translation:{
-            type:String,
-            required:true,
-            trim:true
+        translation: {
+            type: String,
+            required: true,
+            trim: true
         },
-        categoryName:{
-            type:String,
-            required:true,
-            lowerCase:true,
-            trim:true
+        categoryName: {
+            type: String,
+            required: true,
+            lowerCase: true,
+            trim: true
         },
-        img:{
-            data:Buffer,
-            contentType:String
+        img: {
+            data: {
+                type: Buffer,
+                required: true
+            },
+            contentType: {
+                type: String,
+                required: true
+            }
         }
     },
     {
         timestamps: true
     })
-const Word=mongoose.model('Word', wordSchema)
-module.exports = {wordSchema,Word}
+const Word = mongoose.model('Word', wordSchema)
+module.exports = { wordSchema, Word }

@@ -5,6 +5,10 @@ const { Word } = require("../models/Word");
 const Challenge = require("../models/Challenge");
 const Question = require("../models/Question");
 const UserProgress = require('../models/UserProgress');
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // get all courses for user
 const getAllCoursesForUser = async (req, res) => {
@@ -205,11 +209,39 @@ const getWordsOfCourseWithFavorites = async (req, res) => {
     }
 }
 
+
 const createFullCourseSimple = async (req, res) => {
     try {
-        const { courseInfo, categories, words, questions, challenges } = req.body
+        let { courseInfo, categories, words, questions, challenges } = req.body
 
-        //step 1: add words to DB
+        if (typeof courseInfo === 'string') courseInfo = JSON.parse(courseInfo)
+        if (typeof categories === 'string') categories = JSON.parse(categories)
+        if (typeof words === 'string') words = JSON.parse(words)
+        if (typeof questions === 'string') questions = JSON.parse(questions)
+        if (typeof challenges === 'string') challenges = JSON.parse(challenges)
+
+        const uploadedImages = req.files || []
+
+        words = words.map((wordObj, index) => {
+          const relevantImage = uploadedImages.find(file => {
+           
+            try {
+              return file.originalname.toLowerCase().includes((wordObj.word || '').toLowerCase())
+            } catch (e) {
+              return false
+            }
+          })
+
+          if (relevantImage) {
+            wordObj.img = {
+              data: relevantImage.buffer,
+              contentType: relevantImage.mimetype
+            }
+          }
+          return wordObj
+        })
+
+        // step 1: add words to DB
         const createdWords = await Word.insertMany(words)
 
         // step 2: add questions to DB
@@ -271,7 +303,7 @@ const createFullCourseSimple = async (req, res) => {
         // step 6: update course categories and status
         await Course.findByIdAndUpdate(createdCourse._id, {
             categories: createdCategories.map((c) => c._id),
-            status: "published", 
+            status: "published",
         });
 
         //step 7: add course to admin user progress
@@ -287,4 +319,15 @@ const createFullCourseSimple = async (req, res) => {
     }
 }
 
-module.exports = { getAllCoursesForUser, getAllCoursesForAdmin,getFullCourseById, getSingleCourse, createFullCourseSimple, updateCourse, deleteCourse, getCategoriesOfCourse, getWordsOfCourseWithFavorites }
+module.exports = {
+  getAllCoursesForUser,
+  getAllCoursesForAdmin,
+  getFullCourseById,
+  getSingleCourse,
+  createFullCourseSimple,
+  updateCourse,
+  deleteCourse,
+  getCategoriesOfCourse,
+  getWordsOfCourseWithFavorites,
+  upload 
+}

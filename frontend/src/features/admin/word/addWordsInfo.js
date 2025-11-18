@@ -18,6 +18,38 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
   const [showList, setShowList] = useState(false)
 
   const handleData = (data) => {
+    const file = data.img?.[0] || null
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        dispatch(setWordInfo({
+          word: data.word,
+          translation: data.translation,
+          categoryName: "",
+          imgData: reader.result,
+          mimeType: file.type
+        }));
+
+        const addAnother = window.confirm("תרצה להוסיף מילה נוספת??")
+        if (!addAnother)
+          dispatch(goToStep(step + 1))
+      };
+
+      reader.readAsDataURL(file);
+    } else {
+      dispatch(setWordInfo({
+        word: data.word,
+        translation: data.translation,
+        categoryName: "",
+        imgData: null,
+        mimeType: null
+      }))
+      const addAnother = window.confirm("תרצה להוסיף מילה נוספת??")
+      if (!addAnother)
+        dispatch(goToStep(step + 1))
+    }
     dispatch(setWordInfo({ word: data.word, translation: data.translation, categoryName: "" }))
     const addAnother = window.confirm("תרצה להוסיף מילה נוספת???")
     if (!addAnother)
@@ -25,20 +57,19 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
   }
 
   const wordSchema = z.object({
-    word: z.string({ required_error: "חובה להכניס מילה" })
-      .nonempty("חובה להכניס מילה")
+    word: z.string({ required_error: "חובה להכניס מילה" }).nonempty("חובה להכניס מילה")
       .refine((val) => !wordData?.some((w) => w.word === val), {
         message: "המילה כבר קיימת!",
       }),
-    translation: z.string({ required_error: "חובה להכניס תרגום" })
-      .nonempty("חובה להכניס תרגום"),
+    translation: z.string({ required_error: "חובה להכניס תרגום" }).nonempty("חובה להכניס תרגום"),
+    img: z.any({required_error: "התמונה חובה"})
   })
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors,isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(wordSchema),
   })
@@ -70,6 +101,16 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
           placeholder="הכנס תרגום..."
           htmlFor="translation"
         />
+
+        <div className="mt-4">
+          <label className="block font-bold mb-1">תמונה</label>
+          <input
+            type="file"
+            accept="image/*"
+            {...register("img")}
+            className="border p-2 rounded w-full"
+          />
+        </div>
 
         <SubmitButton text="שמירה" isLoading={isSubmitting} className="mt-4" />
         <Button variant="text" onClick={() => setShowList(true)} className="mt-4 !text-orange-500 !underline">מילים שהוספתי</Button>
