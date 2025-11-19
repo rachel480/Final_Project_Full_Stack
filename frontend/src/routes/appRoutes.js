@@ -46,6 +46,7 @@ import ForgotPassword from "../features/auth/forgotPassword";
 import ResetPassword from "../features/auth/resetPassword";
 import ChallengeRoot from "../features/category/challengeSection/challengeRoot";
 import FinalExamRoot from "../features/course/finalExam/finalExamRoot";
+import Home from "../pages/home";
 
 const AppRoutes = () => {
   return (
@@ -54,7 +55,7 @@ const AppRoutes = () => {
       {/* Layout ציבורי - התחלה, הרשמה, התחברות וכו' */}
       <Route path='/' element={<PublicLayout />}>
         <Route index element={<Navigate to='about' />} />
-        <Route path='about' element={<h1>אודותינו</h1>} />
+        <Route path='about' element={<Home/>} />
         <Route path='contact' element={<ContactForm/>} />
         <Route path='login' element={<LoginForm />} />
         <Route path='register' element={<RegisterForm />} />
