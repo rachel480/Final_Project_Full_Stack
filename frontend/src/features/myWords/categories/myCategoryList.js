@@ -2,7 +2,7 @@ import { useState } from "react";
 import BaseList from "../common/BaseList";
 import { useGetAllMyCategorisQuery } from "./myCategoryApi";
 import AddCategoryForm from "./addCategoryForm";
-import CategoryCard from "./categoryCard";
+import CategoryCard from "./categorycard";
 import SingleCategoryWords from "./singleCategoryWords";
 
 const MyCategoryList = () => {
