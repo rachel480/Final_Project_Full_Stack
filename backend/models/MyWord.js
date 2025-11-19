@@ -1,27 +1,45 @@
 const mongoose = require('mongoose')
-const {wordSchema}=require('../models/Word')
 
 const MyWordSchema = new mongoose.Schema(
     {
-        word:{
-            type:wordSchema,
-            required:true
+        word: {
+            word: {
+                type: String,
+                required: true,
+                lowerCase: true,
+                trim: true
+            },
+            translation: {
+                type: String,
+                required: true,
+                trim: true
+            },
+            categoryName: {
+                type: String,
+                required: true,
+                lowerCase: true,
+                trim: true
+            },
+            img: {
+                data: { type: Buffer, default: null },     
+                contentType: { type: String, default: null }
+            }
         },
-        user:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
-            required:true
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         },
-        rateing:{
-            type:Number,
-            min:0,
-            max:5,
-            default:0,
+        rateing: {
+            type: Number,
+            min: 0,
+            max: 5,
+            default: 0
         }
     },
 
     {
-        timestamps:true
+        timestamps: true
     })
 
 module.exports = mongoose.model('MyWord', MyWordSchema)

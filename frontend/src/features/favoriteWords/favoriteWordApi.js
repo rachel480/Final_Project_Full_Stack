@@ -1,41 +1,43 @@
-const { default: baseApi } = require("../../app/baseApi");
+import baseApi from "../../app/baseApi";
 
-const favoriteWordApi=baseApi.injectEndpoints({
-    endpoints:(builder)=>({
-       createFavoriteWord:builder.mutation({
-        query:(favoriteData)=>({
-            url:'/favoriteWord/',
-            method:'POST',
-            body:favoriteData
+const favoriteWordApi = baseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        
+        getAllFavoriteWords: builder.query({
+            query: (data) => ({
+                url: `/favoriteWord/?page=${data.page}&limit=${data.limit}&sortBy=${data.sortBy}`,
+                method: 'GET'
+            }),
+            providesTags: ["FavoriteWord"]
         }),
-        invalidatesTags: ["FavoriteWord","Course",'Category']
 
-       }),
-       
-       getAllFavoriteWords:builder.query({
-        query:(data)=>({
-            url:`/favoriteWord/?page=${data.page}&limit=${data.limit}&sortBy=${data.sortBy}`,
-            method:'GET'
+        createFavoriteWord: builder.mutation({
+            query: (favoriteWordData) => ({
+                url: '/favoriteWord/',
+                method: 'POST',
+                body: favoriteWordData
+            }),
+            invalidatesTags: ["FavoriteWord", "Course", "Category"]
         }),
-        providesTags: ["FavoriteWord"]
-       }),
-       
-       deleteFavoriteWord:builder.mutation({
-        query:(favoriteData)=>({
-            url:'/favoriteWord/',
-            method:'DELETE',
-            body:favoriteData
+
+        updateFavoriteWordRaiting: builder.mutation({
+            query: (favoriteWordData) => ({
+                url: '/favoriteWord/',
+                method: 'PUT',
+                body: favoriteWordData
+            }),
+            invalidatesTags: ["FavoriteWord"]
         }),
-        invalidatesTags: ["FavoriteWord"]
-       }),
-       updateFavoriteWordRaiting:builder.mutation({
-        query:(favoriteData)=>({
-            url:'/favoriteWord/',
-            method:'PUT',
-            body:favoriteData
+
+        deleteFavoriteWord: builder.mutation({
+            query: (favoriteWordData) => ({
+                url: '/favoriteWord/',
+                method: 'DELETE',
+                body: favoriteWordData
+            }),
+            invalidatesTags: ["FavoriteWord"]
         }),
-          invalidatesTags: ["FavoriteWord"]
-       })
     })
 })
-export const{useCreateFavoriteWordMutation,useGetAllFavoriteWordsQuery,useDeleteFavoriteWordMutation,useUpdateFavoriteWordRaitingMutation}=favoriteWordApi
+
+export const { useCreateFavoriteWordMutation, useGetAllFavoriteWordsQuery, useDeleteFavoriteWordMutation, useUpdateFavoriteWordRaitingMutation } = favoriteWordApi

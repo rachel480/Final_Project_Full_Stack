@@ -1,39 +1,39 @@
-import { useState } from "react"
-import { useDeleteMyCategoryMutation } from "./myCategoryApi"
-import UpdateCategoryForm from "./updateCategoryForm"
+import { useState } from "react";
+import { toast } from "react-toastify";
+import UpdateCategoryForm from "./updateCategoryForm";
+import { useDeleteMyCategoryMutation } from "./myCategoryApi";
+import UpdateButton from "../../../components/updateButton";
+import DeleteButton from "../../../components/deleteButton";
+import SingleCard from "../common/singleCard";
 
-const Categorycard = ({ category ,setShowSingleCategory}) => {
-    const [message,setMessage]=useState(null)
-    const [showUpdateForm,setShowUpdateForm]=useState(false)
-    
-    const [deleteMyCategory, { isLoading: delateLoading }] = useDeleteMyCategoryMutation()
-    
-    
-    const handelDelete = async() => {
-        setMessage(null)
-        try {
-            const res = await deleteMyCategory({ id:category._id }).unwrap()
-            setMessage({ type: 'success', text: res?.message || 'deleted successfully' })
-        }
-        catch (err) {
-            const errorMsg =
-                err?.data?.message ||
-                err?.error ||
-                'unknown error'
-            setMessage({ type: 'error', text: errorMsg })
-        }
+const CategoryCard = ({ category, setShowSingleCategory }) => {
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [deleteMyCategory] = useDeleteMyCategoryMutation();
+
+  const handleDelete = async () => {
+    try {
+      const res = await deleteMyCategory({ id: category._id }).unwrap();
+      toast.success(res?.message || "הקטגוריה נמחקה בהצלחה");
+    } catch (err) {
+      const msg = err?.data?.message || err?.error || "שגיאה לא ידועה";
+      toast.error(msg);
     }
-    
-    return (
-        <div>
-        <div>
-            <button onClick={()=>setShowSingleCategory(category)}>{category.name}</button>
-            <button onClick={() => handelDelete()} disabled={delateLoading}>{delateLoading?'deleteing...':'🗑️'}</button>
-            <button onClick={() => setShowUpdateForm(true)} >✏️</button>
-        </div>
-        {showUpdateForm&&<UpdateCategoryForm setShowUpdateForm={setShowUpdateForm} category={category}/>}
-        {message && (<div style={{ color: message.type === 'error' ? 'red' : 'green', marginBottom: '1rem', }}>{message.text}</div>)}
-        </div>
-    )
+  };
+
+  return (
+    <>
+      <SingleCard
+        title={category.name}
+        subtitle="לחץ כדי להציג מילים בקטגוריה"
+        onClickTitle={() => setShowSingleCategory(category)}
+        updateButton={<UpdateButton onClick={() => setShowUpdateForm(true)} />}
+        deleteButton={<DeleteButton onClick={handleDelete} />}
+      />
+      {showUpdateForm && (
+        <UpdateCategoryForm setShowUpdateForm={setShowUpdateForm} category={category} />
+      )}
+    </>
+  )
 }
-export default Categorycard
+
+export default CategoryCard

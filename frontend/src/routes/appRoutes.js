@@ -10,7 +10,7 @@ import UserLayout from "./layouts/userLayout";
 import CategoryLayout from "./layouts/categoryLayout";
 import WordSection from "../features/course/wordSection";
 import HomePage from "../pages/homePage";
-import FavoriteWordsList from "../features/favoriteWords/favoriteWordsList";
+import FavoriteWordsList from "../features/favoriteWords/FavoriteWordsList";
 import MyWordList from "../features/myWords/words/myWordList";
 import MyCategoryList from "../features/myWords/categories/myCategoryList";
 import MyWords from "../features/myWords/myWords";

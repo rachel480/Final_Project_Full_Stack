@@ -1,58 +1,48 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import FormInput from '../../../components/formInput'
-import { useState } from 'react'
-import {  useUpdateMyCategoryMutation } from './myCategoryApi'
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import FormInput from "../../../components/formInput";
+import { useUpdateMyCategoryMutation } from "./myCategoryApi";
+import { toast } from "react-toastify";
+import UpdateFormWrapper from "../common/updateFormWrapper";
 
 const updateCategorySchema = z.object({
-    name: z.string({ required_error: 'category name is required' }).nonempty('category name must contain at least 1 charachter')
-})
-const UpdateCategoryForm = ({ setShowUpdateForm,category }) => {
-    const [message, setMessage] = useState("")
-    const [errorMsg, setErrorMsg] = useState("")
+  name: z.string({required_error:true}).nonempty("קטגוריה חייבת להכיל לפחות תו 1")
+});
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors }
-    } = useForm({ resolver: zodResolver(updateCategorySchema),defaultValues: {
-        name: category?.name || ""
-    } })
+const UpdateCategoryForm = ({ setShowUpdateForm, category }) => {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(updateCategorySchema),
+    defaultValues: { name: category?.name || "" }
+  });
 
-    const [updateMyCategory,{isLoading}]=useUpdateMyCategoryMutation()
+  const [updateMyCategory, { isLoading }] = useUpdateMyCategoryMutation();
 
-    const onSubmit = async (data) => {
-        try {
-            setErrorMsg('')
-            const res = await updateMyCategory({name:data.name,id:category._id}).unwrap()
-            setMessage(res.message)
-            setTimeout(() => { setMessage(''); setShowUpdateForm(false) }, 2000)
-        } catch (err) {
-            setErrorMsg(err?.data?.message || "Something went wrong. Please try again!!")
-        }
+  const onSubmit = async (data) => {
+    try {
+      const res = await updateMyCategory({ id: category._id, name: data.name }).unwrap();
+      toast.success(res.message || "קטגוריה עודכנה בהצלחה", { autoClose: 3000, onClose: () => setShowUpdateForm(false) });
+    } catch (err) {
+      toast.error(err?.data?.message || "העדכון נכשל", { autoClose: 3000 });
     }
+  };
 
-    return (
-        <div >
-            <h1>Update category</h1>
-            <form onSubmit={handleSubmit(onSubmit)} style={{display: "flex",flexDirection: "column",gap: 12,width: "100%",maxWidth: 480,margin: "0 auto",padding: 14,border: "1px solid #eee",borderRadius: 8,background: "#fff",boxShadow: "0 1px 4px rgba(16,24,40,0.04)",fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial" }}>
-                <FormInput
-                    label="category name"
-                    type="text"
-                    register={register("name")}
-                    error={errors.name?.message}
-                    placeholder={'enter category name...'}
-                    htmlFor="name"
-                />
-
-                <button type={'submit'} disabled={isLoading} >update</button>
-                <button type={'button'} disabled={isLoading} onClick={() => setShowUpdateForm(false)}>cancle</button>
-
-                {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
-                {message && <p style={{ color: "rgb(64, 255, 102)" }}>{message}</p>}
-            </form>
-        </div>
-    )
+  return (
+    <UpdateFormWrapper
+      title="Update Category"
+      isLoading={isLoading}
+      onSubmit={handleSubmit(onSubmit)}
+      setShowUpdateForm={setShowUpdateForm}
+    >
+      <FormInput
+        label="Name"
+        type="text"
+        register={register("name")}
+        error={errors.name?.message}
+        placeholder="Enter category name..."
+      />
+    </UpdateFormWrapper>
+  )
 }
-export default UpdateCategoryForm
+
+export default UpdateCategoryForm;

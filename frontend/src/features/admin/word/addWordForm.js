@@ -7,6 +7,7 @@ import FormInput from "../../../components/formInput"
 import FormContainer from "../../../components/formContainer"
 import FormTitle from "../../../components/formTitle"
 import SubmitButton from "../../../components/submitButton"
+import FileInput from "../../../components/fileInput"
 
 const AddWordForm = ({ categoryWords = [], categoryId }) => {
   const dispatch = useDispatch()
@@ -72,15 +73,7 @@ const AddWordForm = ({ categoryWords = [], categoryId }) => {
         htmlFor="translation"
       />
 
-      <div className="mt-4">
-        <label className="block font-bold mb-1">תמונה</label>
-        <input
-          type="file"
-          accept="image/*"
-          {...register("img")}
-          className="border p-2 rounded w-full"
-        />
-      </div>
+      <FileInput label="Upload Image" register={register} name="img" />
 
       <SubmitButton text="שמירה" isLoading={isSubmitting} className="mt-4" />
     </FormContainer>

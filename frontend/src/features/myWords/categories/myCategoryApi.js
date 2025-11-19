@@ -1,50 +1,51 @@
-const { default: baseApi } = require("../../../app/baseApi");
+import baseApi from "../../../app/baseApi";
 
-const myCategoryApi=baseApi.injectEndpoints({
-    endpoints:(builder)=>({
-       
-       getAllMyCategorys:builder.query({
-        query:()=>({
-            url:'/myCategory/',
-            method:'GET'
+const myCategoryApi = baseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        getAllMyCategoris:builder.query({
+            query:()=>({
+                url:'/myCategory/',
+                method:'GET'
+            }),
+            providesTags: ["MyCategory"]
         }),
-        providesTags: ["MyCategory"]
-       }),
 
-       getWordsOfCategory:builder.query({
-        query:(categoryId)=>({
-            url:`/myCategory/${categoryId}/words`,
-            method:'GET'
+        
+        getWordsOfCategory:builder.query({
+            query:(categoryId)=>({
+                url:`/myCategory/${categoryId}/words`,
+                method:'GET'
+            }),
+            providesTags: (result, error, categoryId) => [{ type: "MyCategory", id: categoryId }]
         }),
-        providesTags: (result, error, categoryId) => [{ type: "MyCategory", id: categoryId }]
-       }),
 
         createMyCategory:builder.mutation({
-        query:(myCategoryData)=>({
-            url:'/myCategory/',
-            method:'POST',
-            body:myCategoryData
+            query:(myCategoryData)=>({
+                url:'/myCategory/',
+                method:'POST',
+                body:myCategoryData
+            }),
+            invalidatesTags: ["MyCategory"]
         }),
-        invalidatesTags: ["MyCategory"]
-       }),
 
-       updateMyCategory:builder.mutation({
-        query:(myCategoryData)=>({
-             url:'/myCategory/',
-            method:'PUT',
-            body:myCategoryData
+        updateMyCategory:builder.mutation({
+            query:(myCategoryData)=>({
+                url:'/myCategory/',
+                method:'PUT',
+                body:myCategoryData
+            }),
+            invalidatesTags: ["MyCategory"]
         }),
-          invalidatesTags: ["MyCategory"]
-       }),
 
-       deleteMyCategory:builder.mutation({
-        query:(myCategoryData)=>({
-            url:'/myCategory/',
-            method:'DELETE',
-            body:myCategoryData
-        }),
-        invalidatesTags: ["MyCategory"]
-       })
+        deleteMyCategory:builder.mutation({
+            query:(myCategoryData)=>({
+                url:'/myCategory/',
+                method:'DELETE',
+                body:myCategoryData
+            }),
+            invalidatesTags: ["MyCategory"]
+        })
     })
 })
-export const{useGetAllMyCategorysQuery,useGetWordsOfCategoryQuery,useCreateMyCategoryMutation,useUpdateMyCategoryMutation,useDeleteMyCategoryMutation}=myCategoryApi
+
+export const {useGetAllMyCategorisQuery,useGetWordsOfCategoryQuery,useCreateMyCategoryMutation,useUpdateMyCategoryMutation,useDeleteMyCategoryMutation}=myCategoryApi

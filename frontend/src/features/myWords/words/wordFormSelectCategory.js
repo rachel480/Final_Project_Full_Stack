@@ -1,39 +1,68 @@
-import { useGetAllMyCategorysQuery } from "../categories/myCategoryApi"
+import ErrorMessage from "../../../components/errorMessage";
+import LoadingSpinner from "../../../components/loadingSpinner";
+import { useGetAllMyCategorisQuery } from "../categories/myCategoryApi";
+import { FormControl, InputLabel, Select, MenuItem, Typography } from "@mui/material";
 
 const WordFormSelectCategory = ({ label, registerProps, error, placeholder, currentCategory }) => {
-    const { data: categories, isLoading, error: categoryErroe } = useGetAllMyCategorysQuery()
+    const { data: categories = [], isLoading, error: categoryError } = useGetAllMyCategorisQuery();
 
-    if (currentCategory) {
-        return (
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <label>{label}</label>
-                <select {...registerProps} defaultValue={currentCategory} readOnly>
-                    <option value={currentCategory}>{currentCategory}</option>
-                </select>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-            </div>
-        )
-    }
-    if (isLoading)
-        return <p>loading categoies...</p>
-
-    if (categoryErroe)
-        return <p>{categoryErroe?.data?.message || "something went wrong"}</p>
+    if (isLoading) return <LoadingSpinner />;
+    if (categoryError) return <ErrorMessage message={categoryError?.data?.message || "משהו השתבש"} />;
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <label>{label}</label>
-            <select {...registerProps} defaultValue="">
-                <option value="" disabled>{placeholder}</option>
+        <FormControl
+            fullWidth
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                mb: 2,
+            }}
+        >
+            <InputLabel
+                sx={{
+                    fontWeight: "bold",
+                    color: "#555",
+                    mb: 0.5,
+                    '&.Mui-focused': { color: "rgba(229,145,42,0.62)" }
+                }}
+            >
+                {label}
+            </InputLabel>
+
+            <Select
+                {...registerProps}
+                defaultValue={currentCategory || ""}
+                disabled={!!currentCategory}
+                sx={{
+                    background: "rgba(173, 216, 230, 0.2)",
+                    borderRadius: 2,
+                    paddingX: 1,
+                    border: "2px solid rgba(229,145,42,0.62)",
+                    '&:hover': { borderColor: "rgba(229,145,42,0.8)" },
+                    '&.Mui-focused': { borderColor: "rgba(229,145,42,1)" },
+                    "&.Mui-disabled": { color: "#333", background: "#f0f0f0" },
+                }}
+            >
+                {!currentCategory && (
+                    <MenuItem value="" disabled>
+                        {placeholder}
+                    </MenuItem>
+                )}
                 {categories.map((category) => (
-                    <option key={category._id} value={category.name}>
+                    <MenuItem key={category._id} value={category.name}>
                         {category.name}
-                    </option>
+                    </MenuItem>
                 ))}
-            </select>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-        </div>
+            </Select>
+
+            {error && (
+                <Typography variant="body2" sx={{ color: "red", mt: 0.5 }}>
+                    {error}
+                </Typography>
+            )}
+        </FormControl>
     )
 }
-export default WordFormSelectCategory
 
+export default WordFormSelectCategory;

@@ -1,26 +1,40 @@
-const SearchInput = ({ searchText, setSearchText, placeholder }) => {
+import TextField from "@mui/material/TextField";
 
-    const handleSearch = (e) => {
-        setSearchText(e.target.value)
-    }
+const SearchInput = ({ searchText, setSearchText, placeholder='🔎Search...'}) => {
+  const handleSearch = (e) => {
+    setSearchText(e.target.value);
+  };
 
-    return (
-        <input
-            type="text"
-            placeholder={placeholder}
-            value={searchText}
-            onChange={(e) => handleSearch(e)}
-            style={{
-                width: "10vw",
-                marginLeft:'45vw',
-                padding: "8px",
-                marginBottom: "16px",
-                fontSize: "16px",
-                border: "1px solid black",
-                borderRadius: "4px"
-            }}
-        />
-    )
-}
+  return (
+    <div className="w-full">
+      <TextField
+        placeholder={placeholder}
+        value={searchText}
+        onChange={handleSearch}
+        fullWidth
+        variant="outlined"
+        inputProps={{
+          style: { textAlign: "left" }, 
+        }}
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: 'rgba(255, 247, 217, 0.39)', 
+            borderRadius: '12px',
+            '& fieldset': {
+              borderColor: 'rgba(229,145,42,0.62)',
+              borderRadius: '12px',
+            },
+            '&:hover fieldset': {
+              borderColor: 'rgba(229,145,42,0.8)',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'rgba(229,145,42,1)',
+            },
+          },
+        }}
+      />
+    </div>
+  );
+};
 
 export default SearchInput
