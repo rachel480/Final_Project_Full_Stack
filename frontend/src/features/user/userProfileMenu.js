@@ -5,6 +5,7 @@ import { selectUser, logout } from "../auth/authSlice";
 import { toast } from "react-toastify";
 import { Logout, AccountCircle } from "@mui/icons-material";
 import Tooltip from "@mui/material/Tooltip";
+import { persistor } from "../../app/store"
 
 const UserProfileMenu = () => {
   const [open, setOpen] = useState(false);
@@ -23,9 +24,11 @@ const UserProfileMenu = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
     localStorage.removeItem("userAccessToken");
     dispatch(logout());
+    await persistor.flush(); 
+    await persistor.purge()
     toast.success("התנתקת בהצלחה", {
       position: "top-right",
       autoClose: 3000,

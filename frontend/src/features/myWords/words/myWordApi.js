@@ -1,51 +1,51 @@
-import baseApi from '../../../app/baseApi'
+import baseApi from "../../../app/baseApi";
 
-const myWordApi=baseApi.injectEndpoints({
-    endpoints:(builder)=>({
-       
-       getAllMyWords:builder.query({
-        query:()=>({
-            url:`/myWord/`,
-            method:'GET'
+const myWordApi = baseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        getAllMyWords: builder.query({
+            query: () => ({
+                url: `/myWord/`,
+                method: 'GET'
+            }),
+            providesTags: ["MyWord"]
         }),
-        providesTags: ["MyWord"]
-       }),
 
-        createMyWord:builder.mutation({
-        query:(myWordData)=>({
-            url:'/myWord/',
-            method:'POST',
-            body:myWordData
+        createMyWord: builder.mutation({
+            query: (myWordData) => ({
+                url: '/myWord/',
+                method: 'POST',
+                body: myWordData
+            }),
+            invalidatesTags: ["MyWord", "MyCategory"]
         }),
-        invalidatesTags: ["MyWord",'MyCategory']
-       }),
 
-       updateMyWordRaiting:builder.mutation({
-        query:(myWordData)=>({
-             url:'/myWord/rateing',
-            method:'PUT',
-            body:myWordData
+        updateMyWordRaiting: builder.mutation({
+            query: (myWordData) => ({
+                url: '/myWord/rating',
+                method: 'PUT',
+                body: myWordData
+            }),
+            invalidatesTags: ["MyWord"]
         }),
-          invalidatesTags: ["MyWord"]
-       }),
 
-       updateMyWord:builder.mutation({
-        query:(myWordData)=>({
-             url:'/myWord/',
-            method:'PUT',
-            body:myWordData
+        updateMyWord: builder.mutation({
+            query: (myWordData) => ({
+                url: '/myWord/',
+                method: 'PUT',
+                body: myWordData
+            }),
+            invalidatesTags: ["MyWord", "MyCategory"]
         }),
-          invalidatesTags: ["MyWord",'MyCategory']
-       }),
 
-       deleteMyWord:builder.mutation({
-        query:(myWordData)=>({
-            url:'/myWord/',
-            method:'DELETE',
-            body:myWordData
+        deleteMyWord: builder.mutation({
+            query: (myWordData) => ({
+                url: '/myWord/',
+                method: 'DELETE',
+                body: myWordData
+            }),
+            invalidatesTags: ["MyWord", "MyCategory"]
         }),
-        invalidatesTags: ["MyWord",'MyCategory']
-       }),
     })
 })
-export const{useGetAllMyWordsQuery,useCreateMyWordMutation,useUpdateMyWordRaitingMutation,useUpdateMyWordMutation,useDeleteMyWordMutation,}=myWordApi
+
+export const { useGetAllMyWordsQuery, useCreateMyWordMutation, useUpdateMyWordRaitingMutation, useUpdateMyWordMutation, useDeleteMyWordMutation } = myWordApi

@@ -1,5 +1,10 @@
 const MyWord = require('../models/MyWord')
 const MyCategory = require('../models/MyCategory')
+const mongoose = require("mongoose")
+const multer = require('multer')
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage })
 
 // get all my words for user
 const getAllMyWords = async (req, res) => {
@@ -16,35 +21,40 @@ const getAllMyWords = async (req, res) => {
 
 // create my word for user
 const createMyWord = async (req, res) => {
-    try {
-        const { word } = req.body
-        const rateing = Number(req.body.rateing)
+    // try {
+    const word  = JSON.parse(req.body.word)
+    const rateing = Number(req.body.rateing)
 
-        if (!word)
-            return res.status(400).send('word is required')
+    if (!word)
+        return res.status(400).send('word is required')
 
-        const user = req.user
+    //handle word img
+    const img = req.file ? { data: req.file.buffer, contentType: req.file.mimetype } : undefined
 
-        const foundCategory = await MyCategory.findOne({ user: user._id, name: word.categoryName }).exec()
-        if (!foundCategory)
-            return res.status(404).json({ message: 'Category not found' })
+    const user = req.user
+    const userId = new mongoose.Types.ObjectId(user._id)
 
-        const newWord = await MyWord.create({ word, user: user._id, rateing })
-        if (!newWord)
-            return res.status(400).json({ message: `error occurred while creating the word` })
+    const foundCategory = await MyCategory.findOne({user: userId,name: word.categoryName.trim()}).exec();
 
-        foundCategory.words.push(newWord._id)
-        const updatedCategory = await foundCategory.save()
+    if (!foundCategory)
+        return res.status(404).json({ message: 'Category not found' })
 
-        if (!updatedCategory) {
-            await MyWord.findByIdAndDelete(newWord._id)
-            return res.status(400).json({ message: `error occurred while updating category, word was not saved` })
-        }
+    const newWord = await MyWord.create({ word: { ...word, img }, user: user._id, rateing })
+    if (!newWord)
+        return res.status(400).json({ message: `error occurred while creating the word` })
 
-        return res.status(201).json({ message: `word ${word.word} was created successfully` })
-    } catch (err) {
-        return res.status(500).json({ message: "Internal server error" })
+    foundCategory.words.push(newWord._id)
+    const updatedCategory = await foundCategory.save()
+
+    if (!updatedCategory) {
+        await MyWord.findByIdAndDelete(newWord._id)
+        return res.status(400).json({ message: `error occurred while updating category, word was not saved` })
     }
+
+    return res.status(201).json({ message: `word ${word.word} was created successfully` })
+    // } catch (err) {
+    //     return res.status(500).json({ message: "Internal server error" })
+    // }
 }
 
 // delete my word for user
@@ -84,7 +94,7 @@ const deleteMyWord = async (req, res) => {
     }
 }
 
-// update my word rating 
+// update my word rating
 const updateMyWordRaiting = async (req, res) => {
     try {
         const { id } = req.body
@@ -111,7 +121,7 @@ const updateMyWordRaiting = async (req, res) => {
     }
 }
 
-// update my word 
+// update my word
 const updateMyWord = async (req, res) => {
     try {
         const { id, word } = req.body
@@ -166,4 +176,4 @@ const updateMyWord = async (req, res) => {
     }
 }
 
-module.exports = { getAllMyWords, createMyWord, deleteMyWord, updateMyWordRaiting, updateMyWord }
+module.exports = { getAllMyWords, createMyWord, upload, deleteMyWord, updateMyWordRaiting, updateMyWord }

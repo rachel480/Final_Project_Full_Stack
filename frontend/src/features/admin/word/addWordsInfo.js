@@ -10,6 +10,7 @@ import FormInput from "../../../components/formInput"
 import FormContainer from "../../../components/formContainer"
 import FormTitle from "../../../components/formTitle"
 import SubmitButton from "../../../components/submitButton"
+import FileInput from "../../../components/fileInput";
 
 const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardStep }) => {
   const dispatch = useDispatch()
@@ -102,15 +103,7 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
           htmlFor="translation"
         />
 
-        <div className="mt-4">
-          <label className="block font-bold mb-1">תמונה</label>
-          <input
-            type="file"
-            accept="image/*"
-            {...register("img")}
-            className="border p-2 rounded w-full"
-          />
-        </div>
+        <FileInput label="Upload Image" register={register} name="img" />
 
         <SubmitButton text="שמירה" isLoading={isSubmitting} className="mt-4" />
         <Button variant="text" onClick={() => setShowList(true)} className="mt-4 !text-orange-500 !underline">מילים שהוספתי</Button>

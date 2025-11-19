@@ -1,54 +1,59 @@
-import { useDeleteFavoriteWordMutation, useGetAllFavoriteWordsQuery, useUpdateFavoriteWordRaitingMutation } from "./favoriteWordApi"
-import { useState } from "react"
-import SearchInput from "../../components/searchInput"
-import SortSelect from "../../components/sortSelect"
-import FavoriteWordCard from "./favoriteWordCard"
-import Pagination from "../../components/pagination"
-import NavigateButton from "../../components/navigateButton"
+import { useState } from "react";
+import { useDeleteFavoriteWordMutation, useGetAllFavoriteWordsQuery, useUpdateFavoriteWordRaitingMutation } from "./favoriteWordApi";
+import FavoriteWordCard from "./favoriteWordCard";
+import Pagination from "../../components/pagination";
+import LoadingSpinner from "../../components/loadingSpinner";
+import ErrorMessage from "../../components/errorMessage";
+import PageTitle from "../../components/pageTitle";
+import InfoMessage from "../../components/infoMessage";
 
 const FavoriteWordsList = () => {
-    const [message, setMessage] = useState(null)
-    const [searchText, setSearchText] = useState("")
-    const [sortBy, setSortBy] = useState('sort by')
-    const [page, setPage] = useState(1)
-    const [showModal,setShowModal]=useState(null)
-    
-    const limit = 10
-    
-    const [updateFavoriteWordRaiting, { isLoading: updateLoading }] = useUpdateFavoriteWordRaitingMutation()
+  const [page, setPage] = useState(1);
+  const [showModal, setShowModal] = useState(null);
 
-    const [deleteFavoriteWord, { isLoading: delateLoading }] = useDeleteFavoriteWordMutation()
+  const limit = 10;
 
-    const { data, isLoading, error } = useGetAllFavoriteWordsQuery({ page, limit, sortBy })
-    const favwords = data?.words || []
-    const totalPages = data?.totalPages
-    const filteredFavWords = favwords.filter((favWord) => favWord.word.word.indexOf(searchText.toLowerCase()) > -1)
+  const [deleteFavoriteWord] = useDeleteFavoriteWordMutation();
+  const [updateFavoriteWordRaiting] = useUpdateFavoriteWordRaitingMutation();
+  const { data, isLoading, error } = useGetAllFavoriteWordsQuery({ page, limit });
 
-    const sortByWord = (a, b) => a.word.word.localeCompare(b.word.word);
-    const sortByRateing = (a, b) => a.rateing - b.rateing
+  const favWords = data?.words || [];
+  const totalPages = data?.totalPages;
 
-    const sortedFavWords = [...filteredFavWords].sort(
-        sortBy === "words" ? sortByWord : sortBy === 'rateing' ? sortByRateing : () => 0
-    )
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"} />;
 
-    if (isLoading || delateLoading || updateLoading)
-        return <p>loading...</p>
+  return (
+    <div className="px-4 pt-8 min-h-screen">
 
-    if (error)
-        return <p>{error?.data?.message || "something went wrong"}</p>
+      <div className="max-w-6xl mx-auto text-center mb-8">
+        <PageTitle text="המילים המועדפות שלי" size="h4"/>
+      </div>
 
-    
-    
-    return <div>
-        {message && (<div style={{ color: message.type === 'error' ? 'red' : 'green', marginBottom: '1rem', }}>{message.text}</div>)}
-        <SearchInput searchText={searchText} setSearchText={setSearchText} placeholder={'Search word...'} />
-        <SortSelect sortBy={sortBy} setSortBy={setSortBy} options={['words', 'rateing']} />
-        <NavigateButton navigation={'/user/my-words'} buttonText={'🔙'}/>
-        {
-            sortedFavWords.length===0?<h1>No Words found!!!!</h1>:
-            sortedFavWords.map((favWord) => (<FavoriteWordCard favWord={favWord} setShowModal={setShowModal} showModal={showModal} deleteFavoriteWord={deleteFavoriteWord} setMessage={setMessage} updateFavoriteWordRaiting={updateFavoriteWordRaiting}/>))
-        }
-        <Pagination page={page} setPage={setPage} totalPages={totalPages}/>
-     </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {favWords.length === 0 ? (
+          <InfoMessage message="לא נמצאו מילים מועדפות"/>
+        ) : (
+          favWords.map(favWord => (
+            <FavoriteWordCard
+              key={favWord._id}
+              favWord={favWord}
+              showModal={showModal}
+              setShowModal={setShowModal}
+              deleteFavoriteWord={deleteFavoriteWord}
+              updateFavoriteWordRaiting={updateFavoriteWordRaiting}
+            />
+          ))
+        )}
+      </div>
+
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+        </div>
+      )}
+    </div>
+  )
 }
+
 export default FavoriteWordsList
