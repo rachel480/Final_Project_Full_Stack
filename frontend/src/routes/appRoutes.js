@@ -46,7 +46,9 @@ import ForgotPassword from "../features/auth/forgotPassword";
 import ResetPassword from "../features/auth/resetPassword";
 import ChallengeRoot from "../features/category/challengeSection/challengeRoot";
 import FinalExamRoot from "../features/course/finalExam/finalExamRoot";
-import Home from "../pages/home";
+import AdminRecommendionList from "../features/recommention/admiRecommentionList";
+import AddRecommendionForm from "../features/recommention/addRecommendionForm";
+import AboutUs from "../pages/aboutUs";
 
 const AppRoutes = () => {
   return (
@@ -55,14 +57,12 @@ const AppRoutes = () => {
       {/* Layout ציבורי - התחלה, הרשמה, התחברות וכו' */}
       <Route path='/' element={<PublicLayout />}>
         <Route index element={<Navigate to='about' />} />
-        <Route path='about' element={<Home/>} />
+        <Route path='about' element={<AboutUs/>} />
         <Route path='contact' element={<ContactForm/>} />
         <Route path='login' element={<LoginForm />} />
         <Route path='register' element={<RegisterForm />} />
         <Route path='forgot-password' element={<ForgotPassword/>} />
       <Route path='reset-password/:token' element={<ResetPassword/>} />
-      
-      
       </Route>
 
       {/* Layout פרטי - רק לאחר התחברות */}
@@ -73,6 +73,7 @@ const AppRoutes = () => {
         <Route path='course-list' element={<CourseList />} />
         <Route path='profile' element={<UserProfileForm/>} />
         <Route path='reset-password' element={<ResetPasswordForm/>}/>
+        <Route path="add-recommendion" element={<AddRecommendionForm/>} />
 
         <Route path='course/:courseId' element={<CourseLayout />}>
           <Route index element={<Navigate to='category' />} />
@@ -160,6 +161,7 @@ const AppRoutes = () => {
             <Route path="add" element={<UserWizard/>}/>
           </Route>
           <Route path="contact-messages" element={<ContactMessage/>}/>
+          <Route path="recommendions" element={<AdminRecommendionList/>}/>
         </Route>
 
       </Route>
