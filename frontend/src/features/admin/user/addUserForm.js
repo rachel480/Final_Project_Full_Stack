@@ -9,6 +9,7 @@ import FormTitle from "../../../components/formTitle";
 import SubmitButton from "../../../components/submitButton";
 import { setUserInfo } from "./userWizardSlice";
 import { selectWizardData, selectWizardStep, goToStep } from "./userWizardSlice";
+import PasswordInput from "../../../components/passwordInput";
 
 const userSchema = z.object({
   userName: z.string({ required_error: "חובה להכניס שם משתמש" }).nonempty("חובה להכניס שם משתמש"),
@@ -52,7 +53,7 @@ const AddUserForm = () => {
         htmlFor="userName"
       />
 
-      <FormInput
+      <PasswordInput
         label="סיסמה"
         type="password"
         register={register("password")}

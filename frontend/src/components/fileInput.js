@@ -1,23 +1,15 @@
-import { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 
-const FileInput = ({ label = "תמונה", register, name }) => {
-  const [preview, setPreview] = useState(null);
+const FileInput = ({ label = "תמונה", register, name,error }) => {
 
   const handlePreview = (fileList) => {
     if (fileList && fileList[0]) {
       const file = fileList[0]
       const reader = new FileReader()
-      reader.onloadend = () => setPreview(reader.result);
       reader.readAsDataURL(file)
-    } else {
-      setPreview(null)
     }
   }
 
-  useEffect(() => {
-    return () => setPreview(null);
-  }, []);
 
   return (
     <Box className="mt-4">
@@ -35,22 +27,7 @@ const FileInput = ({ label = "תמונה", register, name }) => {
           backgroundColor: "rgba(173, 216, 230, 0.2)",
         }}
       />
-      {preview && (
-        <Box className="mt-2 flex justify-center">
-          <img
-            src={preview}
-            alt="preview"
-            style={{
-              width: "128px",
-              height: "128px",
-              objectFit: "contain",
-              border: "2px solid rgba(229,145,42,0.62)",
-              borderRadius: "8px",
-              marginTop: "8px",
-            }}
-          />
-        </Box>
-      )}
+      <p className="text-red-600">{error}</p>
     </Box>
   )
 }

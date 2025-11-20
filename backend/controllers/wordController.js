@@ -38,16 +38,23 @@ const getSingleWord = async (req, res) => {
 //create word only for admin
 const createNewWord = async (req, res) => {
   try {
+
     const { word, translation, categoryName, categoryId } = req.body
 
     //validation:
     if (!word || !translation || !categoryName || !categoryId)
       return res.status(400).send('all fields are required')
 
-    //handle word img
-    const img = req.file ? { data: req.file.buffer, contentType: req.file.mimetype } : undefined
+    //handle image
+    if (!req.file)
+      return res.status(400).json({ message: "Image is required" })
 
-    const newWord = await Word.create({ word, translation, categoryName,img })
+    const img = {
+      data: req.file.buffer,
+      contentType: req.file.mimetype
+    }
+
+    const newWord = await Word.create({ word, translation, categoryName, img })
     if (!newWord)
       return res.status(400).json({ message: `error occurred while creating word ${word}` })
 

@@ -1,19 +1,21 @@
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useDispatch } from "react-redux"
-import { setWordInfo, goToStep } from "./wordWizardSlice"
-import FormInput from "../../../components/formInput"
-import FormContainer from "../../../components/formContainer"
-import FormTitle from "../../../components/formTitle"
-import SubmitButton from "../../../components/submitButton"
-import FileInput from "../../../components/fileInput"
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch } from "react-redux";
+import { setWordInfo, goToStep } from "./wordWizardSlice";
+import FormInput from "../../../components/formInput";
+import FormContainer from "../../../components/formContainer";
+import FormTitle from "../../../components/formTitle";
+import SubmitButton from "../../../components/submitButton";
+import FileInput from "../../../components/fileInput";
 
 const AddWordForm = ({ categoryWords = [], categoryId }) => {
   const dispatch = useDispatch()
 
   const wordSchema = z.object({
-    word: z.string({ required_error: "חובה להכניס מילה" }).nonempty("חובה להכניס מילה")
+    word: z
+      .string({ required_error: "חובה להכניס מילה" })
+      .nonempty("חובה להכניס מילה")
       .refine(
         (val) =>
           !categoryWords.some((w) => w.word.toLowerCase() === val.toLowerCase()),
@@ -23,20 +25,26 @@ const AddWordForm = ({ categoryWords = [], categoryId }) => {
     translation: z
       .string({ required_error: "חובה להכניס תרגום" })
       .nonempty("חובה להכניס תרגום"),
-    img: z.any({required_error: "התמונה חובה"})
+
+    img: z
+      .any()
+      .refine(
+        (files) => files instanceof FileList && files.length > 0,
+        "התמונה חובה"
+      ),
   })
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors ,isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(wordSchema),
   })
 
   const onSubmit = (data) => {
-    const file = data.img?.[0] || null
+    const file = data.img[0]
 
     dispatch(
       setWordInfo({
@@ -47,7 +55,7 @@ const AddWordForm = ({ categoryWords = [], categoryId }) => {
       })
     )
 
-    dispatch(goToStep(2))
+    dispatch(goToStep(2));
     reset()
   }
 
@@ -73,11 +81,11 @@ const AddWordForm = ({ categoryWords = [], categoryId }) => {
         htmlFor="translation"
       />
 
-      <FileInput label="Upload Image" register={register} name="img" />
+      <FileInput label="תמונה" register={register} name="img" error={errors.img?.message}/>
 
       <SubmitButton text="שמירה" isLoading={isSubmitting} className="mt-4" />
     </FormContainer>
   )
 }
 
-export default AddWordForm
+export default AddWordForm;

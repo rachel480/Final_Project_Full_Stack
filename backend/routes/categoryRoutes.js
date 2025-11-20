@@ -4,6 +4,8 @@ const categoryController =require('../controllers/categoryController')
 const verifyJWT =require('../middleware/verifyJWT')
 const verifyRoles = require('../middleware/verifyRoles')
 
+router.post('/', categoryController.upload.array('images', 100),verifyJWT,verifyRoles('Admin') , categoryController.createFullCategorySimple)
+
 //use middleware
 router.use(verifyJWT)
 
@@ -12,7 +14,6 @@ router.get('/:id',categoryController.getSingleCategory)
 router.get("/:id/full", categoryController.getFullCategoryById)
 router.get('/:id/challenge',categoryController.getChallengeOfCategory)
 router.get('/:id/words',categoryController.getWordsOfCategory)
-router.post('/', verifyRoles('Admin') ,categoryController.upload.array('images', 100), categoryController.createFullCategorySimple)
 router.put('/',verifyRoles('Admin') , categoryController.updateCategory)
 router.delete('/',verifyRoles('Admin') ,categoryController.deleteCategory)
 

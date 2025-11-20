@@ -21,7 +21,7 @@ const getAllMyWords = async (req, res) => {
 
 // create my word for user
 const createMyWord = async (req, res) => {
-    // try {
+    try {
     const word  = JSON.parse(req.body.word)
     const rateing = Number(req.body.rateing)
 
@@ -52,9 +52,9 @@ const createMyWord = async (req, res) => {
     }
 
     return res.status(201).json({ message: `word ${word.word} was created successfully` })
-    // } catch (err) {
-    //     return res.status(500).json({ message: "Internal server error" })
-    // }
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error" })
+    }
 }
 
 // delete my word for user

@@ -31,14 +31,14 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
           categoryName: "",
           imgData: reader.result,
           mimeType: file.type
-        }));
+        }))
 
         const addAnother = window.confirm("תרצה להוסיף מילה נוספת??")
         if (!addAnother)
           dispatch(goToStep(step + 1))
-      };
+      }
 
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file)
     } else {
       dispatch(setWordInfo({
         word: data.word,
@@ -51,10 +51,6 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
       if (!addAnother)
         dispatch(goToStep(step + 1))
     }
-    dispatch(setWordInfo({ word: data.word, translation: data.translation, categoryName: "" }))
-    const addAnother = window.confirm("תרצה להוסיף מילה נוספת???")
-    if (!addAnother)
-      dispatch(goToStep(step + 1))
   }
 
   const wordSchema = z.object({
@@ -63,7 +59,11 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
         message: "המילה כבר קיימת!",
       }),
     translation: z.string({ required_error: "חובה להכניס תרגום" }).nonempty("חובה להכניס תרגום"),
-    img: z.any({required_error: "התמונה חובה"})
+    img: z.any()
+      .refine(
+        (files) => files instanceof FileList && files.length > 0,
+        "התמונה חובה"
+      ),
   })
 
   const {
@@ -103,7 +103,7 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
           htmlFor="translation"
         />
 
-        <FileInput label="Upload Image" register={register} name="img" />
+        <FileInput label="תמונה" register={register} name="img" error={errors.img?.message}/>
 
         <SubmitButton text="שמירה" isLoading={isSubmitting} className="mt-4" />
         <Button variant="text" onClick={() => setShowList(true)} className="mt-4 !text-orange-500 !underline">מילים שהוספתי</Button>

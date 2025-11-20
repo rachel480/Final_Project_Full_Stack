@@ -85,6 +85,7 @@ const CourseWizard = () => {
 
     } catch (err) {
       console.error(err);
+       dispatch(resetWizard())
       const msg = err?.data?.message || err.message || "שגיאה ביצירת קורס";
       toast.error(msg, {
         position: "top-right",

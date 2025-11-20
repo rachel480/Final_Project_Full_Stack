@@ -21,28 +21,13 @@ const updateWordSchema = z.object({
   word: z.string({ required_error: "חובה להכניס מילה" }).min(1, "חובה להכניס מילה"),
   translation: z.string({ required_error: "חובה להכניס תרגום"}).min(1, "חובה להכניס תרגום"),
   categoryName: z.string({required_error:"חובה לבחור שם קטגוריה"}).min(1, "חובה לבחור קטגוריה"),
-  img: z.any({required_error: "התמונה חובה"})
+  img: z
+      .any()
+      .refine(
+        (files) => files instanceof FileList && files.length > 0,
+        "התמונה חובה"
+      )
 })
-
-const arrayBufferToBase64 = (buffer) => {
-  let binary = '';
-  let bytes;
-  if (buffer?.data && Array.isArray(buffer.data)) {
-    bytes = buffer.data;
-  } else if (buffer instanceof Uint8Array) {
-    bytes = Array.from(buffer);
-  } else if (buffer && buffer.type === 'Buffer' && buffer.data) {
-    bytes = buffer.data;
-  } else {
-    return null;
-  }
-  const chunkSize = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    const chunk = bytes.slice(i, i + chunkSize);
-    binary += String.fromCharCode.apply(null, chunk);
-  }
-  return btoa(binary);
-};
 
 const UpdateWordForm = () => {
   const { wordId, categoryId, courseId } = useParams()
@@ -57,7 +42,6 @@ const UpdateWordForm = () => {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(updateWordSchema),
