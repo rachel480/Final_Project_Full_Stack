@@ -216,23 +216,33 @@ const createFullCategorySimple = async (req, res) => {
     const questions = JSON.parse(req.body.questions)
     let words = JSON.parse(req.body.words)
     const courseId = req.body.courseId
-    const uploadedImages = req.files
+    const uploadedImages = req.files || []
 
-    if (!uploadedImages || uploadedImages.length === 0) {
-      console.log("No images uploaded")
+    if (!uploadedImages.length) {
+      return res.status(400).json({ message: "יש להעלות תמונה לכל מילה" })
     }
 
-    words = words.map((wordObj, index) => {
-      const relevantImage = uploadedImages?.find(file => file.originalname.includes(wordObj.word))
-
-      if (relevantImage) {
-        wordObj.img = {
-          data: relevantImage.buffer,
-          contentType: relevantImage.mimetype
-        };
+    for (const word of words) {
+      const imgForWord = uploadedImages.find(f => f.originalname.includes(word.word))
+      if (!imgForWord) {
+        return res.status(400).json({
+          message: `חסרה תמונה עבור המילה: ${word.word}`
+        })
       }
-      return wordObj;
-    });
+    }
+
+    words = words.map((wordObj) => {
+      const relevantImage = uploadedImages.find(f =>
+        f.originalname.includes(wordObj.word)
+      )
+
+      wordObj.img = {
+        data: relevantImage.buffer,
+        contentType: relevantImage.mimetype
+      }
+
+      return wordObj
+    })
 
     // step 1: add words to DB
     const createdWords = await Word.insertMany(words)

@@ -5,7 +5,8 @@ const initialState = {
   wordInfo: {
     word: "",
     translation: "",
-    img: ""
+    img: null,
+    categoryId: ""
   }
 }
 
@@ -14,13 +15,16 @@ const wordWizardSlice = createSlice({
   initialState,
   reducers: {
     goToStep(state, action) {
-      state.step = action.payload
+      state.step = action.payload;
     },
     setWordInfo(state, action) {
-      state.wordInfo = action.payload
+      state.wordInfo = {
+        ...state.wordInfo,
+        ...action.payload
+      }
     },
     resetWizard() {
-      return initialState
+      return initialState;
     },
   },
 })

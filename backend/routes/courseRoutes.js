@@ -4,6 +4,8 @@ const courseController = require('../controllers/courseController')
 const verifyJWT = require('../middleware/verifyJWT')
 const verifyRoles = require('../middleware/verifyRoles')
 
+router.post("/createFullSimple", courseController.upload.array('images', 100),verifyJWT, verifyRoles('Admin') , courseController.createFullCourseSimple)
+
 //use middleware
 router.use(verifyJWT)
 
@@ -13,7 +15,6 @@ router.get('/:id',courseController.getSingleCourse)
 router.get("/:id/full", courseController.getFullCourseById)
 router.get('/:id/categories',courseController.getCategoriesOfCourse)
 router.get('/:id/words', courseController.getWordsOfCourseWithFavorites)
-router.post("/createFullSimple", verifyRoles('Admin') , courseController.upload.array('images', 100), courseController.createFullCourseSimple)
 router.put('/',verifyRoles('Admin') ,courseController.updateCourse)
 router.delete('/',verifyRoles('Admin') ,courseController.deleteCourse)
 
