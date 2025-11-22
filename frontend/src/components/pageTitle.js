@@ -1,11 +1,11 @@
-import { Typography } from "@mui/material";
+import { Typography } from "@mui/material"
 
 const PageTitle = ({ text, size = "h5", align = "center" }) => {
   return (
     <Typography
       variant={size}
       align={align}
-      className="font-bold tracking-wide mb-6"
+      className="font-bold tracking-wide mb-6 max-md:text-lg"
       sx={{
         color: "rgba(229,145,42,0.9)",
         textShadow: "0 1px 2px rgba(0,0,0,0.1)",
@@ -13,7 +13,7 @@ const PageTitle = ({ text, size = "h5", align = "center" }) => {
     >
       {text}
     </Typography>
-  );
-};
+  )
+}
 
-export default PageTitle;
+export default PageTitle

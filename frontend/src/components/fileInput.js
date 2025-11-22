@@ -1,19 +1,20 @@
 import { Box, Typography } from "@mui/material";
 
-const FileInput = ({ label = "תמונה", register, name,error }) => {
-
+const FileInput = ({ label = "תמונה", register, name, error }) => {
   const handlePreview = (fileList) => {
     if (fileList && fileList[0]) {
-      const file = fileList[0]
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
+      const file = fileList[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
     }
   }
 
-
   return (
-    <Box className="mt-4">
-      <Typography sx={{ fontWeight: "bold", mb: 1 }}>{label}</Typography>
+    <Box className="mt-4 max-md:mt-3">
+      <Typography sx={{ fontWeight: "bold", mb: 1, fontSize: { xs: "14px", md: "16px" } }}>
+        {label}
+      </Typography>
+
       <input
         type="file"
         accept="image/*"
@@ -25,11 +26,13 @@ const FileInput = ({ label = "תמונה", register, name,error }) => {
           borderRadius: "8px",
           border: "2px solid rgba(229,145,42,0.62)",
           backgroundColor: "rgba(173, 216, 230, 0.2)",
+          fontSize: window.innerWidth <= 768 ? "14px" : "16px",
         }}
       />
-      <p className="text-red-600">{error}</p>
+
+      <p className="text-red-600 max-md:text-sm">{error}</p>
     </Box>
-  )
-}
+  );
+};
 
 export default FileInput

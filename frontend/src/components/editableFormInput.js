@@ -2,10 +2,10 @@ import { useState } from "react";
 import TextField from "@mui/material/TextField";
 
 const EditableFormInput = ({ label, htmlFor, register, error, placeholder, type = "text" }) => {
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div className="mb-4 max-md:mb-3">
       <TextField
         id={htmlFor}
         label={label}
@@ -25,26 +25,32 @@ const EditableFormInput = ({ label, htmlFor, register, error, placeholder, type 
           sx: {
             color: "#000",
             fontWeight: "normal",
-            '&.Mui-focused': {
+            "&.Mui-focused": {
               color: "rgba(229,145,42,0.62)",
               fontWeight: "bold",
             },
           },
         }}
         sx={{
-          '& .MuiOutlinedInput-root': {
+          "& .MuiOutlinedInput-root": {
             backgroundColor: isEditing ? "#fff" : "rgba(173, 216, 230, 0.2)",
-            '& fieldset': {
-              borderColor: isEditing ? "rgba(229,145,42,1)" : "rgba(229,145,42,0.62)",
+            "& fieldset": {
+              borderColor: isEditing
+                ? "rgba(229,145,42,1)"
+                : "rgba(229,145,42,0.62)",
             },
-            '&:hover fieldset': {
+            "&:hover fieldset": {
               borderColor: "rgba(229,145,42,0.8)",
             },
+          },
+          fontSize: {
+            xs: "14px",
+            md: "16px",
           },
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default EditableFormInput;
+export default EditableFormInput
