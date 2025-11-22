@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import {
-  useGetUserProgressByUserQuery,
-  useUpdateChallengeResultInUserProgressMutation,
-} from "../../userProgress/userProgressApi"
+import {useGetUserProgressByUserQuery,useUpdateChallengeResultInUserProgressMutation} from "../../userProgress/userProgressApi"
 import LoadingSpinner from "../../../components/loadingSpinner"
 import ErrorMessage from "../../../components/errorMessage"
 import { toast } from "react-toastify"
@@ -25,14 +22,12 @@ const ChallengeLogicRoot = ({
   const [challengeResults, setChallengeResults] = useState(null)
   const [isNewAttempt, setIsNewAttempt] = useState(true)
 
-  // sync external index if provided
   useEffect(() => {
     if (typeof externalIndex === "number") {
       setCurrentIndex(externalIndex)
     }
   }, [externalIndex])
 
-  // expose changing index back to parent
   useEffect(() => {
     if (setExternalIndex) {
       setExternalIndex(currentIndex)
@@ -83,6 +78,10 @@ const ChallengeLogicRoot = ({
   const handleNext = () => {
     if (currentIndex < questions.length - 1) setCurrentIndex(currentIndex + 1)
   }
+  
+  const handlePrev=()=>{
+    if (currentIndex >0) setCurrentIndex(currentIndex -1)
+  }
 
   const handleEnd = async () => {
     if (course.level === "Easy") {
@@ -126,6 +125,7 @@ const ChallengeLogicRoot = ({
     setCurrentIndex,
     handleUsersAnswer,
     handleNext,
+    handlePrev,
     handleEnd,
     challengeResults,
     courseId,

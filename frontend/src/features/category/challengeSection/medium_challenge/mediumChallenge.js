@@ -1,6 +1,7 @@
 import MediumQuestionCard from "./mediumQuestionCard"
-import MediumEndModal from "./mediumEndModal"
 import ChallengeLogicRoot from "../challengeLogicRoot"
+import EndModal from "../results/endModal"
+import LoadingSpinner from "../../../../components/loadingSpinner"
 
 const MediumChallenge = ({ challenge }) => {
   return (
@@ -23,10 +24,10 @@ const MediumChallenge = ({ challenge }) => {
           }
         }
 
-        if (!questions || questions.length === 0) return <div>Loading...</div>
+        if (!questions || questions.length === 0) return <LoadingSpinner/>
 
         return (
-          <div className="w-full flex justify-center pt-10">
+          <div className="w-full flex justify-center pt-10 max-md:pt-6">
             {currentIndex < questions.length ? (
               <MediumQuestionCard
                 question={questions[currentIndex]}
@@ -35,7 +36,7 @@ const MediumChallenge = ({ challenge }) => {
                 nextQuestion={nextQuestion}
               />
             ) : (
-              <MediumEndModal
+              <EndModal
                 score={challengeResults?.totalScore || 0}
                 total={questions.length * 10}
                 courseId={courseId}
