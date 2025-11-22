@@ -16,7 +16,7 @@ const CategoryLayout = () => {
       <div>
          <FormTitle text={`${category.name} category`}/> 
          <CategoryNavigation/>
-         <main className="mt-[32px] p-4"><Outlet /></main>
+         <main><Outlet /></main>
       </div>
    )
 }
