@@ -4,7 +4,8 @@ import Footer from '../../components/footer'
 
 const UserLayout = () => {
   return (
-   <div className="mt-[140px] min-h-screen flex flex-col bg-gradient-to-bl from-white via-green-300/20 to-orange-50/40 ">
+   <div className="mt-[140px] min-h-screen flex flex-col bg-gradient-to-bl from-white via-green-300/20 to-orange-50/40  dark:from-[#1f1f1f]
+        dark:to-gray-800">
  
       <UserNavigation />
 

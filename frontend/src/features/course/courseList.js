@@ -5,6 +5,7 @@ import PageTitle from "../../components/pageTitle"
 import LoadingSpinner from "../../components/loadingSpinner"
 import ErrorMessage from "../../components/errorMessage"
 import InfoMessage from "../../components/infoMessage"
+import SideMenu from "../../components/sideMenu"
 
 const rainbowGradients = [
   "from-pink-400 to-red-500",
@@ -26,6 +27,7 @@ const CourseList = () => {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-[80px] px-6 max-md:px-3">
       <div className="max-w-6xl mx-auto text-center mb-10 max-md:mb-6">
         <PageTitle text="בחר את קורס האנגלית שלך" />
+        <SideMenu/>
         <p className="text-gray-600 mt-2 max-md:text-sm">
           בחר קורס כדי להתחיל ללמוד מילים חדשות ולשפר את כישורי האנגלית שלך 🚀
         </p>

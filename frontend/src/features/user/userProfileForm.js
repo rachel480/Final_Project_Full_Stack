@@ -15,6 +15,7 @@ import Tooltip from '@mui/material/Tooltip';
 import LoadingSpinner from "../../components/loadingSpinner"
 import ErrorMessage from "../../components/errorMessage"
 import InfoMessage from "../../components/infoMessage"
+import SideMenu from "../../components/sideMenu";
 
 const userSchema = z.object({
     fullName: z.string({ required_error: "חובה להכניס שם מלא" }).min(1, "שם מלא חייב להכיל לפחות תו 1"),
@@ -83,7 +84,7 @@ const UserProfileForm = () => {
         <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
             <FormTitle text={`פרופיל משתמש`} />
-
+             <SideMenu/>
             <p className="text-center text-gray-600">{user.userName} :שם משתמש</p>
 
             <EditableFormInput

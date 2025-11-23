@@ -2,7 +2,7 @@ import { Email, Phone } from "@mui/icons-material";
 
 const Footer = () => {
   return (
-    <footer className="w-full py-3 mt-auto relative z-[60] bg-gradient-to-b from-gray-700 via-gray-800 to-black text-white">
+    <footer className="w-full py-3 mt-auto relative z-[60] bg-gradient-to-b from-gray-700 via-gray-800 to-black text-white dark:text-[rgba(180,22,84,1)]">
       <div className="max-w-5xl mx-auto px-4 flex flex-row items-center justify-between gap-4">
         <div className="flex flex-row gap-4 text-sm">
           <div className="flex items-center gap-2">

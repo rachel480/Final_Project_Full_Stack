@@ -9,6 +9,7 @@ import FormContainer from "../../components/formContainer";
 import SubmitButton from "../../components/submitButton";
 import FormInput from "../../components/formInput";
 import FormSelect from "../../components/formSelect";
+import SideMenu from "../../components/sideMenu";
 
 const recommendionSchema = z.object({
     userName: z.string({ required_error: "חובה להכניס שם משתמש" }).nonempty("חובה להכניס שם משתמש"),
@@ -40,9 +41,9 @@ const AddRecommendionForm = () => {
 
     return (
         <FormContainer onSubmit={handleSubmit(onSubmit)} className="max-md:px-4 max-md:py-4">
-
+            
             <FormTitle text='הוספת המלצה' />
-
+             <SideMenu/>
             {message && (
                 <div className="p-3 mb-4 rounded bg-indigo-100 text-indigo-700 font-semibold text-center max-md:text-sm">
                     {message}

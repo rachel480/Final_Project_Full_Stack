@@ -5,6 +5,7 @@ import { selectUser } from '../features/auth/authSlice'
 import { useCreateUserProgressMutation } from '../features/userProgress/userProgressApi'
 import PageTitle from '../components/pageTitle'
 import { Card, CardContent, CardActions, Typography, Button, Alert, CircularProgress, Box } from '@mui/material'
+import SideMenu from '../components/sideMenu'
 
 const HomePage = () => {
   const { data: courses, isLoading: isLoadingCourses, error: errorCourses } = useGetAllCoursesQuery()
@@ -51,9 +52,10 @@ const HomePage = () => {
   }
 
   return (
+
     <div className="mt-[64px] p-6 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen text-right">
       <PageTitle text={`שלום ${user.fullName || 'משתמש'} 👋`} />
-
+      <SideMenu />
       {message && (
         <Alert
           severity={message.type}

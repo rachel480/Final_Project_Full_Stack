@@ -6,8 +6,11 @@ import { toast } from "react-toastify";
 import { Logout, AccountCircle } from "@mui/icons-material";
 import Tooltip from "@mui/material/Tooltip";
 import { persistor } from "../../app/store";
+import ThemeSwitch from "../../components/themeSwitch";
+import { useTheme } from "../../app/useTheme"
 
 const UserProfileMenu = () => {
+  const { theme, toggleTheme } = useTheme()
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const user = useSelector(selectUser);
@@ -80,6 +83,7 @@ const UserProfileMenu = () => {
             <Logout fontSize="small" />
             <span className="truncate">התנתקות</span>
           </button>
+          <ThemeSwitch theme={theme} toggleTheme={toggleTheme}/>
         </div>
       )}
     </div>

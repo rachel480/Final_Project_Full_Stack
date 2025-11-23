@@ -11,6 +11,7 @@ import SubmitButton from "../../components/submitButton";
 import BackButton from "../../components/backButton";
 import validPassword from "../auth/service/validPassword";
 import PasswordInput from "../../components/passwordInput";
+import SideMenu from "../../components/sideMenu";
 
 
 const passwordSchema = z.object({
@@ -57,7 +58,7 @@ const ResetPasswordForm = () => {
     <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
       <BackButton navigation={'/user/profile'} />
-
+      <SideMenu/>
       <FormTitle text={'איפוס סיסמא'}/>
 
       <PasswordInput

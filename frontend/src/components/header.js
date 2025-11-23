@@ -6,7 +6,7 @@ const Header = ({ children }) => {
     return (
         <AppBar 
             position="fixed" 
-            className="!bg-[rgba(229,145,42,0.62)] shadow-sm z-50 px-6 py-1"
+            className="!bg-[rgba(229,145,42,0.62)] shadow-sm z-50 px-6 py-1 dark:!bg-[rgba(180,22,84,1)]"
         >
             <Toolbar className='!justify-between text-white font-bold text-xl flex flex-row max-md:flex-col gap-0 max-md:gap-0'>
                 <Box className="flex justify-start max-md:justify-center">
