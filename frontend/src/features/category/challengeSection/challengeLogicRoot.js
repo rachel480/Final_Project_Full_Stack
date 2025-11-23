@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import {useGetUserProgressByUserQuery,useUpdateChallengeResultInUserProgressMutation} from "../../userProgress/userProgressApi"
 import LoadingSpinner from "../../../components/loadingSpinner"
 import ErrorMessage from "../../../components/errorMessage"
@@ -21,7 +21,8 @@ const ChallengeLogicRoot = ({
   const [currentIndex, setCurrentIndex] = useState(-1)
   const [challengeResults, setChallengeResults] = useState(null)
   const [isNewAttempt, setIsNewAttempt] = useState(true)
-
+  
+  const navigate=useNavigate()
   useEffect(() => {
     if (typeof externalIndex === "number") {
       setCurrentIndex(externalIndex)
@@ -41,7 +42,8 @@ const ChallengeLogicRoot = ({
       (r) => r.challenge._id.toString() === challenge._id.toString()
     )
     if (existingResult && isNewAttempt) {
-      return
+      navigate(`${existingResult.challenge._id}/results`)
+      return 
     }
 
     const questionsWithAnswers = challenge.questions.map((question) => {
