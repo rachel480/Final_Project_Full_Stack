@@ -5,7 +5,7 @@ import { selectUser, logout } from "../auth/authSlice";
 import { toast } from "react-toastify";
 import { Logout, AccountCircle } from "@mui/icons-material";
 import Tooltip from "@mui/material/Tooltip";
-import { persistor } from "../../app/store"
+import { persistor } from "../../app/store";
 
 const UserProfileMenu = () => {
   const [open, setOpen] = useState(false);
@@ -24,11 +24,11 @@ const UserProfileMenu = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     localStorage.removeItem("userAccessToken");
     dispatch(logout());
-    await persistor.flush(); 
-    await persistor.purge()
+    await persistor.flush();
+    await persistor.purge();
     toast.success("התנתקת בהצלחה", {
       position: "top-right",
       autoClose: 3000,
@@ -42,7 +42,7 @@ const UserProfileMenu = () => {
   };
 
   return (
-    <div ref={menuRef} className="relative inline-block text-right">
+    <div ref={menuRef} className="relative inline-block text-right max-md:text-sm">
       <Tooltip title={user?.userName || "משתמש"} arrow>
         <button
           onClick={() => setOpen((prev) => !prev)}
@@ -52,11 +52,11 @@ const UserProfileMenu = () => {
             <img
               src={user.avatarUrl}
               alt="avatar"
-              className="w-9 h-9 rounded-full border border-gray-300 object-cover"
+              className="w-9 h-9 max-md:w-8 max-md:h-8 rounded-full border border-gray-300 object-cover"
             />
           ) : (
             <AccountCircle
-              className="w-9 h-9 text-white"
+              className="w-9 h-9 max-md:w-8 max-md:h-8 text-white"
               fontSize="large"
             />
           )}
@@ -64,26 +64,26 @@ const UserProfileMenu = () => {
       </Tooltip>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+        <div className="absolute right-0 mt-2 w-44 max-md:w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
           <button
             onClick={goToProfile}
-            className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-lg"
+            className="flex items-center gap-2 w-full px-4 py-2 max-md:px-3 max-md:py-1 text-gray-700 hover:bg-gray-100 rounded-t-lg text-xl"
           >
             <AccountCircle fontSize="small" />
-            <span>פרופיל אישי</span>
+            <span className="truncate">פרופיל אישי</span>
           </button>
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 w-full px-4 py-2 text-red-600 hover:bg-red-50 rounded-b-lg"
+            className="flex items-center gap-2 w-full px-4 py-2 max-md:px-3 max-md:py-1 text-red-600 hover:bg-red-50 rounded-b-lg text-xl"
           >
             <Logout fontSize="small" />
-            <span>התנתקות</span>
+            <span className="truncate">התנתקות</span>
           </button>
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default UserProfileMenu
+export default UserProfileMenu;
