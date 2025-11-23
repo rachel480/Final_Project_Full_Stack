@@ -68,7 +68,7 @@ const AddCategoriesInfo = ({ setCategoryInfo, goToStep, selectWizardCategory, se
 
   return (
     !showList ?
-      <FormContainer onSubmit={handleSubmit(onSubmit)}>
+      <FormContainer onSubmit={handleSubmit(onSubmit)} className="max-md:p-3">
 
         <FormTitle text='הוספת קטגוריה' />
 
@@ -82,7 +82,7 @@ const AddCategoriesInfo = ({ setCategoryInfo, goToStep, selectWizardCategory, se
         />
 
         <label>
-          <span>{sumSelected} מילים נבחרו</span>
+          <span className="max-md:text-sm">{sumSelected} מילים נבחרו</span>
         </label>
 
         <WordCheckboxList
@@ -94,28 +94,30 @@ const AddCategoriesInfo = ({ setCategoryInfo, goToStep, selectWizardCategory, se
         />
 
         <SubmitButton text={'שמור'} />
-        <Button variant="text" onClick={() => setShowList(true)} className="mt-4 !text-orange-500 !underline">קטגוריות שהוספתי</Button>
+        <Button variant="text" onClick={() => setShowList(true)} className="mt-4 !text-orange-500 !underline max-md:text-sm">קטגוריות שהוספתי</Button>
 
       </FormContainer>
+
       :
-      <Paper elevation={1} className="max-w-md w-full mx-auto p-6 flex flex-col gap-3 rounded-xl bg-white shadow-sm">
+
+      <Paper elevation={1} className="max-w-md w-full mx-auto p-6 flex flex-col gap-3 rounded-xl bg-white shadow-sm max-md:p-4">
 
         <SectionTitle text='רשימת קטגוריות' />
 
         <Stack spacing={2}>
           {categoryData.map((category, idx) => (
-            <Box key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <Typography variant="subtitle1" className="font-semibold text-orange-500">
+            <Box key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-200 max-md:p-2">
+              <Typography variant="subtitle1" className="font-semibold text-orange-500 max-md:text-sm">
                 {category.name}
               </Typography>
-              <Typography variant="body2" className="text-gray-500">
+              <Typography variant="body2" className="text-gray-500 max-md:text-xs">
                 Words: {category.words.join(", ")}
               </Typography>
             </Box>
           ))}
         </Stack>
 
-        <Button variant="text" onClick={() => setShowList(false)} className="mt-4 !text-orange-500 !underline"> הוספת קטגוריה</Button>
+        <Button variant="text" onClick={() => setShowList(false)} className="mt-4 !text-orange-500 !underline max-md:text-sm"> הוספת קטגוריה</Button>
       </Paper>
   )
 }

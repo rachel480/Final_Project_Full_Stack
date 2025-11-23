@@ -39,10 +39,11 @@ const ChallengeLogicRoot = ({
     if (!challenge?.questions || !userProgress) return
 
     const existingResult = userProgress?.challengeResults?.find(
-      (r) => r.challenge._id.toString() === challenge._id.toString()
-    )
+  (r) => r.challenge?._id?.toString() === challenge?._id?.toString()
+)
+
     if (existingResult && isNewAttempt) {
-      navigate(`${existingResult.challenge._id}/results`)
+      navigate(`${existingResult?.challenge?._id}/results`)
       return 
     }
 
