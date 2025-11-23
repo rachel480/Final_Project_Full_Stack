@@ -81,9 +81,12 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
   }
 
   return (
-    !showList ?
-      <FormContainer onSubmit={handleSubmit(onSubmit)}>
-        <FormTitle text="הוספת מילה" />
+    !showList ? (
+      <FormContainer
+        onSubmit={handleSubmit(onSubmit)}
+        className="max-md:px-3 max-md:py-2"
+      >
+        <FormTitle text="הוספת מילה" className="max-md:text-lg" />
 
         <FormInput
           label="מילה"
@@ -92,6 +95,7 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
           error={errors.word?.message}
           placeholder="הכנס מילה..."
           htmlFor="word"
+          className="max-md:text-sm"
         />
 
         <FormInput
@@ -101,35 +105,65 @@ const AddWordsInfo = ({ selectWizardWords, setWordInfo, goToStep, selectWizardSt
           error={errors.translation?.message}
           placeholder="הכנס תרגום..."
           htmlFor="translation"
+          className="max-md:text-sm"
         />
 
-        <FileInput label="תמונה" register={register} name="img" error={errors.img?.message}/>
+        <FileInput
+          label="תמונה"
+          register={register}
+          name="img"
+          error={errors.img?.message}
+          className="max-md:text-sm max-md:mt-2"
+        />
 
-        <SubmitButton text="שמירה" isLoading={isSubmitting} className="mt-4" />
-        <Button variant="text" onClick={() => setShowList(true)} className="mt-4 !text-orange-500 !underline">מילים שהוספתי</Button>
+        <SubmitButton
+          text="שמירה"
+          isLoading={isSubmitting}
+          className="mt-4 max-md:mt-3"
+        />
 
+        <Button
+          variant="text"
+          onClick={() => setShowList(true)}
+          className="mt-4 !text-orange-500 !underline max-md:text-sm max-md:mt-3"
+        >
+          מילים שהוספתי
+        </Button>
       </FormContainer>
+    ) : (
+      <Paper
+        elevation={1}
+        className="max-w-md w-full mx-auto p-6 flex flex-col gap-3 rounded-xl bg-white shadow-sm
+                   max-md:p-4 max-md:gap-2"
+      >
+        <SectionTitle text='רשימת מילים' className="max-md:text-lg" />
 
-      :
-      <Paper elevation={1} className="max-w-md w-full mx-auto p-6 flex flex-col gap-3 rounded-xl bg-white shadow-sm">
-
-        <SectionTitle text='רשימת מילים' />
-
-        <Stack spacing={2}>
+        <Stack spacing={2} className="max-md:space-y-1">
           {wordData.map((word, idx) => (
-            <Box key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-              <Typography variant="subtitle1" className="font-semibold text-gray-500">
-                word:{word.word}
+            <Box
+              key={idx}
+              className="p-3 bg-gray-50 rounded-lg border border-gray-200
+                         max-md:p-2"
+            >
+              <Typography variant="subtitle1" className="font-semibold text-gray-500 max-md:text-sm">
+                word: {word.word}
               </Typography>
-              <Typography variant="subtitle1" className="font-semibold text-gray-500">
-                category:{word.categoryName}
+              <Typography variant="subtitle1" className="font-semibold text-gray-500 max-md:text-sm">
+                category: {word.categoryName}
               </Typography>
             </Box>
           ))}
         </Stack>
 
-        <Button variant="text" onClick={() => setShowList(false)} className="mt-4 !text-orange-500 !underline"> הוספת מילה</Button>
+        <Button
+          variant="text"
+          onClick={() => setShowList(false)}
+          className="mt-4 !text-orange-500 !underline max-md:text-sm max-md:mt-3"
+        >
+          הוספת מילה
+        </Button>
       </Paper>
+    )
   )
 }
 

@@ -11,37 +11,37 @@ const Pagination = ({ page, setPage, totalPages }) => {
   };
 
   return (
-    <div className="flex items-center justify-center gap-4 mt-6">
+    <div className="flex items-center justify-center gap-4 mt-6 max-md:gap-2">
       
       <IconButton
         onClick={handlePrevPage}
         disabled={page <= 1}
-        className={`transition-all duration-200 rounded-lg p-2 border-2 ${
+        className={`transition-all duration-200 rounded-lg p-2 max-md:p-1 border-2 ${
           page <= 1
             ? "border-gray-300 text-gray-300 cursor-not-allowed"
             : "border-green-400 text-green-600 hover:bg-green-100 hover:border-green-500"
         }`}
       >
-        <ArrowBackIos />
+        <ArrowBackIos className="max-md:text-sm" />
       </IconButton>
 
-      <Typography variant="h6" className="font-bold text-gray-700">
+      <Typography variant="h6" className="font-bold text-gray-700 max-md:text-sm">
         {page} / {totalPages || 1}
       </Typography>
 
       <IconButton
         onClick={handleNextPage}
         disabled={page >= (totalPages || 1)}
-        className={`transition-all duration-200 rounded-lg p-2 border-2 ${
+        className={`transition-all duration-200 rounded-lg p-2 max-md:p-1 border-2 ${
           page >= (totalPages || 1)
             ? "border-gray-300 text-gray-300 cursor-not-allowed"
             : "border-green-400 text-green-600 hover:bg-green-100 hover:border-green-500"
         }`}
       >
-        <ArrowForwardIos />
+        <ArrowForwardIos className="max-md:text-sm" />
       </IconButton>
     </div>
   )
 }
 
-export default Pagination
+export default Pagination;

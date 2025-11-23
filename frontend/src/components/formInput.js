@@ -1,8 +1,8 @@
-import TextField from "@mui/material/TextField"
+import TextField from "@mui/material/TextField";
 
 const FormInput = ({ label, htmlFor, type, register, error, placeholder }) => {
   return (
-    <div>
+    <div className="mb-4 max-md:mb-3">
       <TextField
         id={htmlFor}
         label={label}
@@ -20,25 +20,26 @@ const FormInput = ({ label, htmlFor, type, register, error, placeholder }) => {
           sx: {
             color: "black",
             fontWeight: "normal",
-            '&.Mui-focused': {
+            "&.Mui-focused": {
               color: "rgba(229,145,42,0.62)",
               fontWeight: "bold",
             },
           },
         }}
         sx={{
-          '& .MuiOutlinedInput-root': {
-            backgroundColor: 'rgba(173, 216, 230, 0.2)',
-            '& fieldset': {
-              borderColor: 'rgba(229,145,42,0.62)',
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "rgba(173, 216, 230, 0.2)",
+            "& fieldset": {
+              borderColor: "rgba(229,145,42,0.62)",
             },
-            '&:hover fieldset': {
-              borderColor: 'rgba(229,145,42,0.8)',
+            "&:hover fieldset": {
+              borderColor: "rgba(229,145,42,0.8)",
             },
-            '&.Mui-focused fieldset': {
-              borderColor: 'rgba(229,145,42,1)',
+            "&.Mui-focused fieldset": {
+              borderColor: "rgba(229,145,42,1)",
             },
           },
+          fontSize: { xs: "14px", md: "16px" },
         }}
       />
     </div>

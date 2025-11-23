@@ -1,43 +1,48 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 
-const UpdateFormWrapper = ({title,isLoading,onSubmit,setShowUpdateForm,children }) => {
+const UpdateFormWrapper = ({ title, isLoading, onSubmit, setShowUpdateForm, children }) => {
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: 0, left: 0,
-        width: "100%", height: "100%",
-        bgcolor: "rgba(0,0,0,0.2)",
-        display: "flex", justifyContent: "center", alignItems: "center",
-        zIndex: 1000
-      }}
-    >
-      <Box
-        component="form"
+    <div className="fixed inset-0 bg-black bg-opacity-20 flex justify-center items-center z-50">
+      <form
         onSubmit={onSubmit}
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          width: "100%",
-          maxWidth: 480,
-          p: 4,
-          borderRadius: 3,
-          background: "linear-gradient(135deg, #fef3c7, #fde68a)",
-          boxShadow: 3,
-          fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial'
-        }}
+        className="
+          flex flex-col gap-4
+          w-full max-w-[480px]
+          p-4 md:p-4
+          rounded-lg
+          shadow-md
+          bg-[linear-gradient(135deg,#fef3c7,#fde68a)]
+          font-sans
+          max-md:p-2
+        "
       >
-        <Typography variant="h5" fontWeight="bold" textAlign="center">{title}</Typography>
+        <h2 className="text-2xl font-bold text-center mb-0 max-md:mb-2">{title}</h2>
 
         {children}
 
-        <Box display="flex" gap={1} mt={1}>
-          <Button type="submit" variant="contained" color="warning" fullWidth disabled={isLoading}>Update</Button>
-          <Button type="button" variant="outlined" color="error" fullWidth disabled={isLoading} onClick={() => setShowUpdateForm(false)}>Cancel</Button>
-        </Box>
-      </Box>
-    </Box>
+        <div className="flex gap-2 mt-2 flex-row max-md:flex-col">
+          <Button
+            type="submit"
+            variant="contained"
+            color="warning"
+            disabled={isLoading}
+            className="w-full"
+          >
+            Update
+          </Button>
+          <Button
+            type="button"
+            variant="outlined"
+            color="error"
+            disabled={isLoading}
+            onClick={() => setShowUpdateForm(false)}
+            className="w-full"
+          >
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </div>
   )
 }
 

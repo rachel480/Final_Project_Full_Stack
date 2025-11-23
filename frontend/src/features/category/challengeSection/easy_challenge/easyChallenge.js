@@ -1,7 +1,7 @@
-import { Button, Typography, Paper, Box } from "@mui/material"
-import QuestionCard from "./questionCard"
-import EndModal from "../results/endModal"
-import ChallengeLogicRoot from "../challengeLogicRoot"
+import { Button, Typography, Paper, Box } from "@mui/material";
+import QuestionCard from "./questionCard";
+import EndModal from "../results/endModal";
+import ChallengeLogicRoot from "../challengeLogicRoot";
 
 const EasyChallenge = ({ challenge }) => {
   return (
@@ -17,9 +17,11 @@ const EasyChallenge = ({ challenge }) => {
         challengeResults,
         courseId,
       }) => (
-        <Box className="flex flex-col items-center p-6">
-          <Paper elevation={4} className="p-8 rounded-2xl w-full max-w-3xl bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-
+        <Box className="flex flex-col items-center p-6 max-md:p-4">
+          <Paper
+            elevation={4}
+            className="p-8 max-md:p-6 rounded-2xl w-full max-w-3xl bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50"
+          >
             {questions[currentIndex] ? (
               <QuestionCard
                 key={currentIndex}
@@ -31,13 +33,13 @@ const EasyChallenge = ({ challenge }) => {
               />
             ) : (
               <div className="text-center space-y-4">
-                <Typography variant="h6">
+                <Typography variant="h6" className="max-md:text-sm">
                   במבחן הבא תצטרך להתאים בין מילים לתמונות או לבחור תשובה נכונה אחת בכל שאלה 🎯
                 </Typography>
                 <Button
                   variant="contained"
                   onClick={() => setCurrentIndex(0)}
-                  className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl px-6 py-3"
+                  className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-xl px-6 py-3 max-md:px-4 max-md:py-2 text-sm"
                 >
                   התחל מבחן 🚀
                 </Button>
@@ -45,12 +47,12 @@ const EasyChallenge = ({ challenge }) => {
             )}
 
             {currentIndex !== -1 && currentIndex < questions.length && (
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-6 max-md:flex-col max-md:gap-2">
                 <Button
                   variant="outlined"
                   onClick={handlePrev}
                   disabled={currentIndex === 0}
-                  className="rounded-xl border-purple-400 text-purple-600 hover:bg-purple-100"
+                  className="rounded-xl border-purple-400 text-purple-600 hover:bg-purple-100 max-md:w-full"
                 >
                   שאלה קודמת
                 </Button>
@@ -59,7 +61,7 @@ const EasyChallenge = ({ challenge }) => {
                   <Button
                     variant="contained"
                     onClick={handleEnd}
-                    className="bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-xl"
+                    className="bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-xl max-md:w-full"
                   >
                     סיום המבחן 🏁
                   </Button>
@@ -67,7 +69,7 @@ const EasyChallenge = ({ challenge }) => {
                   <Button
                     variant="contained"
                     onClick={handleNext}
-                    className="bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-xl"
+                    className="bg-gradient-to-r from-blue-400 to-indigo-500 text-white rounded-xl max-md:w-full"
                   >
                     שאלה הבאה ➡️
                   </Button>
@@ -76,7 +78,7 @@ const EasyChallenge = ({ challenge }) => {
             )}
 
             {currentIndex === challenge?.questions?.length && challengeResults && (
-              <EndModal challengeResults={challengeResults} courseId={courseId} />
+              <EndModal challengeId={challenge._id} courseId={courseId} score={challengeResults?.totalScore || 0} total={questions.length * 10} />
             )}
           </Paper>
         </Box>

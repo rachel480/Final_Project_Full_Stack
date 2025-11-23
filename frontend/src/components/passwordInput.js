@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { TextField, IconButton, InputAdornment } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const PasswordInput = ({ label, register, error, placeholder, htmlFor }) => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false)
 
   return (
     <TextField
@@ -17,16 +18,17 @@ const PasswordInput = ({ label, register, error, placeholder, htmlFor }) => {
       {...register}
       id={htmlFor}
       InputLabelProps={{
-          sx: {
-            color: "black",
-            fontWeight: "normal",
-            '&.Mui-focused': {
-              color: "rgba(229,145,42,0.62)",
-              fontWeight: "bold",
-            },
+        sx: {
+          color: "black",
+          fontWeight: "normal",
+          "&.Mui-focused": {
+            color: "rgba(229,145,42,0.62)",
+            fontWeight: "bold",
           },
-        }}
+        },
+      }}
       sx={{
+        fontSize: { xs: "14px", md: "16px" },
         "& .MuiOutlinedInput-root": {
           "& fieldset": {
             borderColor: "#FF8A00",
@@ -49,7 +51,7 @@ const PasswordInput = ({ label, register, error, placeholder, htmlFor }) => {
         ),
       }}
     />
-  );
-};
+  )
+}
 
-export default PasswordInput;
+export default PasswordInput

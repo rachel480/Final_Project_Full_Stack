@@ -1,15 +1,15 @@
-import { Typography } from "@mui/material";
+import { Typography } from "@mui/material"
 
 const SectionTitle = ({ text, Icon }) => {
   return (
     <Typography
       variant="h4"
-      className="flex justify-end text-right items-center gap-2 font-bold text-2xl text-[rgba(229,145,42,0.9)]"
+      className="flex justify-end text-right items-center gap-2 font-bold text-2xl max-md:text-xl text-[rgba(229,145,42,0.9)]"
     >
-      {Icon && <Icon className="text-[rgba(229,145,42,0.9)] text-3xl" />}
+      {Icon && <Icon className="text-[rgba(229,145,42,0.9)] text-3xl max-md:text-2xl" />}
       {text}
     </Typography>
-  );
-};
+  )
+}
 
-export default SectionTitle;
+export default SectionTitle

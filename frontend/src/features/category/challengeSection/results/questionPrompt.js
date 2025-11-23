@@ -7,15 +7,23 @@ const QuestionPrompt = ({ question, status }) => {
 
   if (status === 0)
     return (
-      <Typography variant="h6" className="text-indigo-700 my-2">{question?.question?.word}?</Typography>
+      <Typography variant="h6" className="text-indigo-700  text-center my-2 max-md:text-base">
+        {question?.question?.word}?
+      </Typography>
     )
 
   return (
-    <Box className="my-4 flex justify-center">
+    <Box className="my-4 max-md:my-2 flex justify-center">
       {src ? (
-        <img src={src} alt={question?.question?.word} className="w-32 h-32 object-contain rounded-lg shadow-md" />
+        <img
+          src={src}
+          alt={question?.question?.word}
+          className="w-32 h-32 max-md:w-24 max-md:h-24 object-contain rounded-lg shadow-md"
+        />
       ) : (
-        <Typography color="textSecondary">לא נמצאה תמונה</Typography>
+        <Typography color="textSecondary" className="max-md:text-sm">
+          לא נמצאה תמונה
+        </Typography>
       )}
     </Box>
   )

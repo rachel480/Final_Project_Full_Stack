@@ -14,10 +14,10 @@ const CourseLayout = () => {
     if(error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
     
     return (
-        <div className="mt-[64px] p-4">
+        <div>
             <PageTitle text={`${course.name} קורס`}/>
             <CourseNavigation/>
-            <main className="mt-[32px] p-4"><Outlet /></main>
+            <main><Outlet /></main>
         </div>
     )
 }

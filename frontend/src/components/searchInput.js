@@ -1,12 +1,10 @@
 import TextField from "@mui/material/TextField";
 
 const SearchInput = ({ searchText, setSearchText, placeholder='🔎Search...'}) => {
-  const handleSearch = (e) => {
-    setSearchText(e.target.value);
-  };
+  const handleSearch = (e) => setSearchText(e.target.value);
 
   return (
-    <div className="w-full">
+    <div className="w-full max-md:mt-2">
       <TextField
         placeholder={placeholder}
         value={searchText}
@@ -14,7 +12,7 @@ const SearchInput = ({ searchText, setSearchText, placeholder='🔎Search...'}) 
         fullWidth
         variant="outlined"
         inputProps={{
-          style: { textAlign: "left" }, 
+          style: { textAlign: "left", fontSize: 16 }, 
         }}
         sx={{
           '& .MuiOutlinedInput-root': {
@@ -24,13 +22,10 @@ const SearchInput = ({ searchText, setSearchText, placeholder='🔎Search...'}) 
               borderColor: 'rgba(229,145,42,0.62)',
               borderRadius: '12px',
             },
-            '&:hover fieldset': {
-              borderColor: 'rgba(229,145,42,0.8)',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: 'rgba(229,145,42,1)',
-            },
+            '&:hover fieldset': { borderColor: 'rgba(229,145,42,0.8)' },
+            '&.Mui-focused fieldset': { borderColor: 'rgba(229,145,42,1)' },
           },
+          fontSize: { xs: '14px', md: '16px' } 
         }}
       />
     </div>

@@ -3,7 +3,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useCreateRecommendionMutation } from "./recommendtionApi";
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import FormTitle from "../../components/formTitle";
+import FormContainer from "../../components/formContainer";
+import SubmitButton from "../../components/submitButton";
+import FormInput from "../../components/formInput";
+import FormSelect from "../../components/formSelect";
 
 const recommendionSchema = z.object({
     userName: z.string({ required_error: "חובה להכניס שם משתמש" }).nonempty("חובה להכניס שם משתמש"),
@@ -16,9 +21,9 @@ const AddRecommendionForm = () => {
     const [message, setMessage] = useState("")
     const navigate = useNavigate()
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(recommendionSchema),
-        defaultValues: { userName: "", recommendtion: "", rating:"" }
+        defaultValues: { userName: "", recommendtion: "", rating: "" }
     })
 
     const onSubmit = async (data) => {
@@ -26,80 +31,67 @@ const AddRecommendionForm = () => {
         try {
             await createRecommendion(data).unwrap()
             setMessage("התגובה נשלחה וממתינה לאישור מנהל ✔")
-            setTimeout(()=>navigate('/user/home-page'),3000)
+            setTimeout(() => navigate('/user/home-page'), 3000)
         } catch (err) {
             setMessage("אירעה שגיאה בשליחת התגובה ❌")
-            setTimeout(()=>setMessage(""),3000)
+            setTimeout(() => setMessage(""), 3000)
         }
     }
 
     return (
-        <div className="max-w-xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-10">
+        <FormContainer onSubmit={handleSubmit(onSubmit)} className="max-md:px-4 max-md:py-4">
 
-            <h1 className="text-3xl font-bold mb-5 text-purple-700">
-                כתיבת תגובה
-            </h1>
+            <FormTitle text='הוספת המלצה' />
 
             {message && (
-                <div className="p-3 mb-4 rounded bg-indigo-100 text-indigo-700 font-semibold">
+                <div className="p-3 mb-4 rounded bg-indigo-100 text-indigo-700 font-semibold text-center max-md:text-sm">
                     {message}
                 </div>
             )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            <FormInput
+                label="שם משתמש"
+                type="text"
+                register={register("userName")}
+                error={errors.userName?.message}
+                placeholder="הכנס שם משתמש"
+                htmlFor="userName"
+            />
 
-                <div>
-                    <label className="block font-semibold mb-1">שם משתמש</label>
-                    <input
-                        type="text"
-                        className="w-full border p-2 rounded"
-                        {...register("userName")}
-                        placeholder="הכנס שם..."
-                    />
-                    {errors.userName && (
-                        <p className="text-red-600 text-sm mt-1">{errors.userName.message}</p>
-                    )}
-                </div>
+            <div className="flex flex-col mb-4 max-md:mb-3">
+                <label htmlFor="recommendtion" className="text-gray-700 mb-1 max-md:text-sm">תוכן תגובה</label>
+                <textarea
+                    {...register("recommendtion")}
+                    id="recommendtion"
+                    placeholder="הכנס את התגובה שלך..."
+                    className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 max-md:text-sm"
+                    rows={5}
+                />
+                {errors.recommendtion && (
+                    <span className="text-red-500 text-sm mt-1">
+                        {errors.recommendtion.message}
+                    </span>
+                )}
+            </div>
 
-                <div>
-                    <label className="block font-semibold mb-1">תוכן התגובה</label>
-                    <textarea
-                        className="w-full border p-2 rounded resize-none h-28"
-                        {...register("recommendtion")}
-                        placeholder="הכנס תגובה..."
-                    />
-                    {errors.recommendtion && (
-                        <p className="text-red-600 text-sm mt-1">{errors.recommendtion.message}</p>
-                    )}
-                </div>
+            <FormSelect
+                label="דירוג"
+                id="rating"
+                register={register("rating", { valueAsNumber: true })}
+                error={errors.rating?.message}
+                options={[
+                    { value: "", label: "-- כמה אתה מרוצה מהאתר שלנו?? --" },
+                    { value: 5, label: "⭐ 5" },
+                    { value: 4, label: "⭐ 4" },
+                    { value: 3, label: "⭐ 3" },
+                    { value: 2, label: "⭐ 2" },
+                    { value: 1, label: "⭐ 1" },
+                ]}
+            />
 
-                <div>
-                    <label className="block font-semibold mb-1">דירוג</label>
-                    <select
-                        className="w-full border p-2 rounded"
-                        {...register("rating", { valueAsNumber: true })}
-                    >
-                        <option value="" label="-- כמה אתה מרוצה מהאתר שלנו?? --"/>
-                        <option value={5}>⭐ 5</option>
-                        <option value={4}>⭐ 4</option>
-                        <option value={3}>⭐ 3</option>
-                        <option value={2}>⭐ 2</option>
-                        <option value={1}>⭐ 1</option>
-                    </select>
-                    {errors.rating && (
-                        <p className="text-red-600 text-sm mt-1">{errors.rating.message}</p>
-                    )}
-                </div>
+            <SubmitButton text='שלח תגובה' disabled={isSubmitting} />
 
-                <button
-                    type="submit"
-                    className="p-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition"
-                >
-                    שלח תגובה
-                </button>
-            </form>
-
-        </div>
+        </FormContainer>
     )
 }
 

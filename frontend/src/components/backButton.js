@@ -8,9 +8,9 @@ const BackButton = ({ navigation, buttonText = "חזרה" }) => {
 
   return (
     <Tooltip title={buttonText}>
-        
       <IconButton
         onClick={() => navigate(navigation)}
+        className="max-md:!top-5 max-md:!left-4"
         sx={{
           position: 'absolute',
           top: 16,
@@ -22,7 +22,7 @@ const BackButton = ({ navigation, buttonText = "חזרה" }) => {
           },
         }}
       >
-        <ArrowBackIcon />
+        <ArrowBackIcon className="max-md:!text-[20px]" />
       </IconButton>
     </Tooltip>
   )
