@@ -3,8 +3,8 @@ import { Typography } from "@mui/material";
 import { shuffleArray } from "../../admin/challenge/services/challengeServices";
 
 const PartA = ({ allWords, onEnd }) => {
-  const NUM_QUESTIONS = 15
-  const TIME_PER_QUESTION = 15
+  const NUM_QUESTIONS = 15;
+  const TIME_PER_QUESTION = 15;
 
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,22 +13,17 @@ const PartA = ({ allWords, onEnd }) => {
   const [answered, setAnswered] = useState(false);
   const [showCorrect, setShowCorrect] = useState(false);
   const [boardItems, setBoardItems] = useState([]);
-  const [wrongItem, setWrongItem] = useState(null); // שומר תשובה לא נכונה
+  const [wrongItem, setWrongItem] = useState(null);
 
   const timerRef = useRef(null);
-
 
   useEffect(() => {
     if (!allWords || allWords.length === 0) return;
 
     const shuffled = shuffleArray(allWords);
     const selected = shuffled.slice(0, NUM_QUESTIONS).map(word => {
-      let status = Math.floor(Math.random() * 3);
-
-      let answerStatus;
-      if (status === 0) answerStatus = 1;
-      else if (status === 1) answerStatus = Math.random() < 0.5 ? 0 : 2;
-      else answerStatus = 1;
+      const status = Math.floor(Math.random() * 3);
+      const answerStatus = Math.floor(Math.random() * 3);
 
       return {
         ...word,
@@ -40,21 +35,23 @@ const PartA = ({ allWords, onEnd }) => {
     setQuestions(selected);
   }, [allWords]);
 
-  const currentQuestion = questions[currentIndex]
+  const currentQuestion = questions[currentIndex];
+
   useEffect(() => {
     if (!currentQuestion) return;
 
-    const items = shuffleArray(allWords.map(word => {
-      const status = Math.floor(Math.random() * 3);
-      const x = Math.random() * 80 + 10;
-      const y = Math.random() * 80 + 10;
-      return { ...word, status, x, y };
-    }));
+    const items = shuffleArray(
+      allWords.map(word => {
+        const status = Math.floor(Math.random() * 3);
+        const x = Math.random() * 80 + 10;
+        const y = Math.random() * 80 + 10;
+        return { ...word, status, x, y };
+      })
+    );
 
     setBoardItems(items);
   }, [currentQuestion, allWords]);
 
-  // טיימר ושאילת שאלות
   useEffect(() => {
     if (!currentQuestion) return;
 
@@ -69,11 +66,9 @@ const PartA = ({ allWords, onEnd }) => {
     return () => clearInterval(timerRef.current);
   }, [currentQuestion]);
 
-  // סיום זמן
   useEffect(() => {
     if (timer === 0 && !answered) {
       setShowCorrect(true);
-
       setTimeout(() => nextQuestion(), 1500);
     }
   }, [timer, answered]);
@@ -86,14 +81,15 @@ const PartA = ({ allWords, onEnd }) => {
     }
   };
 
-  const chooseAnswer = (item) => {
+  const chooseAnswer = item => {
     if (answered || showCorrect) return;
 
     setAnswered(true);
 
     const isCorrect =
       (currentQuestion.answerStatus === 0 && item.word === currentQuestion.word) ||
-      (currentQuestion.answerStatus === 1 && item.translation === currentQuestion.translation) ||
+      (currentQuestion.answerStatus === 1 &&
+        item.translation === currentQuestion.translation) ||
       (currentQuestion.answerStatus === 2 && item.img === currentQuestion.img);
 
     if (isCorrect) {
@@ -115,13 +111,15 @@ const PartA = ({ allWords, onEnd }) => {
         <img
           src={`data:image/${currentQuestion.img.contentType};base64,${currentQuestion.img.data}`}
           alt={currentQuestion.word}
-          className="w-24 h-24 object-contain"
+          className="w-24 h-24 object-contain max-md:w-16 max-md:h-16"
         />
-      ) : "אין תמונה";
+      ) : (
+        "אין תמונה"
+      );
     }
   };
 
-  const renderBoardItemValue = (item) => {
+  const renderBoardItemValue = item => {
     if (item.status === 0) return item.word;
     if (item.status === 1) return item.translation;
     if (item.status === 2) {
@@ -129,21 +127,23 @@ const PartA = ({ allWords, onEnd }) => {
         <img
           src={`data:image/${item.img.contentType};base64,${item.img.data}`}
           alt={item.word}
-          className="w-16 h-16 object-contain"
+          className="w-16 h-16 object-contain max-md:w-10 max-md:h-10"
         />
-      ) : "?";
+      ) : (
+        "?"
+      );
     }
   };
 
-  const isCorrectItem = (item) => {
+  const isCorrectItem = item => {
     return (
       (currentQuestion.answerStatus === 0 && item.word === currentQuestion.word) ||
-      (currentQuestion.answerStatus === 1 && item.translation === currentQuestion.translation) ||
+      (currentQuestion.answerStatus === 1 &&
+        item.translation === currentQuestion.translation) ||
       (currentQuestion.answerStatus === 2 && item.img === currentQuestion.img)
     );
   };
 
-  // ⭐ פונקציה לערבוב לוח
   const reshuffleBoard = () => {
     setBoardItems(prev =>
       prev.map(item => ({
@@ -157,28 +157,43 @@ const PartA = ({ allWords, onEnd }) => {
   if (!currentQuestion) return <div>Loading...</div>;
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full">
-      <Typography variant="h5" className="font-bold">חלק א – מציאת זוגות</Typography>
+    <div className="flex flex-col items-center gap-4 w-full max-md:gap-3">
+      <Typography variant="h5" className="font-bold max-md:text-xl">
+        חלק א – מציאת זוגות
+      </Typography>
 
-      <Typography variant="body1">ניקוד: {score}</Typography>
-      <Typography variant="body1">שאלה {currentIndex + 1} מתוך {questions.length}</Typography>
+      <Typography variant="body1" className="max-md:text-sm">
+        ניקוד: {score}
+      </Typography>
 
-      <Typography variant="body1" className="text-red-600 font-bold">
+      <Typography variant="body1" className="max-md:text-sm">
+        שאלה {currentIndex + 1} מתוך {questions.length}
+      </Typography>
+
+      <Typography variant="body1" className="text-red-600 font-bold max-md:text-sm">
         זמן נותר: {timer} שניות
       </Typography>
 
-      <Typography variant="h6" className="mt-4 mb-2">
+      <Typography variant="h6" className="mt-4 mb-2 max-md:text-base">
         מצא את הזוג של: {renderQuestionContent()}
       </Typography>
 
       <button
         onClick={reshuffleBoard}
-        className="px-4 py-2 mb-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+        className="
+          px-4 py-2 mb-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition
+          max-md:px-3 max-md:py-1 max-md:text-sm
+        "
       >
         ערבב כרטיסים 🔄
       </button>
 
-      <div className="relative w-full h-[500px] border border-gray-300 rounded-lg overflow-hidden">
+      <div
+        className="
+          relative w-full h-[500px] border border-gray-300 rounded-lg overflow-hidden
+          max-md:h-[380px]
+        "
+      >
         {boardItems.map((item, i) => {
           const correct = isCorrectItem(item);
           const isWrong = wrongItem === item;
@@ -187,7 +202,9 @@ const PartA = ({ allWords, onEnd }) => {
             <div
               key={i}
               onClick={() => chooseAnswer(item)}
-              className={`absolute p-2 cursor-pointer rounded-md shadow-md bg-white flex justify-center items-center transition-all duration-300
+              className={`
+                absolute p-2 cursor-pointer rounded-md shadow-md bg-white flex justify-center items-center transition-all duration-300
+                max-md:p-1 max-md:text-xs
                 ${showCorrect && correct ? "bg-green-400 border-4 border-green-700 scale-125" : ""}
                 ${showCorrect && isWrong ? "bg-red-300 border-4 border-red-700 scale-110" : ""}
               `}
@@ -207,4 +224,4 @@ const PartA = ({ allWords, onEnd }) => {
   );
 };
 
-export default PartA;
+export default PartA

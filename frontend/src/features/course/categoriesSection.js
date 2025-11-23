@@ -15,17 +15,18 @@ const rainbowColors = [
 ]
 
 const CategoriesSection = () => {
-  const { courseId } = useParams()
   const navigate = useNavigate()
+
+  const { courseId } = useParams()
   const { data: categories, isLoading, error } = useGetCourseCategoriesQuery(courseId)
-  const { data: userProgress } = useGetUserProgressByUserQuery()
+  const { data: userProgress, isLoading: LoadingUserProgress } = useGetUserProgressByUserQuery()
   const [hoveredCategory, setHoveredCategory] = useState(null)
 
-  if (isLoading ||userProgress) return <LoadingSpinner/>
-  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (isLoading || LoadingUserProgress) return <LoadingSpinner />
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"} />
 
   return (
-    <div className="flex flex-wrap justify-center gap-6 mt-8 px-4 mr-[3rem] " >
+    <div className="flex flex-wrap justify-center gap-6 mt-8 px-4 mr-[3rem] max-md:mr-0 max-md:mt-4">
       {categories.map((category, index) => {
         const isCompleted = userProgress?.completedCategories?.some(
           (completed) => completed._id === category._id
@@ -50,10 +51,10 @@ const CategoriesSection = () => {
             <Card
               onMouseEnter={() => setHoveredCategory(category._id)}
               onMouseLeave={() => setHoveredCategory(null)}
-              className={`w-80 transform transition-all duration-300 cursor-pointer hover:scale-105 shadow-lg rounded-2xl border-0 overflow-hidden`}
+              className="w-80 max-md:w-80 transform transition-all duration-300 cursor-pointer hover:scale-105 shadow-lg rounded-2xl border-0 overflow-hidden"
             >
-              <div className={`h-32 bg-gradient-to-r ${gradient} flex items-center justify-center`}>
-                <span className="text-3xl animate-bounce text-white">
+              <div className={`h-32 max-md:h-24 bg-gradient-to-r ${gradient} flex items-center justify-center`}>
+                <span className="text-3xl max-md:text-2xl animate-bounce text-white">
                   {isCompleted ? "✅" : "🟢"}
                 </span>
               </div>
@@ -62,7 +63,7 @@ const CategoriesSection = () => {
                 <CardContent className="flex flex-col items-center justify-center py-4 px-4 bg-white">
                   <Typography
                     variant="h6"
-                    className="text-gray-800 font-bold text-center truncate"
+                    className="text-gray-800 font-bold text-center truncate max-md:text-lg"
                   >
                     {category.name}
                   </Typography>
@@ -70,7 +71,7 @@ const CategoriesSection = () => {
                   {isCompleted && hoveredCategory === category._id && (
                     <Typography
                       variant="body2"
-                      className="text-green-700 mt-2 text-center"
+                      className="text-green-700 mt-2 text-center max-md:text-sm"
                     >
                       סיימת! נקודות: {result?.totalScore ?? 0}
                     </Typography>

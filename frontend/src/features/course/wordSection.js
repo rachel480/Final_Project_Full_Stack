@@ -12,7 +12,6 @@ import CustomLink from "../../components/customLink"
 import LoadingSpinner from "../../components/loadingSpinner"
 import ErrorMessage from "../../components/errorMessage"
 
-
 const WordSection = () => {
   const { courseId } = useParams()
   const [searchText, setSearchText] = useState("")
@@ -41,20 +40,22 @@ const WordSection = () => {
       : () => 0
   )
 
-  if (isLoading) return  <LoadingSpinner text="טוען מילים...."/>
-  if (error) return  <ErrorMessage message={error?.data?.message || "משהו השתבש"}/>
+  if (isLoading) return <LoadingSpinner text="טוען מילים...." />
+  if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"} />
 
   return (
-    <Box className="flex flex-col items-center gap-4 p-6">
+    <Box className="flex flex-col items-center gap-4 p-6 max-md:p-3">
+
       <Paper
         elevation={4}
-        className="w-full max-w-5xl p-6 rounded-2xl bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 shadow-md"
+        className="w-full max-w-5xl p-6 max-md:p-3 rounded-2xl bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 shadow-md"
       >
-        <div className="flex flex-wrap justify-between items-center mb-6 gap-3">
+        <div className="flex flex-wrap justify-between items-center mb-6 gap-3 max-md:gap-2 max-md:mb-4">
+
           <Button
             variant="contained"
             startIcon={<DownloadIcon />}
-            className="bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white rounded-xl"
+            className="bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white rounded-xl max-md:text-xs max-md:px-2"
             onClick={() => downloadWordFile(sortedWords)}
           >
             להורדת המילים
@@ -63,18 +64,21 @@ const WordSection = () => {
           <CustomLink
             navigation={"/user/my-words/favorites"}
             children={"למילים מועדפות"}
+            className="max-md:text-xs"
           />
 
           <SortSelect
             sortBy={sortBy}
             setSortBy={setSortBy}
             options={["words", "categories"]}
+            className="max-md:text-xs"
           />
 
           <SearchInput
             searchText={searchText}
             setSearchText={setSearchText}
             placeholder={"Search word or translation..."}
+            className="max-md:w-full"
           />
         </div>
 

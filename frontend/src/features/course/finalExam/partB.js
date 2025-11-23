@@ -2,23 +2,28 @@ import { useState, useEffect, useRef } from "react";
 import { Typography, Button } from "@mui/material";
 import { shuffleArray } from "../../admin/challenge/services/challengeServices";
 
-const TOTAL_PAIRS = 32   
-const TIME_LIMIT =90
+const TOTAL_PAIRS = 32;
+const TIME_LIMIT = 90;
 
 const PartB = ({ allWords, onEnd }) => {
-  const [board, setBoard] = useState([])
-  const [selected, setSelected] = useState([])
-  const [score, setScore] = useState(0)
-  const [started, setStarted] = useState(false)
+  const [board, setBoard] = useState([]);
+  const [selected, setSelected] = useState([]);
+  const [score, setScore] = useState(0);
+  const [started, setStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const [showAnswers, setShowAnswers] = useState(false);
 
   const timerRef = useRef(null);
 
-  
   const colors = [
-    "bg-red-300", "bg-green-300", "bg-blue-300", "bg-yellow-300",
-    "bg-purple-300", "bg-pink-300", "bg-orange-300", "bg-teal-300"
+    "bg-red-300",
+    "bg-green-300",
+    "bg-blue-300",
+    "bg-yellow-300",
+    "bg-purple-300",
+    "bg-pink-300",
+    "bg-orange-300",
+    "bg-teal-300"
   ];
 
   const prepareBoard = () => {
@@ -61,7 +66,6 @@ const PartB = ({ allWords, onEnd }) => {
     setShowAnswers(false);
   };
 
-  // טיימר
   useEffect(() => {
     if (!started) return;
 
@@ -70,8 +74,10 @@ const PartB = ({ allWords, onEnd }) => {
         if (t <= 1) {
           clearInterval(timerRef.current);
 
-          // מציגים את כל הזוגות שנותרו
-          setBoard(prev => prev.map(c => c.found ? c : { ...c, showAnswer: true }));
+          setBoard(prev =>
+            prev.map(c => (c.found ? c : { ...c, showAnswer: true }))
+          );
+
           setShowAnswers(true);
 
           return 0;
@@ -83,7 +89,6 @@ const PartB = ({ allWords, onEnd }) => {
     return () => clearInterval(timerRef.current);
   }, [started]);
 
-  // סיום החלק לאחר הצגת כל הזוגות
   useEffect(() => {
     if (showAnswers) {
       const timeout = setTimeout(() => onEnd(score), 3000);
@@ -91,7 +96,7 @@ const PartB = ({ allWords, onEnd }) => {
     }
   }, [showAnswers, score, onEnd]);
 
-  const handleClick = (card) => {
+  const handleClick = card => {
     if (selected.length === 2 || card.found || timeLeft === 0) return;
 
     const newSelection = [...selected, card];
@@ -99,7 +104,8 @@ const PartB = ({ allWords, onEnd }) => {
 
     if (newSelection.length === 2) {
       const [first, second] = newSelection;
-      const isMatch = first.matchId === second.matchId && first.type !== second.type;
+      const isMatch =
+        first.matchId === second.matchId && first.type !== second.type;
 
       if (isMatch) {
         setScore(prev => prev + 10);
@@ -114,7 +120,6 @@ const PartB = ({ allWords, onEnd }) => {
     }
   };
 
-  // בדיקה אם כל הזוגות נמצאו
   useEffect(() => {
     if (started && board.length > 0 && board.every(c => c.found)) {
       clearInterval(timerRef.current);
@@ -124,11 +129,17 @@ const PartB = ({ allWords, onEnd }) => {
 
   if (!started) {
     return (
-      <div className="flex flex-col items-center justify-center p-4">
-        <Typography variant="h4" className="font-bold mb-2">
+      <div className="flex flex-col items-center justify-center p-4 max-md:p-3">
+        <Typography
+          variant="h4"
+          className="font-bold mb-2 max-md:text-2xl"
+        >
           חלק ב: משחק זיכרון
         </Typography>
-        <Typography variant="body1" className="mb-4 text-center">
+        <Typography
+          variant="body1"
+          className="mb-4 text-center max-md:text-sm"
+        >
           מצא את 32 הזוגות. יש לך דקה וחצי בלבד! כל זוג שווה 10 נקודות.
         </Typography>
         <Button variant="contained" color="primary" onClick={startGame}>
@@ -139,26 +150,40 @@ const PartB = ({ allWords, onEnd }) => {
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full">
-      <Typography variant="h5" className="font-bold">ניקוד: {score}</Typography>
-      <Typography variant="h6" className="text-red-600 font-bold">
+    <div className="flex flex-col items-center gap-4 w-full max-md:gap-3">
+      <Typography variant="h5" className="font-bold max-md:text-xl">
+        ניקוד: {score}
+      </Typography>
+
+      <Typography variant="h6" className="text-red-600 font-bold max-md:text-base">
         זמן שנותר: {timeLeft} שניות
       </Typography>
 
-      <div className="grid grid-cols-8 gap-2 p-4 w-full max-w-5xl">
+      <div
+        className="
+        grid grid-cols-8 gap-2 p-4 w-full max-w-5xl
+        max-md:grid-cols-4 max-md:gap-1 max-md:p-2
+      "
+      >
         {board.map(card => {
-          const flipped = card.found || selected.includes(card) || card.showAnswer;
+          const flipped =
+            card.found || selected.includes(card) || card.showAnswer;
+
           const bgColor = card.showAnswer
             ? card.color
             : flipped
-              ? "bg-green-200"
-              : "bg-white hover:bg-yellow-100";
+            ? "bg-green-200"
+            : "bg-white hover:bg-yellow-100";
 
           return (
             <div
               key={card.id}
               onClick={() => handleClick(card)}
-              className={`p-3 rounded-md cursor-pointer text-center shadow-md border flex items-center justify-center text-sm font-bold h-20 ${bgColor}`}
+              className={`
+              p-3 rounded-md cursor-pointer text-center shadow-md border flex items-center justify-center text-sm font-bold h-20
+              ${bgColor}
+              max-md:h-14 max-md:text-xs max-md:p-1
+            `}
             >
               {flipped ? card.content : "❓"}
             </div>

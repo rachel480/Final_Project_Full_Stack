@@ -14,7 +14,7 @@ const FinalExamRoot = () => {
   const { data: categories, isLoading: catLoading, error: catError } = useGetCourseCategoriesQuery(courseId)
   const [currentPart, setCurrentPart] = useState(0) 
   const [totalScore, setTotalScore] = useState(0)
-  const [partScores, setPartScores] = useState({ partA: 0, partB: 0 })
+  const [partScores, setPartScores] = useState({ partA: 0, partB: 0})
 
   const handlePartEnd = (part, score) => {
     setPartScores(prev => ({ ...prev, [part]: score }))
@@ -41,22 +41,41 @@ const FinalExamRoot = () => {
       default: return null
     }
     return (
-      <div className="flex flex-col items-center justify-center p-4">
-        <Typography variant="h4" className="font-bold mb-2">{title}</Typography>
-        <Typography variant="body1" className="mb-4 text-center">{desc}</Typography>
+      <div className="flex flex-col items-center justify-center p-4 max-md:p-3">
+        <Typography variant="h4" className="font-bold mb-2 max-md:text-2xl">{title}</Typography>
+        <Typography variant="body1" className="mb-4 text-center max-md:text-sm">{desc}</Typography>
         <Button variant="contained" color="primary" onClick={startNextPart}>התחל</Button>
       </div>
     )
   }
 
   return (
-    <div className="w-full flex flex-col items-center pt-10">
+    <div className="
+      w-full flex flex-col items-center pt-10
+      max-md:pt-6 max-md:px-2
+    ">
       {currentPart === 0 && renderPartIntro()}
-      {currentPart === 1 && <PartA categories={categories} allWords={words} onEnd={score => handlePartEnd("partA", score)}/>}
-      {currentPart === 2 && <PartB categories={categories} allWords={words} onEnd={score => handlePartEnd("partB", score)}/>}
-      {currentPart > 2 && 
-        <FinalExamEndModal totalScore={totalScore} partScores={partScores} courseId={courseId}/>
-      }
+      {currentPart === 1 && (
+        <PartA
+          categories={categories}
+          allWords={words}
+          onEnd={score => handlePartEnd("partA", score)}
+        />
+      )}
+      {currentPart === 2 && (
+        <PartB
+          categories={categories}
+          allWords={words}
+          onEnd={score => handlePartEnd("partB", score)}
+        />
+      )}
+      {currentPart > 2 && (
+        <FinalExamEndModal
+          totalScore={totalScore}
+          partScores={partScores}
+          courseId={courseId}
+        />
+      )}
     </div>
   )
 }
