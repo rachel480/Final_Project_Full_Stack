@@ -8,7 +8,7 @@ const FormSelect = ({ label, id, register, error, options = [], className = "" }
       <select
         id={id}
         {...register}
-        className="border border-gray-300 rounded-md px-3 py-2 text-base max-md:text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+        className="  !bg-[rgba(250, 250, 250, 0.56)] border border-gray-300 rounded-md px-3 py-2 text-base max-md:text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>

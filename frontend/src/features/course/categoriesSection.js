@@ -5,6 +5,7 @@ import { useState } from "react"
 import { Card, CardActionArea, CardContent, Typography, LinearProgress, Tooltip } from "@mui/material"
 import LoadingSpinner from "../../components/loadingSpinner"
 import ErrorMessage from "../../components/errorMessage"
+import BackButton from "../../components/backButton"
 
 const rainbowColors = [
   "from-pink-400 to-red-500",
@@ -26,7 +27,11 @@ const CategoriesSection = () => {
   if (error) return <ErrorMessage message={error?.data?.message || "משהו השתבש"} />
 
   return (
-    <div className="flex flex-wrap justify-center gap-6 mt-8 px-4 mr-[3rem] max-md:mr-0 max-md:mt-4">
+    <div className="relative flex flex-wrap justify-center gap-6 mt-8 px-4 mr-[3rem] max-md:mr-0 max-md:mt-4">
+      <div className="absolute top-0 left-0">
+        <BackButton navigation={'/user/course-list'}/>
+      </div>
+      
       {categories.map((category, index) => {
         const isCompleted = userProgress?.completedCategories?.some(
           (completed) => completed._id === category._id

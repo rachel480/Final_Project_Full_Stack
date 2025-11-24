@@ -33,7 +33,7 @@ const EditableFormInput = ({ label, htmlFor, register, error, placeholder, type 
         }}
         sx={{
           "& .MuiOutlinedInput-root": {
-            backgroundColor: isEditing ? "#fff" : "rgba(173, 216, 230, 0.2)",
+            backgroundColor: isEditing ? "rgba(250, 250, 250, 0.56)" : "rgba(173, 216, 230, 0.2)",
             "& fieldset": {
               borderColor: isEditing
                 ? "rgba(229,145,42,1)"

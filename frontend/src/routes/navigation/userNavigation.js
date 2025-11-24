@@ -9,13 +9,12 @@ const UserNavigation = () => {
 
     return (
         <Header>
-            <CustomNavLink to='home-page' >דף הבית</CustomNavLink>
-            <CustomNavLink to='course-list' >הקורסים שלי</CustomNavLink>
-            <CustomNavLink to='my-words'>המילים שלי</CustomNavLink>
-            <CustomNavLink to="add-recommendion">הוספת המלצה</CustomNavLink>
             {isAdmin && (<CustomNavLink to='admin'>ניהול</CustomNavLink>)}
-
-            <UserProfileMenu/>
+            <CustomNavLink to="add-recommendion">הוספת המלצה</CustomNavLink>
+            <CustomNavLink to='my-words'>המילים שלי</CustomNavLink>
+            <CustomNavLink to='course-list' >הקורסים שלי</CustomNavLink>
+            <CustomNavLink to='home-page' >דף הבית</CustomNavLink>
+            <UserProfileMenu />
         </Header>
     )
 }

@@ -24,12 +24,14 @@ const PasswordInput = ({ label, register, error, placeholder, htmlFor }) => {
           "&.Mui-focused": {
             color: "rgba(229,145,42,0.62)",
             fontWeight: "bold",
+            fontSize:'20px'
           },
         },
       }}
       sx={{
         fontSize: { xs: "14px", md: "16px" },
         "& .MuiOutlinedInput-root": {
+           backgroundColor: "rgba(250, 250, 250, 0.56)",
           "& fieldset": {
             borderColor: "#FF8A00",
           },

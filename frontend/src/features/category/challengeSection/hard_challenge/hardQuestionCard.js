@@ -24,13 +24,13 @@ const HardQuestionCard = ({ question, index, nextQuestion, handleUsersAnswer }) 
     return () => { clearInterval(interval); clearTimeout(timeout) }
   }, [index, nextQuestion])
 
-  if (!question) return <LoadingSpinner/>
+  if (!question) return <LoadingSpinner />
 
   const chooseAnswer = (word) => {
     if (answered) return
     setAnswered(true)
     handleUsersAnswer(word)
-    setTimeout(() => nextQuestion(), 300)
+    setTimeout(() => nextQuestion(), 300) 
   }
 
   return (
@@ -59,6 +59,7 @@ const HardQuestionCard = ({ question, index, nextQuestion, handleUsersAnswer }) 
         status={question.status}
         answer={question.answer}
         chooseAnswer={chooseAnswer}
+        disabled={answered}
       />
     </div>
   )

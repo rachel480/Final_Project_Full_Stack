@@ -18,7 +18,7 @@ const BaseList = ({ title, placeholder, data = [], isLoading, error, searchKey, 
   })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b">
       <div className="bg-gradient-to-r from-green-300 via-green-200 to-green-100 
                 p-6 rounded-b-3xl shadow-2xl
                 flex flex-col items-center gap-4 max-w-6xl mx-auto -mt-20

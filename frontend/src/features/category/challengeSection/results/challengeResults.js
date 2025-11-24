@@ -27,7 +27,7 @@ const ChallengeResults = () => {
         <Paper
           key={question?._id || i}
           className="
-            w-full max-w-3xl max-md:w-lg  p-6 max-md:p-4 
+            w-full max-w-3xl max-md:max-w-lg p-6 max-md:p-4 
             rounded-3xl 
             bg-gradient-to-br from-yellow-50 via-pink-50 to-purple-50 
             shadow-2xl 
@@ -35,7 +35,7 @@ const ChallengeResults = () => {
             transition-all
           "
         >
-          <div className="flex justify-between  max-md:items-center items-center mb-4 max-md:gap-2">
+          <div className="flex justify-between max-md:items-center items-center mb-4 max-md:gap-2">
             <Typography variant="h6" className="font-bold text-indigo-700 max-md:text-base">
               שאלה {i + 1}
             </Typography>

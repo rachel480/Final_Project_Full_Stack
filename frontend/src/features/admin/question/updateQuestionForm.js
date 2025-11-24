@@ -104,7 +104,7 @@ const UpdateQuestionForm = () => {
   const wordOptions = validWords.map((w) => ({ value: w._id, label: w.word }))
 
   return (
-    <Box className="p-6 max-w-3xl mx-auto relative bg-[rgba(255,265,25,0.2)] max-md:p-3">
+    <Box className="p-6 max-w-3xl mx-auto relative bg-[rgba(255,265,25,0.2)]  dark:!bg-[rgba(250,250,250,0)] max-md:p-3">
       <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
         <BackButton navigation={location.state?.from || `/user/admin/data/courses/${courseId}/category/${categoryId}/challenge/${challengeId}`} />

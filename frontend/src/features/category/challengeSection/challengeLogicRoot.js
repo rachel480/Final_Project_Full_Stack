@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import {useGetUserProgressByUserQuery,useUpdateChallengeResultInUserProgressMutation} from "../../userProgress/userProgressApi"
+import { useGetUserProgressByUserQuery, useUpdateChallengeResultInUserProgressMutation, } from "../../userProgress/userProgressApi"
 import LoadingSpinner from "../../../components/loadingSpinner"
 import ErrorMessage from "../../../components/errorMessage"
 import { toast } from "react-toastify"
 import { useGetCourseByIdQuery } from "../../course/courseApi"
 
-const ChallengeLogicRoot = ({
-  challenge,
-  children,
-  externalIndex,
-  setExternalIndex,
-}) => {
+const ChallengeLogicRoot = ({ challenge, children, externalIndex, setExternalIndex, }) => {
+
   const { categoryId, courseId } = useParams()
+  const navigate = useNavigate()
   const [updateChallengeResultInUserProgress] = useUpdateChallengeResultInUserProgressMutation()
   const { data: userProgress, isLoading, error } = useGetUserProgressByUserQuery()
   const { data: course, isLoading: courseLoading, error: courseError } = useGetCourseByIdQuery(courseId)
@@ -21,8 +18,7 @@ const ChallengeLogicRoot = ({
   const [currentIndex, setCurrentIndex] = useState(-1)
   const [challengeResults, setChallengeResults] = useState(null)
   const [isNewAttempt, setIsNewAttempt] = useState(true)
-  
-  const navigate=useNavigate()
+
   useEffect(() => {
     if (typeof externalIndex === "number") {
       setCurrentIndex(externalIndex)
@@ -39,12 +35,11 @@ const ChallengeLogicRoot = ({
     if (!challenge?.questions || !userProgress) return
 
     const existingResult = userProgress?.challengeResults?.find(
-  (r) => r.challenge?._id?.toString() === challenge?._id?.toString()
-)
-
+      (r) => r.challenge._id.toString() === challenge._id.toString()
+    )
     if (existingResult && isNewAttempt) {
-      navigate(`${existingResult?.challenge?._id}/results`)
-      return 
+      navigate(`${existingResult.challenge._id}/results`)
+      return
     }
 
     const questionsWithAnswers = challenge.questions.map((question) => {
@@ -81,9 +76,9 @@ const ChallengeLogicRoot = ({
   const handleNext = () => {
     if (currentIndex < questions.length - 1) setCurrentIndex(currentIndex + 1)
   }
-  
-  const handlePrev=()=>{
-    if (currentIndex >0) setCurrentIndex(currentIndex -1)
+
+  const handlePrev = () => {
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1)
   }
 
   const handleEnd = async () => {
@@ -119,7 +114,7 @@ const ChallengeLogicRoot = ({
   }
 
   if (isLoading || courseLoading) return <LoadingSpinner />
-  if (error || courseError) return <ErrorMessage message={error?.data?.message || "שגיאה בטעינת נתוני המשתמש"}/>
+  if (error || courseError) return <ErrorMessage message={error?.data?.message || "שגיאה בטעינת נתוני המשתמש"} />
 
 
   return children({

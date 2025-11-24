@@ -7,7 +7,7 @@ const QuestionPrompt = ({ question, status }) => {
 
   if (status === 0)
     return (
-      <Typography variant="h6" className="text-indigo-700  text-center my-2 max-md:text-base">
+      <Typography variant="h6" className="text-indigo-700 text-center my-2 max-md:text-base">
         {question?.question?.word}?
       </Typography>
     )

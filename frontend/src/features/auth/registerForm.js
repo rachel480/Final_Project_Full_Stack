@@ -53,55 +53,70 @@ const RegisterForm = () => {
   }
 
   return (
-        <FormContainer onSubmit={handleSubmit(onSubmit)}>
+    <FormContainer onSubmit={handleSubmit(onSubmit)}>
 
-          <FormTitle text="הרשמה" />
+      <FormTitle text="הרשמה" />
 
-          <FormInput
-            label="שם משתמש"
-            type="text"
-            register={register("userName")}
-            error={errors.userName?.message}
-            placeholder="הכנס שם משתמש..."
-            htmlFor="userName"
-          />
+      <FormInput
+        label="שם משתמש"
+        type="text"
+        register={register("userName")}
+        error={errors.userName?.message}
+        placeholder="הכנס שם משתמש..."
+        htmlFor="userName"
+      />
 
-          <FormInput
-            label="שם מלא"
-            type="text"
-            register={register("fullName")}
-            error={errors.fullName?.message}
-            placeholder="הכנס שם מלא..."
-            htmlFor="fullName"
-          />
+      <FormInput
+        label="שם מלא"
+        type="text"
+        register={register("fullName")}
+        error={errors.fullName?.message}
+        placeholder="הכנס שם מלא..."
+        htmlFor="fullName"
+      />
 
-          
-          <FormInput
-            label="אימייל"
-            type="email"
-            register={register("email")}
-            error={errors.email?.message}
-            placeholder="הכנס אימייל..."
-            htmlFor="email"
-          />
+      <PasswordInput
+        label="סיסמא"
+        register={register("password")}
+        error={errors.password?.message}
+        placeholder="הכנס סיסמא..."
+        htmlFor="password"
+      />
 
-          <FormInput
-            label="טלפון (אופציונלי)"
-            type="text"
-            register={register("phone")}
-            error={errors.phone?.message}
-            placeholder="הכנס מספר טלפון..."
-            htmlFor="phone"
-          />
+      <PasswordInput
+        label="אימות סיסמא"
+        register={register("confirmPassword")}
+        error={errors.confirmPassword?.message}
+        placeholder="הכנס סיסמא לאימות..."
+        htmlFor="confirmPassword"
+      />
 
-          <SubmitButton text="הרשמה" isLoading={isLoading} />
+      <FormInput
+        label="אימייל"
+        type="email"
+        register={register("email")}
+        error={errors.email?.message}
+        placeholder="הכנס אימייל..."
+        htmlFor="email"
+      />
 
-          <p className="mt-4 text-center text-sm">
-            כבר יש לך חשבון?{' '}
-            <CustomLink to='/login'>התחברות</CustomLink>
-          </p>
+      <FormInput
+        label="טלפון (אופציונלי)"
+        type="text"
+        register={register("phone")}
+        error={errors.phone?.message}
+        placeholder="הכנס מספר טלפון..."
+        htmlFor="phone"
+      />
 
-        </FormContainer>
+      <SubmitButton text="הרשמה" isLoading={isLoading} />
+
+      <p className="mt-4 text-center text-sm">
+        כבר יש לך חשבון?{' '}
+        <CustomLink to='/login'>התחברות</CustomLink>
+      </p>
+
+    </FormContainer>
   )
 }
 

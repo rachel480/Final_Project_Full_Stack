@@ -23,12 +23,13 @@ const FormInput = ({ label, htmlFor, type, register, error, placeholder }) => {
             "&.Mui-focused": {
               color: "rgba(229,145,42,0.62)",
               fontWeight: "bold",
+              fontSize:'20px'
             },
           },
         }}
         sx={{
           "& .MuiOutlinedInput-root": {
-            backgroundColor: "rgba(173, 216, 230, 0.2)",
+            backgroundColor: "rgba(250, 250, 250, 0.56)",
             "& fieldset": {
               borderColor: "rgba(229,145,42,0.62)",
             },

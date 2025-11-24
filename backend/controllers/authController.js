@@ -105,7 +105,7 @@ const forgotPassword = async (req, res) => {
         <p>כדי לאפס את הסיסמה שלך, לחצ/י על הקישור הבא:</p>
         <a href="${resetUrl}">${resetUrl}</a>
         <p>אם לא ביקשת איפוס סיסמה, פשוט התעלם/י מהמייל הזה.</p>
-        <p>בברכה,<br/>english city</p>
+         <img src="cid:mylogo" alt="english city" style="width:150px; height:auto;" />
       </div>
     `
 

@@ -24,7 +24,7 @@ const CourseList = () => {
   if (courses.length === 0) return <InfoMessage message="לא נמצאו קורסים" />
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-[80px] px-6 max-md:px-3">
+    <div className="min-h-screen bg-gradient-to-b  pt-[80px] px-6 max-md:px-3">
       <div className="max-w-6xl mx-auto text-center mb-10 max-md:mb-6">
         <PageTitle text="בחר את קורס האנגלית שלך" />
         <SideMenu/>

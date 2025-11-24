@@ -12,6 +12,11 @@ const FormContainer = ({ children, onSubmit }) => {
           w-full
           max-w-md
           shadow-md
+          !bg-[rgba(100,150,25,0.4)]
+          border
+          border-4
+          border-[rgba(229,145,42,0.62)]
+          dark:border-[rgba(180,22,84,1)]
         "
       >
         <form onSubmit={onSubmit} className="flex flex-col gap-4">

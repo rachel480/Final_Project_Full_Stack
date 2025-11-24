@@ -2,8 +2,11 @@ import HardQuestionCard from "./hardQuestionCard"
 import ChallengeLogicRoot from "../challengeLogicRoot"
 import EndModal from "../results/endModal"
 import { Box, Button, Typography, Paper } from "@mui/material"
+import { useState } from "react"
 
 const HardChallenge = ({ challenge }) => {
+  const [showEndButton, setShowEndButton] = useState(false)
+
   return (
     <ChallengeLogicRoot challenge={challenge}>
       {({
@@ -17,10 +20,10 @@ const HardChallenge = ({ challenge }) => {
       }) => {
 
         const nextQuestion = () => {
-          if (currentIndex + 1 < questions.length) {
+          if (currentIndex < questions.length - 1) {
             setCurrentIndex(currentIndex + 1)
           } else {
-            handleEnd()
+            setShowEndButton(true)
           }
         }
 
@@ -46,18 +49,33 @@ const HardChallenge = ({ challenge }) => {
         }
 
         return (
-          <div className="w-full flex justify-center pt-10 max-md:pt-6">
-            {currentIndex < questions.length ? (
+          <div className="w-full flex flex-col items-center pt-10 max-md:pt-6">
+            {currentIndex < questions.length && !showEndButton && (
               <HardQuestionCard
                 question={questions[currentIndex]}
                 index={currentIndex}
                 handleUsersAnswer={handleUsersAnswer}
                 nextQuestion={nextQuestion}
               />
-            ) : (
-              currentIndex === challenge?.questions?.length && challengeResults && (
-                <EndModal challengeId={challenge._id} courseId={courseId} score={challengeResults?.totalScore || 0} total={questions.length * 10} />
-              )
+            )}
+
+            {showEndButton && (
+              <Button
+                variant="contained"
+                onClick={handleEnd}
+                className="mt-6 bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-xl max-md:w-full"
+              >
+                סיום מבחן 🏁
+              </Button>
+            )}
+
+            {currentIndex === questions.length && challengeResults && (
+              <EndModal
+                challengeId={challenge._id}
+                courseId={courseId}
+                score={challengeResults?.totalScore || 0}
+                total={questions.length * 10}
+              />
             )}
           </div>
         )

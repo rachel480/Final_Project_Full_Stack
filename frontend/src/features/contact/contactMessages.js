@@ -5,6 +5,7 @@ import { useDeleteMessageMutation, useGetAllMessagesQuery } from "./contactApi";
 import { Card, CardContent, CardActions, Button, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import PageTitle from "../../components/pageTitle";
 
 const ContactMessagesList = () => {
   const { data: messages, isLoading, isError } = useGetAllMessagesQuery();
@@ -32,6 +33,8 @@ const ContactMessagesList = () => {
   };
 
   return (
+    <div>
+      <PageTitle size="h4" text={'ניהול יצירות קשר'} />
     <div className="flex justify-center p-6 mr-[60px] max-md:mr-0 max-md:p-4">
       <div className="
         grid grid-cols-1 
@@ -41,6 +44,7 @@ const ContactMessagesList = () => {
         w-full max-w-7xl
         max-md:gap-4
       ">
+        
         {messages.map((message, index) => {
           const isRead = readMessages.includes(message._id);
           return (
@@ -102,6 +106,7 @@ const ContactMessagesList = () => {
           );
         })}
       </div>
+    </div>
     </div>
   );
 };

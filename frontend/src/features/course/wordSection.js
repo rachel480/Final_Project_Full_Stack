@@ -62,7 +62,7 @@ const WordSection = () => {
           </Button>
 
           <CustomLink
-            navigation={"/user/my-words/favorites"}
+            to={"/user/my-words/favorites"}
             children={"למילים מועדפות"}
             className="max-md:text-xs"
           />

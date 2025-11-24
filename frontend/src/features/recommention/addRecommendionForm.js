@@ -59,13 +59,13 @@ const AddRecommendionForm = () => {
                 htmlFor="userName"
             />
 
-            <div className="flex flex-col mb-4 max-md:mb-3">
-                <label htmlFor="recommendtion" className="text-gray-700 mb-1 max-md:text-sm">תוכן תגובה</label>
+            <div className="flex flex-col mb-4 max-md:mb-3 ">
+                <label htmlFor="recommendtion" className="text-[rgba(229,145,42,0.62)] mb-1 max-md:text-sm">תוכן תגובה</label>
                 <textarea
                     {...register("recommendtion")}
                     id="recommendtion"
                     placeholder="הכנס את התגובה שלך..."
-                    className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 max-md:text-sm"
+                    className="border rounded-md p-2 focus:outline-none focus:ring-2  placeholder:text-black   bg-[rgba(250,250,250,0.56)] focus:ring-[rgba(229,145,42,0.62)] max-md:text-sm"
                     rows={5}
                 />
                 {errors.recommendtion && (

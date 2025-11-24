@@ -68,7 +68,7 @@ const UpdateChallengeForm = () => {
   }
 
   return (
-   <Box className="p-6 max-w-3xl mx-auto relative bg-[rgba(255,265,25,0.2)] max-md:p-3">
+   <Box className="p-6 max-w-3xl mx-auto relative bg-[rgba(255,265,25,0.2)]  dark:!bg-[rgba(250,250,250,0)] max-md:p-3">
       <FormContainer onSubmit={handleSubmit(onSubmit)}>
         <BackButton
           navigation={

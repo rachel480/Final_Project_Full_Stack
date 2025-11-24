@@ -33,6 +33,7 @@ const createMessage = async (req, res) => {
         <p><strong>נושא:</strong> ${subject}</p>
         <p><strong>תוכן ההודעה:</strong></p>
         <p>${message}</p>
+        <img src="cid:mylogo" alt="english city" style="width:150px; height:auto;" />
       `,
     })
 

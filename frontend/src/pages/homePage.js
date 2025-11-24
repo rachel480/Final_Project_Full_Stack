@@ -53,7 +53,7 @@ const HomePage = () => {
 
   return (
 
-    <div className="mt-[64px] p-6 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen text-right">
+    <div className="mt-[64px] p-6 bg-gradient-to-br  min-h-screen text-right">
       <PageTitle text={`שלום ${user.fullName || 'משתמש'} 👋`} />
       <SideMenu />
       {message && (

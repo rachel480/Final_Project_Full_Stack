@@ -67,14 +67,14 @@ const ContactForm = () => {
           />
 
           <div className="flex flex-col mb-4">
-            <label htmlFor="message" className="text-gray-700 mb-1">
+            <label htmlFor="message" className="text-[rgba(229,145,42,0.62)] mb-1">
               הודעה
             </label>
             <textarea
               {...register("message")}
               id="message"
               placeholder="כתוב כאן את ההודעה שלך..."
-              className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border rounded-md p-2 bg-[rgba(250,250,250,0.56)] placeholder:text-black  focus:outline-none focus:ring-2 focus:ring-[rgba(229,145,42,0.62)]"
               rows={5}
             />
             {errors.message && (
